@@ -1,4 +1,4 @@
-package gtwp.metatileentity.multiblock;
+package gtwpp.machines.multiblocks;
 
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityFluidHatch;

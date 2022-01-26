@@ -16,7 +16,7 @@ public class NewMetaTileEntities {
     public static void init() {
         GTLog.logger.info("GT:WP Registering NewMetaTileEntities");
         ASSEMBLER_LUV = GregTechAPI.registerMetaTileEntity(22228, new SimpleMachineMetaTileEntity(location("assembler.luv"), RecipeMaps.ASSEMBLER_RECIPES, Textures.ASSEMBLER_OVERLAY, 6));
-        QUADRUPLE_HATCH = GregTechAPI.registerMetaTileEntity(22229, new MetaTileEntityMultipleFluidHatch(location("fluid_hatch.quadruple"), 4));
+        QUADRUPLE_HATCH = GregTechAPI.registerMetaTileEntity(22229, new MetaTileEntityMultipleFluidHatch(location("fluid_hatch.quadruple"), 4, false));
    }
 
     private static ResourceLocation location(String name)

@@ -1,31 +1,3 @@
-/*package gtwp.machines.multi;
-
-import gregtech.api.capability.impl.FluidTankList;
-import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityFluidHatch;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fluids.FluidTank;
-
-public class MetaTileEntityMultipleFluidHatch extends MetaTileEntityFluidHatch
-{
-    private static FluidTank fluidTanks[];
-
-    public MetaTileEntityMultipleFluidHatch(ResourceLocation resloc)
-    {
-        super(resloc, 4);
-
-        for(int i = 0; i<4;i++)
-        {
-            fluidTanks[i] = new FluidTank(32000);
-        }
-        initializeInventory();
-    }
-
-    @Override
-    protected FluidTankList createImportFluidHandler() {
-        return new FluidTankList(false, fluidTanks);
-    }
-}*/
-
 package gtwp.machines.multi;
 
 import codechicken.lib.render.CCRenderState;
@@ -45,6 +17,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.render.SimpleOverlayRenderer;
 import gregtech.api.render.Textures;
+import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityFluidHatch;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMultiblockPart;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -63,22 +36,20 @@ import java.util.List;
 
 public class MetaTileEntityMultipleFluidHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IFluidTank> {
 
-    private static final int INITIAL_INVENTORY_SIZE = 8000;
+    private static final int INITIAL_INVENTORY_SIZE = 32000;
     private ItemStackHandler containerInventory;
-    private FluidTank fluidTank;
-    private boolean isExportHatch;
+    private FluidTank[] fluidTank = new FluidTank[8];
 
-    public MetaTileEntityMultipleFluidHatch(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
-        super(metaTileEntityId, tier);
+    public MetaTileEntityMultipleFluidHatch(ResourceLocation metaTileEntityId) {
+        super(metaTileEntityId, 4);
         this.containerInventory = new ItemStackHandler(2);
-        fluidTank = new FluidTank(getInventorySize());
-        this.isExportHatch = isExportHatch;
+        for(int i = 0; i<4;i++) this.fluidTank[i] = new FluidTank(getInventorySize());
         initializeInventory();
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new MetaTileEntityMultipleFluidHatch(metaTileEntityId, getTier(), isExportHatch);
+        return new MetaTileEntityMultipleFluidHatch(metaTileEntityId);
     }
 
     @Override
@@ -105,12 +76,8 @@ public class MetaTileEntityMultipleFluidHatch extends MetaTileEntityMultiblockPa
         super.update();
         if (!getWorld().isRemote) {
             fillContainerFromInternalTank(containerInventory, containerInventory, 0, 1);
-            if (isExportHatch) {
-                pushFluidsIntoNearbyHandlers(getFrontFacing());
-            } else {
-                fillInternalTankFromFluidContainer(containerInventory, containerInventory, 0, 1);
-                pullFluidsFromNearbyHandlers(getFrontFacing());
-            }
+            fillInternalTankFromFluidContainer(containerInventory, containerInventory, 0, 1);
+            pullFluidsFromNearbyHandlers(getFrontFacing());
         }
     }
 
@@ -118,20 +85,20 @@ public class MetaTileEntityMultipleFluidHatch extends MetaTileEntityMultiblockPa
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (shouldRenderOverlay()) {
-            SimpleOverlayRenderer renderer = isExportHatch ? Textures.PIPE_OUT_OVERLAY : Textures.PIPE_IN_OVERLAY;
+            SimpleOverlayRenderer renderer = Textures.PIPE_IN_OVERLAY;
             renderer.renderSided(getFrontFacing(), renderState, translation, pipeline);
-            SimpleOverlayRenderer overlay = isExportHatch ? Textures.FLUID_HATCH_OUTPUT_OVERLAY : Textures.FLUID_HATCH_INPUT_OVERLAY;
+            SimpleOverlayRenderer overlay = Textures.FLUID_HATCH_INPUT_OVERLAY;
             overlay.renderSided(getFrontFacing(), renderState, translation, pipeline);
         }
     }
 
     private int getInventorySize() {
-        return INITIAL_INVENTORY_SIZE * (1 << getTier());
+        return INITIAL_INVENTORY_SIZE;
     }
 
     @Override
     protected FluidTankList createImportFluidHandler() {
-        return isExportHatch ? new FluidTankList(false) : new FluidTankList(false, fluidTank);
+        return new FluidTankList(false);
     }
 
     @Override
@@ -141,17 +108,17 @@ public class MetaTileEntityMultipleFluidHatch extends MetaTileEntityMultiblockPa
 
     @Override
     public MultiblockAbility<IFluidTank> getAbility() {
-        return isExportHatch ? MultiblockAbility.EXPORT_FLUIDS : MultiblockAbility.IMPORT_FLUIDS;
+        return MultiblockAbility.IMPORT_FLUIDS;
     }
 
     @Override
     public void registerAbilities(List<IFluidTank> abilityList) {
-        abilityList.addAll(isExportHatch ? this.exportFluids.getFluidTanks() : this.importFluids.getFluidTanks());
+        abilityList.addAll(this.importFluids.getFluidTanks());
     }
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return createTankUI((isExportHatch ? exportFluids : importFluids).getTankAt(0), containerInventory, getMetaFullName(), entityPlayer)
+        return createTankUI(importFluids.getTankAt(0), containerInventory, getMetaFullName(), entityPlayer)
                 .build(getHolder(), entityPlayer);
     }
 

@@ -20,6 +20,7 @@ import gregtech.api.render.Textures;
 import gregtech.api.util.GTLog;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityFluidHatch;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMultiblockPart;
+import gregtech.common.pipelike.fluidpipe.net.FluidNetTank;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -36,27 +37,26 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import gregtech.api.util.GTLog;
-
 public class MetaTileEntityMultipleFluidHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IFluidTank> {
 
     private static final int INITIAL_INVENTORY_SIZE = 32000;
     private final ItemStackHandler containerInventory;
-    private static ArrayList<FluidTank> fluidTank;
-    private int SIZE;
+    private List<FluidTank> fluidTank;
 
-    public MetaTileEntityMultipleFluidHatch(ResourceLocation metaTileEntityId, int tier, int size) {
-        super(metaTileEntityId, tier);
+    public MetaTileEntityMultipleFluidHatch(ResourceLocation metaTileEntityId) {
+        super(metaTileEntityId, 4);
         this.containerInventory = new ItemStackHandler(2);
-        this.SIZE = size;
-        fluidTank = new ArrayList<FluidTank>(SIZE);
-        for(int i = 0; i<SIZE;i++) fluidTank.add(new FluidTank(getInventorySize()));
+        this.fluidTank = new ArrayList<FluidTank>(4);
+        for(int i = 0; i < 4; i++)
+        {
+            fluidTank.add(new FluidTank(getInventorySize()));
+        }
         initializeInventory();
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new MetaTileEntityMultipleFluidHatch(metaTileEntityId, getTier(), getSize());
+        return new MetaTileEntityMultipleFluidHatch(metaTileEntityId);
     }
 
     @Override
@@ -103,18 +103,16 @@ public class MetaTileEntityMultipleFluidHatch extends MetaTileEntityMultiblockPa
         return INITIAL_INVENTORY_SIZE;
     }
 
-    private int getSize(){
-        return SIZE;
-    }
-
     @Override
     protected FluidTankList createImportFluidHandler() {
-        return new FluidTankList(false, fluidTank);
+        if(fluidTank == null) return new FluidTankList(false);
+        else return new FluidTankList(false, fluidTank);
     }
 
     @Override
     protected FluidTankList createExportFluidHandler() {
-        return new FluidTankList(false, fluidTank);
+        if(fluidTank == null) return new FluidTankList(false);
+        else return new FluidTankList(false, fluidTank);
     }
 
     @Override

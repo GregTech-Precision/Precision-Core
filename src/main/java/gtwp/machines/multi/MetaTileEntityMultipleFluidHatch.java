@@ -43,10 +43,11 @@ public class MetaTileEntityMultipleFluidHatch extends MetaTileEntityMultiblockPa
     private final ItemStackHandler containerInventory;
     private List<FluidTank> fluidTank;
     private int SIZE;
+
     public MetaTileEntityMultipleFluidHatch(ResourceLocation metaTileEntityId, int tier, int size) {
         super(metaTileEntityId, tier);
         this.containerInventory = new ItemStackHandler(2);
-        this.fluidTank = new ArrayList<FluidTank>(4);
+        this.fluidTank = new ArrayList<FluidTank>();
         this.SIZE = size;
         for(int i = 0; i < getSize(); i++)
         {

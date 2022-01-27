@@ -42,20 +42,21 @@ public class MetaTileEntityMultipleFluidHatch extends MetaTileEntityMultiblockPa
 
     private static final int INITIAL_INVENTORY_SIZE = 32000;
     private final ItemStackHandler containerInventory;
-    private static ArrayList<FluidTank> fluidTank = new ArrayList<FluidTank>(4);
+    private static ArrayList<FluidTank> fluidTank;
+    private int SIZE;
 
-    public MetaTileEntityMultipleFluidHatch(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, 4);
-        GTLog.logger.info("0");
+    public MetaTileEntityMultipleFluidHatch(ResourceLocation metaTileEntityId, int tier, int size) {
+        super(metaTileEntityId, tier);
         this.containerInventory = new ItemStackHandler(2);
-        for(int i = 0; i<4;i++) fluidTank.add(new FluidTank(getInventorySize()));
-        GTLog.logger.info("1");
+        this.SIZE = size;
+        fluidTank = new ArrayList<FluidTank>(SIZE);
+        for(int i = 0; i<SIZE;i++) fluidTank.add(new FluidTank(getInventorySize()));
         initializeInventory();
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new MetaTileEntityMultipleFluidHatch(metaTileEntityId);
+        return new MetaTileEntityMultipleFluidHatch(metaTileEntityId, getTier(), getSize());
     }
 
     @Override
@@ -100,6 +101,10 @@ public class MetaTileEntityMultipleFluidHatch extends MetaTileEntityMultiblockPa
 
     private int getInventorySize() {
         return INITIAL_INVENTORY_SIZE;
+    }
+
+    private int getSize(){
+        return SIZE;
     }
 
     @Override

@@ -17,6 +17,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.render.SimpleOverlayRenderer;
 import gregtech.api.render.Textures;
+import gregtech.api.util.GTLog;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityFluidHatch;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMultiblockPart;
 import net.minecraft.client.resources.I18n;
@@ -32,18 +33,23 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
+
+import gregtech.api.util.GTLog;
 
 public class MetaTileEntityMultipleFluidHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IFluidTank> {
 
     private static final int INITIAL_INVENTORY_SIZE = 32000;
-    private ItemStackHandler containerInventory;
-    private FluidTank[] fluidTank = new FluidTank[8];
+    private final ItemStackHandler containerInventory;
+    private static ArrayList<FluidTank> fluidTank = new ArrayList<FluidTank>(4);
 
     public MetaTileEntityMultipleFluidHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 4);
+        GTLog.logger.info("0");
         this.containerInventory = new ItemStackHandler(2);
-        for(int i = 0; i<4;i++) this.fluidTank[i] = new FluidTank(getInventorySize());
+        for(int i = 0; i<4;i++) fluidTank.add(new FluidTank(getInventorySize()));
+        GTLog.logger.info("1");
         initializeInventory();
     }
 
@@ -98,7 +104,7 @@ public class MetaTileEntityMultipleFluidHatch extends MetaTileEntityMultiblockPa
 
     @Override
     protected FluidTankList createImportFluidHandler() {
-        return new FluidTankList(false);
+        return new FluidTankList(false, fluidTank);
     }
 
     @Override

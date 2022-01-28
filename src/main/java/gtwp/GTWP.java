@@ -1,5 +1,6 @@
 package gtwp;
 
+import gtwp.blocks.GTWPBlocks;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -24,6 +25,7 @@ public class GTWP {
     public static void preInit(FMLPreInitializationEvent event)
     {
         GTWPMetaTileEntities.init();
+        GTWPBlocks.init();
     }
 
     @EventHandler

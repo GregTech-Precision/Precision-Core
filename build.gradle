@@ -80,7 +80,7 @@ dependencies {
     // that the dep is a ForgeGradleS 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2859'
-    compile files('build/libs/gregtech-1.12.2-2.0.6-beta.jar', 'build/libs/CodeChickenLib-1.12.2-3.2.3.358.jar')
+    compile files('build/libs/gregtech-1.12.2-2.1.0-beta.jar', 'build/libs/CodeChickenLib-1.12.2-3.2.3.358.jar')
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
     // compile "some.group:artifact:version"

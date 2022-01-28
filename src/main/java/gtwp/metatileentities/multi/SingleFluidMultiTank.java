@@ -75,6 +75,7 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
 
     private int getCapacity()
     {
+
         return capacity;
     }
 
@@ -86,9 +87,9 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                 .aisle("XXX", "GGG", "GGG", "GGG", "GGG", "GGG", "GGG", "XXX")
-                 .aisle("XXX", "GMG", "GMG", "GMG", "GMG", "GMG", "GMG", "XSX")
-                 .aisle("XXX", "GGG", "GGG", "GGG", "GGG", "GGG", "GGG", "XXX")
+                 .aisle("XXX", "GGG", "GGG", "GGG", "GGG", "GGG", "XXX")
+                 .aisle("XXX", "GMG", "GMG", "GMG", "GMG", "GMG", "XSX")
+                 .aisle("XXX", "GGG", "GGG", "GGG", "GGG", "GGG", "XXX")
                  .where('S', selfPredicate())
                  .where('X', states(getCasingState()))
                  .where('G', states(getGlassState()).or(metaTileEntities(getIOHatch()).setMaxGlobalLimited(1)))
@@ -141,7 +142,7 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        getFrontOverlay().renderSided(EnumFacing.UP, renderState, translation, pipeline);
+        getFrontOverlay().renderSided(getFrontFacing(), renderState, translation, pipeline);
     }
 
     @Nonnull

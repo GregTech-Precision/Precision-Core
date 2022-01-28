@@ -7,6 +7,8 @@ import gtwp.GTWP;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.relauncher.Side;
 
+import static gregtech.client.renderer.texture.cube.OrientedOverlayRenderer.OverlayFace.*;
+
 @Mod.EventBusSubscriber(modid = GTWP.MODID, value = Side.CLIENT)
 public class GTWPTextures {
 
@@ -14,7 +16,6 @@ public class GTWPTextures {
     public static SimpleOverlayRenderer MULTI_TANK_FLUID_HATCH_T2;
     public static SimpleOverlayRenderer MULTI_TANK_FLUID_HATCH_T3;
     public static SimpleOverlayRenderer MULTI_TANK_FLUID_HATCH_T4;
-    public static OrientedOverlayRenderer IO_HATCH_OVERLAY;
 
     public static void preInit()
     {
@@ -23,6 +24,5 @@ public class GTWPTextures {
         MULTI_TANK_FLUID_HATCH_T2 = new SimpleOverlayRenderer("multi_tank_fluid_storage_t2.png");
         MULTI_TANK_FLUID_HATCH_T3 = new SimpleOverlayRenderer("multi_tank_fluid_storage_t3.png");
         MULTI_TANK_FLUID_HATCH_T4 = new SimpleOverlayRenderer("multi_tank_fluid_storage_t4.png");
-        IO_HATCH_OVERLAY = new OrientedOverlayRenderer("IOHatch.png");
     }
 }

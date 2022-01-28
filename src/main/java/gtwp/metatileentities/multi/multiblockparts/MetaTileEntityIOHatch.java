@@ -30,13 +30,6 @@ public class MetaTileEntityIOHatch extends MetaTileEntityTankValve {
     }
 
     @Override
-    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline)
-    {
-        super.renderMetaTileEntity(renderState, translation, pipeline);
-        GTWPTextures.IO_HATCH_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
-    }
-
-    @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         return null;
     }

@@ -8,6 +8,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 
 import gtwp.metatileentities.GTWPMetaTileEntities;
+import gtwp.blocks.GTWPBlocks;
 
 @Mod(modid = GTWP.MODID,
         name = GTWP.NAME,

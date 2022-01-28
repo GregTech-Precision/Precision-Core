@@ -142,13 +142,13 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        getFrontOverlay().renderSided(getFrontFacing(), renderState, translation, pipeline);
+        getFrontOverlay().renderSided(EnumFacing.UP, renderState, translation, pipeline);
     }
 
     @Nonnull
     @Override
     protected ICubeRenderer getFrontOverlay() {
-        return Textures.ASSEMBLER_OVERLAY;
+        return Textures.QUANTUM_TANK_OVERLAY;
     }
 
     @Override

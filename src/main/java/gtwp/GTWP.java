@@ -6,7 +6,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 
-import gtwp.machines.NewMetaTileEntities;
+import gtwp.metatileentities.GTWPMetaTileEntities;
 
 @Mod(modid = GTWP.MODID,
         name = GTWP.NAME,
@@ -23,7 +23,7 @@ public class GTWP {
     @EventHandler
     public static void preInit(FMLPreInitializationEvent event)
     {
-        NewMetaTileEntities.init();
+        GTWPMetaTileEntities.init();
     }
 
     @EventHandler

@@ -29,15 +29,17 @@ public class BlockMultiTank extends VariantActiveBlock<BlockMultiTank.MultiTankF
         return false;
     }
     public enum MultiTankFluidStorage implements IStringSerializable {
-        FLUID_STORAGE_T1("fluid_storage_t1"),
-        FLUID_STORAGE_T2("fluid_storage_t2"),
-        FLUID_STORAGE_T3("fluid_storage_t3"),
-        FLUID_STORAGE_T4("fluid_storage_t4");
+        FLUID_STORAGE_T1("fluid_storage_t1", 16000000),
+        FLUID_STORAGE_T2("fluid_storage_t2", 32000000),
+        FLUID_STORAGE_T3("fluid_storage_t3", 64000000),
+        FLUID_STORAGE_T4("fluid_storage_t4", 128000000);
 
         private final String name;
+        private final int capacity;
 
-        MultiTankFluidStorage(String name) {
+        MultiTankFluidStorage(String name, int capacity) {
             this.name = name;
+            this.capacity = capacity;
         }
 
         @Nonnull
@@ -45,6 +47,9 @@ public class BlockMultiTank extends VariantActiveBlock<BlockMultiTank.MultiTankF
         public String getName() {
             return this.name;
         }
+
+        @Nonnull
+        public int getCapacity() { return this.capacity; }
     }
 
 }

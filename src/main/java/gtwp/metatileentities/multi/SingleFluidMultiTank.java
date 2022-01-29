@@ -18,6 +18,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.util.GTLog;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
@@ -25,15 +26,20 @@ import gregtech.common.blocks.MetaBlocks;
 import gtwp.blocks.BlockMultiTank;
 import gtwp.blocks.GTWPBlocks;
 import gtwp.metatileentities.GTWPMetaTileEntities;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,18 +48,17 @@ import java.util.List;
 
 public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
 
-    private final int capacity;
+    private int capacity;
+    private boolean updCapacity = true;
 
-    public SingleFluidMultiTank(ResourceLocation metaTileEntityId, int capacity)
+    public SingleFluidMultiTank(ResourceLocation metaTileEntityId)
     {
         super(metaTileEntityId);
-        this.capacity = capacity;
-        initializeAbilities();
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder metaTileEntityHolder) {
-        return new SingleFluidMultiTank(metaTileEntityId, getCapacity());
+        return new SingleFluidMultiTank(metaTileEntityId);
     }
 
     protected void initializeAbilities() {
@@ -70,15 +75,39 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
     }
 
 
-    private int getCapacity()
-    {
-
+    private int countCapacity() {
+        BlockPos storagePos = getPos();
+        int capacity = 0;
+        for (int i = 0; i < 5; i++)
+        {
+            storagePos = storagePos.down();
+            if(!getWorld().isAirBlock(storagePos))
+            {
+                IBlockState storageState = getWorld().getBlockState(storagePos);
+                Block storage = storageState.getBlock();
+                if(storage.getClass() == BlockMultiTank.class)
+                {
+                    GTLog.logger.info("block capacity: " + ((BlockMultiTank) storage).getState(storageState).getCapacity());
+                    capacity += ((BlockMultiTank) storage).getState(storageState).getCapacity();
+                }
+            }
+        }
         return capacity;
     }
 
     @Override
-    protected void updateFormedValid() {
+    public void notifyBlockUpdate() {
+        if(isStructureObstructed()) updCapacity = true;
+    }
 
+    @Override
+    protected void updateFormedValid() {
+        if(capacity == 0 || updCapacity) {
+            capacity = countCapacity();
+            initializeAbilities();
+            updCapacity = false;
+            //GTLog.logger.info("capacity updated");
+        }
     }
 
     @Override

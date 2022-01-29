@@ -18,7 +18,7 @@ public class GTWPMetaTileEntities {
         GTLog.logger.info("GT:WP Registering New Meta Tile Entities");
 
         IO_HATCH = MetaTileEntities.registerMetaTileEntity(id++, new MetaTileEntityIOHatch(location("fluid_hatch.io")));
-        SINGLE_FLUID_MULTI_TANK = MetaTileEntities.registerMetaTileEntity(id++, new SingleFluidMultiTank(location("fluid_tank.single"), 80000000));
+        SINGLE_FLUID_MULTI_TANK = MetaTileEntities.registerMetaTileEntity(id++, new SingleFluidMultiTank(location("fluid_tank.single")));
     }
 
     private static ResourceLocation location(String name)

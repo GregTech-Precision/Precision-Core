@@ -11,11 +11,11 @@ import net.minecraft.world.IBlockAccess;
 
 import javax.annotation.Nonnull;
 
-public class BlockMultiTankFluidStorage extends VariantActiveBlock<BlockMultiTankFluidStorage.MultiTankFluidStorage> {
+public class BlockMultiTank extends VariantActiveBlock<BlockMultiTank.MultiTankFluidStorage> {
 
-    public BlockMultiTankFluidStorage() {
+    public BlockMultiTank() {
         super(Material.IRON);
-        setUnlocalizedName("multi_tank_fluid_storage");
+        setUnlocalizedName("multi_tank");
         setHardness(5.0f);
         setResistance(10.0f);
         setSoundType(SoundType.METAL);
@@ -28,10 +28,10 @@ public class BlockMultiTankFluidStorage extends VariantActiveBlock<BlockMultiTan
         return false;
     }
     public enum MultiTankFluidStorage implements IStringSerializable {
-        FLUID_STORAGE_T1("multi_tank_fluid_storage_t1"),
-        FLUID_STORAGE_T2("multi_tank_fluid_storage_t2"),
-        FLUID_STORAGE_T3("multi_tank_fluid_storage_t3"),
-        FLUID_STORAGE_T4("multi_tank_fluid_storage_t4");
+        FLUID_STORAGE_T1("fluid_storage_t1"),
+        FLUID_STORAGE_T2("fluid_storage_t2"),
+        FLUID_STORAGE_T3("fluid_storage_t3"),
+        FLUID_STORAGE_T4("fluid_storage_t4");
 
         private final String name;
 

@@ -20,6 +20,7 @@ public class GTWPBlocks {
     {
         FLUID_STORAGE = new BlockMultiTank();
         FLUID_STORAGE.setRegistryName("multi_tank");
+
     }
 
     @SideOnly(Side.CLIENT)

@@ -21,6 +21,7 @@ public class BlockMultiTank extends VariantActiveBlock<BlockMultiTank.MultiTankF
         setSoundType(SoundType.METAL);
         setHarvestLevel("wrench", 2);
         setDefaultState(getState(MultiTankFluidStorage.FLUID_STORAGE_T1));
+
     }
 
     @Override

@@ -39,7 +39,7 @@ public class CommonProxy {
         GTLog.logger.info("Registering blocks...");
         IForgeRegistry<Block> registry = event.getRegistry();
 
-        registry.register(GTWPBlocks.MULTI_TANK_STORAGE);
+        registry.register(GTWPBlocks.FLUID_STORAGE);
     }
 
 
@@ -48,7 +48,7 @@ public class CommonProxy {
         GTLog.logger.info("Registering Items...");
         IForgeRegistry<Item> registry = event.getRegistry();
 
-        registry.register(createItemBlock(GTWPBlocks.MULTI_TANK_STORAGE, VariantItemBlock::new));
+        registry.register(createItemBlock(GTWPBlocks.FLUID_STORAGE, VariantItemBlock::new));
     }
 
     private static <T extends Block> ItemBlock createItemBlock(T block, Function<T, ItemBlock> producer) {

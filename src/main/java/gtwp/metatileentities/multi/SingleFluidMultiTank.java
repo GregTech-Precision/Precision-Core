@@ -20,10 +20,10 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gtwp.blocks.BlockMultiTank;
+import gtwp.blocks.GTWPBlocks;
 import gtwp.metatileentities.GTWPMetaTileEntities;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -33,10 +33,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidTank;
-import gregtech.api.capability.impl.FilteredFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -92,8 +89,8 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
                  .aisle("XXX", "GGG", "GGG", "GGG", "GGG", "GGG", "XXX")
                  .where('S', selfPredicate())
                  .where('X', states(getCasingState()))
-                 .where('G', states(getGlassState()).or(metaTileEntities(getIOHatch()).setMaxGlobalLimited(1)))
-                 .where('M', states(getCasingState()))
+                 .where('G', states(getCasingState()).or(metaTileEntities(getIOHatch()).setMaxGlobalLimited(1)))
+                 .where('M', any())
                  .build();
     }
 
@@ -102,10 +99,10 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
         return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID);
     }
 
-    private IBlockState getGlassState()
-    {
-        return MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.TEMPERED_GLASS);
-    }
+    //private IBlockState getGlassState()
+   // {
+    //    return GTWPBlocks.I_GLASS.getState(BlockIGlass.IGlass.WHITE);
+   // }
 
     private MetaTileEntity getIOHatch()
     {
@@ -149,12 +146,5 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.QUANTUM_TANK_OVERLAY;
-    }
-
-    @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.multiblock.tank.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.quantum_tank.capacity", capacity));
     }
 }

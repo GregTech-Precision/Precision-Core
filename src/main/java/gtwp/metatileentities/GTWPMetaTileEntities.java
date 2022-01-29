@@ -11,14 +11,14 @@ public class GTWPMetaTileEntities {
 
     private static int id = 11000;
     public static MetaTileEntityIOHatch IO_HATCH;
-    public static SingleFluidMultiTank SINGLE_FLUID_TANK;
+    public static SingleFluidMultiTank SINGLE_FLUID_MULTI_TANK;
     
     public static void init()
     {
         GTLog.logger.info("GT:WP Registering New Meta Tile Entities");
 
         IO_HATCH = MetaTileEntities.registerMetaTileEntity(id++, new MetaTileEntityIOHatch(location("fluid_hatch.io")));
-        SINGLE_FLUID_TANK = MetaTileEntities.registerMetaTileEntity(id++, new SingleFluidMultiTank(location("fluid_tank_single"), 100000000));
+        SINGLE_FLUID_MULTI_TANK = MetaTileEntities.registerMetaTileEntity(id++, new SingleFluidMultiTank(location("fluid_tank.single"), 80000000));
     }
 
     private static ResourceLocation location(String name)

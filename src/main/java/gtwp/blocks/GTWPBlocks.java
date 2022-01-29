@@ -12,19 +12,19 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class GTWPBlocks {
 
-    public static BlockMultiTankFluidStorage MULTI_TANK_STORAGE;
+    public static BlockMultiTank FLUID_STORAGE;
 
     public GTWPBlocks() {}
 
     public static void init()
     {
-        MULTI_TANK_STORAGE = new BlockMultiTankFluidStorage();
-        MULTI_TANK_STORAGE.setRegistryName("multi_tank_fluid_storage");
+        FLUID_STORAGE = new BlockMultiTank();
+        FLUID_STORAGE.setRegistryName("multi_tank");
     }
 
     @SideOnly(Side.CLIENT)
     public static void registerItemModels() {
-        registerItemModel(MULTI_TANK_STORAGE);
+        registerItemModel(FLUID_STORAGE);
     }
 
     @SideOnly(Side.CLIENT)
@@ -33,5 +33,10 @@ public class GTWPBlocks {
             //noinspection ConstantConditions
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), block.getMetaFromState(state), new ModelResourceLocation(block.getRegistryName(), MetaBlocks.statePropertiesToString(state.getProperties())));
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T extends Comparable<T>> String getPropertyName(IProperty<T> property, Comparable<?> value) {
+        return property.getName((T) value);
     }
 }

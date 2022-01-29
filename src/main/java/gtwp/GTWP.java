@@ -3,6 +3,7 @@ package gtwp;
 import gtwp.blocks.GTWPBlocks;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -22,11 +23,17 @@ public class GTWP {
     public static final String NAME = "GT:WP";
     public static final String VERSION = "0.0.1";
 
+    @SidedProxy(modId = MODID, clientSide = "gtwp.ClientProxy", serverSide = "gtwp.CommonProxy")
+    public static CommonProxy proxy;
+
     @EventHandler
     public static void preInit(FMLPreInitializationEvent event)
     {
-        GTWPMetaTileEntities.init();
         GTWPBlocks.init();
+        GTWPMetaTileEntities.init();
+
+
+        proxy.preLoad();
     }
 
     @EventHandler

@@ -1,6 +1,5 @@
 package gtwp.render;
 
-import gregtech.client.renderer.texture.cube.OrientedOverlayRenderer;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.api.util.GTLog;
 import gtwp.GTWP;
@@ -12,17 +11,10 @@ import static gregtech.client.renderer.texture.cube.OrientedOverlayRenderer.Over
 @Mod.EventBusSubscriber(modid = GTWP.MODID, value = Side.CLIENT)
 public class GTWPTextures {
 
-    public static SimpleOverlayRenderer MULTI_TANK_FLUID_HATCH_T1;
-    public static SimpleOverlayRenderer MULTI_TANK_FLUID_HATCH_T2;
-    public static SimpleOverlayRenderer MULTI_TANK_FLUID_HATCH_T3;
-    public static SimpleOverlayRenderer MULTI_TANK_FLUID_HATCH_T4;
+    public static SimpleOverlayRenderer[] MULTI_TANK_FLUID_STORAGE = new SimpleOverlayRenderer[4];
 
-    public static void preInit()
-    {
+    public static void preInit() {
         GTLog.logger.info("GT:WP pre initializing textures");
-        MULTI_TANK_FLUID_HATCH_T1 = new SimpleOverlayRenderer("multi_tank_fluid_storage_t1.png");
-        MULTI_TANK_FLUID_HATCH_T2 = new SimpleOverlayRenderer("multi_tank_fluid_storage_t2.png");
-        MULTI_TANK_FLUID_HATCH_T3 = new SimpleOverlayRenderer("multi_tank_fluid_storage_t3.png");
-        MULTI_TANK_FLUID_HATCH_T4 = new SimpleOverlayRenderer("multi_tank_fluid_storage_t4.png");
+        for(int i = 1; i<=4;i++) MULTI_TANK_FLUID_STORAGE[i-1] = new SimpleOverlayRenderer("multi_tank/fluid_storage_t"+i+".png");
     }
 }

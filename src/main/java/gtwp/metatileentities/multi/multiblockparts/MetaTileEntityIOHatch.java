@@ -28,9 +28,4 @@ public class MetaTileEntityIOHatch extends MetaTileEntityTankValve {
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder metaTileEntityHolder) {
         return new MetaTileEntityIOHatch(metaTileEntityId);
     }
-
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
-    }
 }

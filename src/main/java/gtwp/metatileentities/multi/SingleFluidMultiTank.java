@@ -48,12 +48,13 @@ import java.util.List;
 
 public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
 
-    private int capacity;
-    private boolean updCapacity = true;
+    private int capacity = 0;
+    private boolean updCapacity = false;
 
     public SingleFluidMultiTank(ResourceLocation metaTileEntityId)
     {
         super(metaTileEntityId);
+        initializeAbilities();
     }
 
     @Override
@@ -77,7 +78,7 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
 
     private int countCapacity() {
         BlockPos storagePos = getPos();
-        int capacity = 0;
+        int l_capacity = 0;
         for (int i = 0; i < 5; i++)
         {
             storagePos = storagePos.down();
@@ -87,17 +88,19 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
                 Block storage = storageState.getBlock();
                 if(storage.getClass() == BlockMultiTank.class)
                 {
-                    GTLog.logger.info("block capacity: " + ((BlockMultiTank) storage).getState(storageState).getCapacity());
-                    capacity += ((BlockMultiTank) storage).getState(storageState).getCapacity();
+                    l_capacity += ((BlockMultiTank) storage).getState(storageState).getCapacity();
                 }
+                else return 0;
             }
+            else return 0;
         }
-        return capacity;
+        return l_capacity;
     }
 
     @Override
-    public void notifyBlockUpdate() {
-        if(isStructureObstructed()) updCapacity = true;
+    public void update() {
+        super.update();
+        if(!updCapacity && isStructureObstructed()) updCapacity = true;
     }
 
     @Override
@@ -106,7 +109,7 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
             capacity = countCapacity();
             initializeAbilities();
             updCapacity = false;
-            //GTLog.logger.info("capacity updated");
+            GTLog.logger.info("capacity updated: " + capacity);
         }
     }
 
@@ -118,7 +121,7 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
                  .aisle("XXX", "GGG", "GGG", "GGG", "GGG", "GGG", "XXX")
                  .where('S', selfPredicate())
                  .where('X', states(getCasingState()))
-                 .where('G', states(getCasingState()).or(metaTileEntities(getIOHatch()).setMaxGlobalLimited(1)))
+                 .where('G', states(getCasingState()).or(metaTileEntities(GTWPMetaTileEntities.IO_HATCH).setMaxGlobalLimited(1)))
                  .where('M', any())
                  .build();
     }
@@ -133,11 +136,6 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
     //    return GTWPBlocks.I_GLASS.getState(BlockIGlass.IGlass.WHITE);
    // }
 
-    private MetaTileEntity getIOHatch()
-    {
-        return GTWPMetaTileEntities.IO_HATCH;
-    }
-
     @Override
     public boolean hasMaintenanceMechanics() {
         return false;
@@ -145,8 +143,7 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
 
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (!isStructureFormed())
-            return false;
+        if (!isStructureFormed()) return false;
         return super.onRightClick(playerIn, hand, facing, hitResult);
     }
 
@@ -175,5 +172,12 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.QUANTUM_TANK_OVERLAY;
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
+        tooltip.add(I18n.format("gregtech.multiblock.tank.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.quantum_tank.capacity"));
     }
 }

@@ -1,5 +1,6 @@
 package gtwp.blocks;
 
+import com.sun.org.apache.xml.internal.security.utils.I18n;
 import gregtech.common.blocks.VariantActiveBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -33,6 +34,14 @@ public class BlockMultiTank extends VariantActiveBlock<BlockMultiTank.MultiTankF
     public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EntityLiving.SpawnPlacementType type) {
         return false;
     }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
+        //int capacity = (IBlockState(getBlockState()).get
+        tooltip.add(I18n.translate("gtwp.block.storage_field.single"));
+        tooltip.add(I18n.translate("gtwp.block.storage_field.multi"));
+    }
+
     public enum MultiTankFluidStorage implements IStringSerializable {
         FLUID_STORAGE_T1("fluid_storage_t1", 16000000),
         FLUID_STORAGE_T2("fluid_storage_t2", 32000000),

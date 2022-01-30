@@ -17,7 +17,9 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.GTLog;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -45,6 +47,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
 
@@ -98,19 +101,11 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
     }
 
     @Override
-    public void update() {
-        super.update();
-        if(!updCapacity && isStructureObstructed()) updCapacity = true;
-    }
-
-    @Override
     protected void updateFormedValid() {
-        if(capacity == 0 || updCapacity) {
-            capacity = countCapacity();
-            initializeAbilities();
-            updCapacity = false;
-            GTLog.logger.info("capacity updated: " + capacity);
-        }
+        capacity = countCapacity();
+        initializeAbilities();
+        updCapacity = false;
+        GTLog.logger.info("capacity updated: " + capacity);
     }
 
     @Override

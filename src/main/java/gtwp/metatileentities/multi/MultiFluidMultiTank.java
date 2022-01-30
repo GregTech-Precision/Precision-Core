@@ -15,29 +15,36 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.TraceabilityPredicate;
+import gregtech.api.util.GTLog;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gtwp.blocks.BlockIGlass;
 import gtwp.blocks.BlockMultiTank;
+import gtwp.blocks.GTWPMetaBlocks;
 import gtwp.metatileentities.GTWPMetaTileEntities;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -45,21 +52,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
+public class MultiFluidMultiTank extends MultiblockControllerBase {
 
     private int capacity = 0;
-    private FilteredFluidHandler fluidHandler;
+    private List<FilteredFluidHandler> fluidHandlers;
 
-    public SingleFluidMultiTank(ResourceLocation metaTileEntityId)
+    public MultiFluidMultiTank(ResourceLocation metaTileEntityId)
     {
         super(metaTileEntityId);
         initializeAbilities();
     }
 
-
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder metaTileEntityHolder) {
-        return new SingleFluidMultiTank(metaTileEntityId);
+        return new MultiFluidMultiTank(metaTileEntityId);
     }
 
     protected void initializeAbilities() {
@@ -70,9 +76,14 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
 
     @Nonnull
     private List<FluidTank> makeFluidTanks() {
-        List<FluidTank> fluidTankList = new ArrayList<>(1);
-        fluidHandler = new FilteredFluidHandler(capacity);
-        fluidTankList.add(fluidHandler);
+        List<FluidTank> fluidTankList = new ArrayList<>(25);
+        fluidHandlers = new ArrayList<>(25);
+        for(int i = 0;i<25;i++)
+        {
+            FilteredFluidHandler fluidHandler = new FilteredFluidHandler(capacity/25);
+            fluidTankList.add(fluidHandler);
+            fluidHandlers.add(fluidHandler);
+        }
         return fluidTankList;
     }
 
@@ -98,26 +109,36 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
         return l_capacity;
     }
 
+    private void onChangeCapacity()
+    {
+        for(int i = 0;i<25;i++) {
+            fluidHandlers.get(i).setCapacity(capacity / 25);
+        }
+    }
+
     @Override
     protected void updateFormedValid() {
         capacity = countCapacity();
-        fluidHandler.setCapacity(capacity);
+        onChangeCapacity();
     }
 
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                 .aisle("XXX", "GGG", "GGG", "GGG", "GGG", "GGG", "XXX")
-                 .aisle("XXX", "GMG", "GMG", "GMG", "GMG", "GMG", "XSX")
-                 .aisle("XXX", "GGG", "GGG", "GGG", "GGG", "GGG", "XXX")
-                 .where('S', selfPredicate())
-                 .where('X', states(getCasingState()))
-                 .where('G', new TraceabilityPredicate(glassPredicate()).or(metaTileEntities(GTWPMetaTileEntities.IO_HATCH).setMaxGlobalLimited(1)))
-                 .where('M', any())
-                 .build();
+                .aisle("XXXXX", "GGGGG", "GGGGG", "GGGGG", "GGGGG", "GGGGG", "XXXXX")
+                .aisle("XXXXX", "GMMMG", "GMMMG", "GMMMG", "GMMMG", "GMMMG", "XXSXX").setRepeatable(3)
+                .aisle("XXXXX", "GGGGG", "GGGGG", "GGGGG", "GGGGG", "GGGGG", "XXXXX")
+                .where('S', selfPredicate())
+                .where('X', states(getCasingState()))
+                .where('G', new TraceabilityPredicate(glassPredicate()).or(metaTileEntities(GTWPMetaTileEntities.IO_HATCH).setMaxGlobalLimited(1)))
+                .where('M', any())
+                .build();
     }
 
-    private IBlockState getCasingState() {
+
+
+    private IBlockState getCasingState()
+    {
         return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID);
     }
 
@@ -125,27 +146,6 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
         return (blockWorldState) -> {
             return blockWorldState.getBlockState().getBlock() instanceof BlockIGlass;
         };
-    }
-
-    @Override
-    public boolean hasMaintenanceMechanics() {
-        return false;
-    }
-
-    @Override
-    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (!isStructureFormed() || capacity == 0) return false;
-        return super.onRightClick(playerIn, hand, facing, hitResult);
-    }
-
-    @Override
-    protected ModularUI.Builder createUITemplate(@Nonnull EntityPlayer entityPlayer) {
-        return ModularUI.defaultBuilder()
-                .widget(new LabelWidget(6, 6, getMetaFullName()))
-                .widget(new TankWidget(importFluids.getTankAt(0), 52, 18, 72, 61)
-                        .setBackgroundTexture(GuiTextures.SLOT)
-                        .setContainerClicking(true, true))
-                .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 0);
     }
 
     @Override
@@ -157,6 +157,11 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         getFrontOverlay().renderSided(EnumFacing.UP, renderState, translation, pipeline);
+    }
+
+    @Override
+    protected ModularUI createUI(EntityPlayer entityPlayer) {
+        return null;
     }
 
     @Nonnull

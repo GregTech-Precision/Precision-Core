@@ -2,7 +2,7 @@ package gtwp;
 
 import gregtech.api.util.GTLog;
 import gregtech.common.blocks.VariantItemBlock;
-import gtwp.blocks.GTWPBlocks;
+import gtwp.blocks.GTWPMetaBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -39,7 +39,8 @@ public class CommonProxy {
         GTLog.logger.info("Registering blocks...");
         IForgeRegistry<Block> registry = event.getRegistry();
 
-        registry.register(GTWPBlocks.FLUID_STORAGE);
+        registry.register(GTWPMetaBlocks.FLUID_STORAGE);
+        registry.register(GTWPMetaBlocks.IGLASS);
     }
 
 
@@ -48,7 +49,8 @@ public class CommonProxy {
         GTLog.logger.info("Registering Items...");
         IForgeRegistry<Item> registry = event.getRegistry();
 
-        registry.register(createItemBlock(GTWPBlocks.FLUID_STORAGE, VariantItemBlock::new));
+        registry.register(createItemBlock(GTWPMetaBlocks.FLUID_STORAGE, VariantItemBlock::new));
+        registry.register(createItemBlock(GTWPMetaBlocks.IGLASS, VariantItemBlock::new));
     }
 
     private static <T extends Block> ItemBlock createItemBlock(T block, Function<T, ItemBlock> producer) {

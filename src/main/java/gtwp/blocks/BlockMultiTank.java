@@ -1,7 +1,7 @@
 package gtwp.blocks;
 
-import com.sun.org.apache.xml.internal.security.utils.I18n;
-import gregtech.common.blocks.VariantActiveBlock;
+import net.minecraft.client.resources.I18n;
+import gregtech.common.blocks.VariantBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class BlockMultiTank extends VariantActiveBlock<BlockMultiTank.MultiTankFluidStorage> {
+public class BlockMultiTank extends VariantBlock<BlockMultiTank.MultiTankFluidStorage> {
 
     public BlockMultiTank() {
         super(Material.IRON);
@@ -38,8 +38,8 @@ public class BlockMultiTank extends VariantActiveBlock<BlockMultiTank.MultiTankF
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
         //int capacity = (IBlockState(getBlockState()).get
-        tooltip.add(I18n.translate("gtwp.block.storage_field.single"));
-        tooltip.add(I18n.translate("gtwp.block.storage_field.multi"));
+        tooltip.add(I18n.format("gtwp.block.storage_field.single"));
+        tooltip.add(I18n.format("gtwp.block.storage_field.multi"));
     }
 
     public enum MultiTankFluidStorage implements IStringSerializable {

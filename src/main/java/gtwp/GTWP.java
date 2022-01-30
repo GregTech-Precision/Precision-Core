@@ -1,6 +1,6 @@
 package gtwp;
 
-import gtwp.blocks.GTWPBlocks;
+import gtwp.blocks.GTWPMetaBlocks;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -9,7 +9,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 
 import gtwp.metatileentities.GTWPMetaTileEntities;
-import gtwp.blocks.GTWPBlocks;
 
 @Mod(modid = GTWP.MODID,
         name = GTWP.NAME,
@@ -29,7 +28,7 @@ public class GTWP {
     @EventHandler
     public static void preInit(FMLPreInitializationEvent event)
     {
-        GTWPBlocks.init();
+        GTWPMetaBlocks.init();
         GTWPMetaTileEntities.init();
 
 

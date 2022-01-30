@@ -1,8 +1,6 @@
 package gtwp;
 
-import codechicken.lib.texture.TextureUtils;
-import gtwp.blocks.GTWPBlocks;
-import gtwp.CommonProxy;
+import gtwp.blocks.GTWPMetaBlocks;
 import gtwp.render.GTWPTextures;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -22,6 +20,6 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent event) {
         GTLog.logger.info("GT:WP register item models");
-        GTWPBlocks.registerItemModels();
+        GTWPMetaBlocks.registerItemModels();
     }
 }

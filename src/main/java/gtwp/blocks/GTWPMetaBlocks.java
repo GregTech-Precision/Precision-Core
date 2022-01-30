@@ -1,6 +1,5 @@
 package gtwp.blocks;
 
-import com.google.common.collect.UnmodifiableIterator;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
@@ -11,20 +10,25 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class GTWPBlocks {
+public class GTWPMetaBlocks {
     public static BlockMultiTank FLUID_STORAGE;
+    public static BlockIGlass IGLASS;
 
-    public GTWPBlocks() {
+    public GTWPMetaBlocks() {
     }
 
     public static void init() {
         FLUID_STORAGE = new BlockMultiTank();
         FLUID_STORAGE.setRegistryName("multi_tank");
+        IGLASS = new BlockIGlass();
+        IGLASS.setRegistryName("iglass");
     }
 
     @SideOnly(Side.CLIENT)
-    public static void registerItemModels() {
+    public static void registerItemModels()
+    {
         registerItemModel(FLUID_STORAGE);
+        registerItemModel(IGLASS);
     }
 
     @SideOnly(Side.CLIENT)

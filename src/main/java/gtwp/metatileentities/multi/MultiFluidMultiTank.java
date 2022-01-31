@@ -26,6 +26,7 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFluidHatch;
 import gtwp.blocks.BlockIGlass;
 import gtwp.blocks.BlockMultiTank;
 import gtwp.blocks.GTWPMetaBlocks;
@@ -87,29 +88,18 @@ public class MultiFluidMultiTank extends MultiblockControllerBase {
         return fluidTankList;
     }
 
-
     private int countCapacity() {
         BlockPos storagePos = getPos();
+        storagePos = storagePos.down(); storagePos = storagePos.north(); storagePos = storagePos.west();
         int l_capacity = 0;
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 7; i++)
         {
-            storagePos = storagePos.down();
-            if(!getWorld().isAirBlock(storagePos))
-            {
-                IBlockState storageState = getWorld().getBlockState(storagePos);
-                Block storage = storageState.getBlock();
-                if(storage.getClass() == BlockMultiTank.class)
-                {
-                    l_capacity += ((BlockMultiTank) storage).getState(storageState).getCapacity();
-                }
-                else return 0;
-            }
-            else return 0;
+            l_capacity += block
         }
         return l_capacity;
     }
 
-    private void onChangeCapacity()
+    private void onCapacityChange()
     {
         for(int i = 0;i<25;i++) {
             fluidHandlers.get(i).setCapacity(capacity / 25);
@@ -118,20 +108,26 @@ public class MultiFluidMultiTank extends MultiblockControllerBase {
 
     @Override
     protected void updateFormedValid() {
-        capacity = countCapacity();
-        onChangeCapacity();
+        if(getOffsetTimer() % 8 == 0) {
+            int l_capacity = countCapacity();
+            if(capacity != l_capacity) onCapacityChange();
+            GTLog.logger.info("multi tank capacity: " + capacity);
+            //getMultiblockParts().
+        }
     }
 
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("XXXXX", "GGGGG", "GGGGG", "GGGGG", "GGGGG", "GGGGG", "XXXXX")
-                .aisle("XXXXX", "GMMMG", "GMMMG", "GMMMG", "GMMMG", "GMMMG", "XXSXX").setRepeatable(3)
-                .aisle("XXXXX", "GGGGG", "GGGGG", "GGGGG", "GGGGG", "GGGGG", "XXXXX")
+                .aisle("XXXXX", "GGGGG", "GGGGG", "GGGGG", "GGGGG", "GGGGG", "GGGGG", "GGGGG", "XXXXX")
+                .aisle("XXXXX", "GMMMG", "GMMMG", "GMMMG", "GMMMG", "GMMMG", "GMMMG", "GMMMG", "XXXXX")
+                .aisle("XXXXX", "GMMMG", "GMMMG", "GMMMG", "GMMMG", "GMMMG", "GMMMG", "GMMMG", "XXSXX")
+                .aisle("XXXXX", "GMMMG", "GMMMG", "GMMMG", "GMMMG", "GMMMG", "GMMMG", "GMMMG", "XXXXX")
+                .aisle("XXXXX", "GGGGG", "GGGGG", "GGGGG", "GGGGG", "GGGGG", "GGGGG", "GGGGG", "XXXXX")
                 .where('S', selfPredicate())
                 .where('X', states(getCasingState()))
                 .where('G', new TraceabilityPredicate(glassPredicate()).or(metaTileEntities(GTWPMetaTileEntities.IO_HATCH).setMaxGlobalLimited(1)))
-                .where('M', any())
+                .where('M', new TraceabilityPredicate(storagePredicate()))
                 .build();
     }
 
@@ -145,6 +141,12 @@ public class MultiFluidMultiTank extends MultiblockControllerBase {
     public static Predicate<BlockWorldState> glassPredicate() {
         return (blockWorldState) -> {
             return blockWorldState.getBlockState().getBlock() instanceof BlockIGlass;
+        };
+    }
+
+    public static Predicate<BlockWorldState> storagePredicate() {
+        return (blockWorldState) -> {
+            return blockWorldState.getBlockState().getBlock() instanceof BlockMultiTank;
         };
     }
 

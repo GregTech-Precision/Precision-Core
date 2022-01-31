@@ -38,6 +38,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -76,11 +77,14 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
         return fluidTankList;
     }
 
+    @Override
+    public boolean canShare() {
+        return false;
+    }
 
     private int countCapacity() {
-        BlockPos storagePos = getPos();
         int l_capacity = 0;
-        for (int i = 0; i < 5; i++)
+       /* for (int i = 0; i < 5; i++)
         {
             storagePos = storagePos.down();
             if(!getWorld().isAirBlock(storagePos))
@@ -94,14 +98,27 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
                 else return 0;
             }
             else return 0;
+        }*/
+        List<BlockMultiTank> storages = new ArrayList<>();
+        for(IMultiblockPart part : getMultiblockParts())
+        {
+            storages.add((BlockMultiTank) ((BlockMultiTank) part).getBlockState().getBlock());
+        }
+        if(storages.size() < 5) return 0;
+        else
+        {
+            for(BlockMultiTank storage : storages) l_capacity += storage.getState()
         }
         return l_capacity;
     }
 
+
     @Override
     protected void updateFormedValid() {
-        capacity = countCapacity();
-        fluidHandler.setCapacity(capacity);
+        if(getOffsetTimer() % 8 == 0) {
+            capacity = countCapacity();
+            fluidHandler.setCapacity(capacity);
+        }
     }
 
     @Override
@@ -113,7 +130,7 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
                  .where('S', selfPredicate())
                  .where('X', states(getCasingState()))
                  .where('G', new TraceabilityPredicate(glassPredicate()).or(metaTileEntities(GTWPMetaTileEntities.IO_HATCH).setMaxGlobalLimited(1)))
-                 .where('M', any())
+                 .where('M', new TraceabilityPredicate(storagePredicate()))
                  .build();
     }
 
@@ -124,6 +141,12 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
     public static Predicate<BlockWorldState> glassPredicate() {
         return (blockWorldState) -> {
             return blockWorldState.getBlockState().getBlock() instanceof BlockIGlass;
+        };
+    }
+
+    public static Predicate<BlockWorldState> storagePredicate() {
+        return (blockWorldState) -> {
+            return blockWorldState.getBlockState().getBlock() instanceof BlockMultiTank;
         };
     }
 

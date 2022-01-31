@@ -1,12 +1,11 @@
 package gtwp.blocks;
 
-import com.sun.javafx.sg.prism.NodeEffectInput;
 import gregtech.common.blocks.VariantBlock;
+import net.minecraft.block.BlockIce;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -21,12 +20,18 @@ public class BlockIGlass extends VariantBlock<BlockIGlass.IGlass> {
         setResistance(5.0f);
         setSoundType(SoundType.GLASS);
         setDefaultState(getState(IGlass.WHITE));
+        setLightOpacity(0);
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
     public BlockRenderLayer getBlockLayer() {
         return BlockRenderLayer.TRANSLUCENT;
+    }
+
+    @Override
+    public boolean isOpaqueCube(IBlockState state)
+    {
+        return false;
     }
 
     enum IGlass implements IStringSerializable {

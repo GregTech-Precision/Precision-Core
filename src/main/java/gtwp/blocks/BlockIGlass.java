@@ -6,9 +6,13 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+
+import static codechicken.lib.util.ClientUtils.getWorld;
 
 public class BlockIGlass extends VariantBlock<BlockIGlass.IGlass> {
 
@@ -32,6 +36,11 @@ public class BlockIGlass extends VariantBlock<BlockIGlass.IGlass> {
     public boolean isOpaqueCube(IBlockState state)
     {
         return false;
+    }
+
+    @Override
+    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+        return blockAccess.getBlockState(pos.offset(side)) != blockState || blockState.getBlock() != this && super.shouldSideBeRendered(blockState, blockAccess, pos, side);
     }
 
     enum IGlass implements IStringSerializable {

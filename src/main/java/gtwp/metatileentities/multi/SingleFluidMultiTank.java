@@ -20,6 +20,8 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.TraceabilityPredicate;
+import gregtech.api.util.FacingPos;
+import gregtech.api.util.GTLog;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
@@ -38,7 +40,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -83,31 +84,22 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
     }
 
     private int countCapacity() {
+        BlockPos storagePos = getPos();
         int l_capacity = 0;
-       /* for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 5; i++)
         {
             storagePos = storagePos.down();
             if(!getWorld().isAirBlock(storagePos))
             {
                 IBlockState storageState = getWorld().getBlockState(storagePos);
                 Block storage = storageState.getBlock();
-                if(storage.getClass() == BlockMultiTank.class)
+                if(storage instanceof BlockMultiTank)
                 {
                     l_capacity += ((BlockMultiTank) storage).getState(storageState).getCapacity();
                 }
                 else return 0;
             }
             else return 0;
-        }*/
-        List<BlockMultiTank> storages = new ArrayList<>();
-        for(IMultiblockPart part : getMultiblockParts())
-        {
-            storages.add((BlockMultiTank) ((BlockMultiTank) part).getBlockState().getBlock());
-        }
-        if(storages.size() < 5) return 0;
-        else
-        {
-            for(BlockMultiTank storage : storages) l_capacity += storage.getState()
         }
         return l_capacity;
     }
@@ -116,8 +108,11 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
     @Override
     protected void updateFormedValid() {
         if(getOffsetTimer() % 8 == 0) {
-            capacity = countCapacity();
-            fluidHandler.setCapacity(capacity);
+            int l_capacity = countCapacity();
+            if (l_capacity != capacity) {
+                capacity = l_capacity;
+                fluidHandler.setCapacity(capacity);
+            }
         }
     }
 
@@ -135,7 +130,7 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
     }
 
     private IBlockState getCasingState() {
-        return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID);
+        return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.PTFE_INERT_CASING);
     }
 
     public static Predicate<BlockWorldState> glassPredicate() {
@@ -161,6 +156,17 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
         return super.onRightClick(playerIn, hand, facing, hitResult);
     }
 
+    /*@Override
+    public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide, CuboidRayTraceResult hitResult) {
+        setFrontFacing(wrenchSide);
+        return super.onWrenchClick(playerIn, hand, wrenchSide, hitResult);
+    }
+
+    @Override
+    public boolean hasFrontFacing() {
+        return true;
+    }*/
+
     @Override
     protected ModularUI.Builder createUITemplate(@Nonnull EntityPlayer entityPlayer) {
         return ModularUI.defaultBuilder()
@@ -173,7 +179,7 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
 
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
-        return Textures.SOLID_STEEL_CASING;
+        return Textures.INERT_PTFE_CASING;
     }
 
     @Override

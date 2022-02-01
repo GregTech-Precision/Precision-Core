@@ -88,13 +88,30 @@ public class MultiFluidMultiTank extends MultiblockControllerBase {
         return fluidTankList;
     }
 
+    private int getCapacityAt(BlockPos pos)
+    {
+        if(!getWorld().isAirBlock(pos)) {
+            IBlockState storageState = getWorld().getBlockState(pos);
+            Block storage = storageState.getBlock();
+            if(storage instanceof BlockMultiTank) return ((BlockMultiTank) storage).getState(storageState).getCapacity();
+        }
+        return 0;
+    }
+
     private int countCapacity() {
         BlockPos storagePos = getPos();
-        storagePos = storagePos.down(); storagePos = storagePos.north(); storagePos = storagePos.west();
         int l_capacity = 0;
-        for (int i = 0; i < 7; i++)
+        for (int y = -1; y >= -7; y--)
         {
-            l_capacity += block
+            for(int x = -1; x<1;x++)
+            {
+                for(int z = -1; z<1;z++)
+                {
+                    int n_cap = getCapacityAt(storagePos.add(x,y,z));
+                    if(n_cap == 0) return 0;
+                    l_capacity += n_cap;
+                }
+            }
         }
         return l_capacity;
     }
@@ -110,9 +127,11 @@ public class MultiFluidMultiTank extends MultiblockControllerBase {
     protected void updateFormedValid() {
         if(getOffsetTimer() % 8 == 0) {
             int l_capacity = countCapacity();
-            if(capacity != l_capacity) onCapacityChange();
-            GTLog.logger.info("multi tank capacity: " + capacity);
-            //getMultiblockParts().
+            GTLog.logger.info("capacity " + l_capacity);
+            if(capacity != l_capacity) {
+                capacity = l_capacity;
+                onCapacityChange();
+            }
         }
     }
 
@@ -135,7 +154,7 @@ public class MultiFluidMultiTank extends MultiblockControllerBase {
 
     private IBlockState getCasingState()
     {
-        return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID);
+        return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.PTFE_INERT_CASING);
     }
 
     public static Predicate<BlockWorldState> glassPredicate() {
@@ -152,7 +171,7 @@ public class MultiFluidMultiTank extends MultiblockControllerBase {
 
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
-        return Textures.SOLID_STEEL_CASING;
+        return Textures.INERT_PTFE_CASING;
     }
 
     @Override
@@ -160,6 +179,17 @@ public class MultiFluidMultiTank extends MultiblockControllerBase {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         getFrontOverlay().renderSided(EnumFacing.UP, renderState, translation, pipeline);
     }
+
+    /*@Override
+    public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide, CuboidRayTraceResult hitResult) {
+        setFrontFacing(wrenchSide);
+        return super.onWrenchClick(playerIn, hand, wrenchSide, hitResult);
+    }
+
+    @Override
+    public boolean hasFrontFacing() {
+        return true;
+    }*/
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {

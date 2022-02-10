@@ -109,7 +109,7 @@ public class MultiFluidMultiTank extends MultiblockControllerBase {
                 {
                     int n_cap = getCapacityAt(storagePos.add(x,y,z));
                     if(n_cap == 0) return 0;
-                    l_capacity += n_cap;
+                    l_capacity += n_cap/25;
                 }
             }
         }
@@ -119,7 +119,7 @@ public class MultiFluidMultiTank extends MultiblockControllerBase {
     private void onCapacityChange()
     {
         for(int i = 0;i<25;i++) {
-            fluidHandlers.get(i).setCapacity(capacity / 25);
+            fluidHandlers.get(i).setCapacity(capacity);
         }
     }
 
@@ -127,7 +127,6 @@ public class MultiFluidMultiTank extends MultiblockControllerBase {
     protected void updateFormedValid() {
         if(getOffsetTimer() % 8 == 0) {
             int l_capacity = countCapacity();
-            GTLog.logger.info("capacity " + l_capacity);
             if(capacity != l_capacity) {
                 capacity = l_capacity;
                 onCapacityChange();

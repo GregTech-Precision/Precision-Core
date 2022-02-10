@@ -3,6 +3,7 @@ package gtwp;
 import gregtech.api.util.GTLog;
 import gregtech.common.blocks.VariantItemBlock;
 import gtwp.blocks.GTWPMetaBlocks;
+import gtwp.recipes.GTWPRecipeLoader;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -59,11 +60,12 @@ public class CommonProxy {
         return itemBlock;
     }
 
-    @SubscribeEvent()
+   @SubscribeEvent()
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
-        //GTLog.logger.info("Registering recipe low...");
+        GTLog.logger.info("Registering recipe low...");
+        GTWPRecipeLoader.init();
 
-        // Main recipe registration
+       // Main recipe registration
         // This is called AFTER GregTech registers recipes, so
         // anything here is safe to call removals in
         //
@@ -82,5 +84,6 @@ public class CommonProxy {
     public static void registerRecipesLowest(RegistryEvent.Register<IRecipe> event) {
 //        RecipeHandler.runRecipeGeneration();
 //        RecipeHandler.generatedRecipes();
+
     }
 }

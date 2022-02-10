@@ -25,3 +25,5 @@ tile.iglass.iglass12.name=Brown I-Glass
 tile.iglass.iglass13.name=Green I-Glass
 tile.iglass.iglass14.name=Red I-Glass
 tile.iglass.iglass15.name=Black I-Glass
+
+gtwp.multi.meitemoutputhatch=ME Item Output Bus

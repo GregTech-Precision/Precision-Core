@@ -16,13 +16,18 @@ import appeng.me.GridAccessException;
 import appeng.me.helpers.AENetworkProxy;
 import appeng.me.helpers.IGridProxyable;
 import appeng.me.helpers.MachineSource;
+import appeng.parts.CableBusStorage;
+import appeng.parts.networking.PartCableSmart;
+import appeng.tile.networking.TileCableBus;
 import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.util.GTLog;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityItemBus;
+import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -38,7 +43,6 @@ public class MetaTileEntityMEItemOutputHatch extends MetaTileEntityItemBus imple
 
     private IActionSource source;
     private AENetworkProxy proxy;
-    IItemList<IAEItemStack> items = AEApi.instance().storage().getStorageChannel(IItemStorageChannel.class).createList();
 
     public MetaTileEntityMEItemOutputHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 5, true);
@@ -50,25 +54,35 @@ public class MetaTileEntityMEItemOutputHatch extends MetaTileEntityItemBus imple
     }
 
     @Override
+    public void onAttached(Object... data) {
+        super.onAttached(data);
+        AENetworkProxy px = getProxy();
+        px.gridChanged();
+    }
+
+    @Override
+    public void onRemoval() {
+        AENetworkProxy px = getProxy();
+        px.gridChanged();
+        super.onRemoval();
+    }
+
+    @Override
     public void update() {
-        if(getOffsetTimer() % 8 == 0) {
-            for(int i = 0; i<exportItems.getSlots();i++)
-                items.add(AEApi.instance().storage().getStorageChannel(IItemStorageChannel.class).createStack(exportItems.getStackInSlot(i)));
+        if(getOffsetTimer() % 8 == 0)
             pushItemsIntoMe();
-        }
     }
 
     private IActionSource getRequest() {
         if (source == null)
-            source = new MachineSource((IActionHost)getWorld().getTileEntity(getPos()));
+            source = new MachineSource((IActionHost)this);
         return source;
     }
 
     @Nonnull
     @Override
     public AECableType getCableConnectionType(@Nonnull AEPartLocation aePartLocation) {
-        GTLog.logger.info("get cable connection type call");
-        return aePartLocation.getFacing() == getFrontFacing() ? AECableType.SMART : AECableType.NONE;
+        return aePartLocation.getFacing().equals(getFrontFacing()) ? AECableType.SMART : AECableType.NONE;
     }
 
     @Override
@@ -79,13 +93,9 @@ public class MetaTileEntityMEItemOutputHatch extends MetaTileEntityItemBus imple
     @Override
     public AENetworkProxy getProxy() {
         if (proxy == null) {
-            TileEntity te = getWorld().getTileEntity(getPos());
-            if (te instanceof IGridProxyable) {
-                proxy = new AENetworkProxy((IGridProxyable) te, "proxy", this.getStackForm(1), true);
-                proxy.onReady();
-                proxy.setFlags(GridFlags.REQUIRE_CHANNEL);
-            }
-            else GTLog.logger.info("not an instance of IGridProxyable");
+            proxy = new AENetworkProxy((IGridProxyable) this, "proxy", this.getStackForm(1), true);
+            proxy.onReady();
+            proxy.setFlags(GridFlags.REQUIRE_CHANNEL);
         }
         return this.proxy;
     }
@@ -104,23 +114,25 @@ public class MetaTileEntityMEItemOutputHatch extends MetaTileEntityItemBus imple
     @Override
     public IGridNode getGridNode(@Nonnull AEPartLocation aePartLocation) {
         AENetworkProxy np = getProxy();
-        if(np == null) GTLog.logger.info("getGridNode proxy is null");
-        return aePartLocation.getFacing() == getFrontFacing() && np != null ? np.getNode() : null;
+        return aePartLocation.getFacing().equals(getFrontFacing()) && np != null ? np.getNode() : null;
     }
 
     @Nonnull
     @Override
     public IGridNode getActionableNode() {
         AENetworkProxy np = getProxy();
-        if(np == null) GTLog.logger.info("getActionableNode proxy is null");
         return np != null ? np.getNode() : null;
     }
 
     private void pushItemsIntoMe()
     {
-        if(items.size() == 0) return;
         AENetworkProxy p = getProxy();
         if (proxy == null) return;
+        IItemList<IAEItemStack> items = AEApi.instance().storage().getStorageChannel(IItemStorageChannel.class).createList();
+        for(int i = 0; i<exportItems.getSlots();i++) {
+            items.add(AEApi.instance().storage().getStorageChannel(IItemStorageChannel.class).createStack(exportItems.getStackInSlot(i)));
+            exportItems.setStackInSlot(0, ItemStack.EMPTY);
+        }
         try {
             IMEMonitor<IAEItemStack> sg = p.getStorage().getInventory(AEApi.instance().storage().getStorageChannel(IItemStorageChannel.class));
             for (IAEItemStack s: items ) {

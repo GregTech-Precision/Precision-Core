@@ -1,45 +1,49 @@
 package gtwp.metatileentities.multi.multiblockparts;
 
 import appeng.api.AEApi;
-import appeng.api.networking.*;
+import appeng.api.networking.GridFlags;
+import appeng.api.networking.IGridNode;
 import appeng.api.networking.security.IActionHost;
 import appeng.api.networking.security.IActionSource;
+import appeng.api.parts.IPartHost;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.channels.IItemStorageChannel;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IItemList;
 import appeng.api.util.AECableType;
+import appeng.api.util.AECableVariant;
 import appeng.api.util.AEPartLocation;
 import appeng.api.util.DimensionalCoord;
-import appeng.core.api.ApiStorage;
+import appeng.block.AEBaseTileBlock;
+import appeng.entity.AEBaseEntityItem;
 import appeng.me.GridAccessException;
 import appeng.me.helpers.AENetworkProxy;
 import appeng.me.helpers.IGridProxyable;
 import appeng.me.helpers.MachineSource;
-import appeng.parts.CableBusStorage;
+import appeng.parts.AEBasePart;
+import appeng.parts.networking.PartCable;
 import appeng.parts.networking.PartCableSmart;
+import appeng.tile.AEBaseTile;
+import appeng.tile.grid.AENetworkTile;
 import appeng.tile.networking.TileCableBus;
 import appeng.util.Platform;
-import appeng.util.item.AEItemStack;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.util.GTLog;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityItemBus;
-import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.feature.WorldGenBigTree;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MetaTileEntityMEItemOutputHatch extends MetaTileEntityItemBus implements IGridProxyable, IActionHost {
+public class MetaTileEntityMEItemOutputHatch extends MetaTileEntityItemBus {
 
     private IActionSource source;
     private AENetworkProxy proxy;
@@ -54,23 +58,15 @@ public class MetaTileEntityMEItemOutputHatch extends MetaTileEntityItemBus imple
     }
 
     @Override
-    public void onAttached(Object... data) {
-        super.onAttached(data);
-        AENetworkProxy px = getProxy();
-        px.gridChanged();
-    }
-
-    @Override
-    public void onRemoval() {
-        AENetworkProxy px = getProxy();
-        px.gridChanged();
-        super.onRemoval();
+    public void onFirstTick() {
+        super.onFirstTick();
+        getProxy();
     }
 
     @Override
     public void update() {
-        if(getOffsetTimer() % 8 == 0)
-            pushItemsIntoMe();
+        if(getOffsetTimer() % 5 == 0)
+            pushItemsIntoME();
     }
 
     private IActionSource getRequest() {
@@ -86,23 +82,13 @@ public class MetaTileEntityMEItemOutputHatch extends MetaTileEntityItemBus imple
     }
 
     @Override
-    public void securityBreak() {
-
-    }
-
-    @Override
     public AENetworkProxy getProxy() {
         if (proxy == null) {
-            proxy = new AENetworkProxy((IGridProxyable) this, "proxy", this.getStackForm(1), true);
+            proxy = new AENetworkProxy((IGridProxyable) this.getHolder(), "proxy", this.getStackForm(1), true);
             proxy.onReady();
             proxy.setFlags(GridFlags.REQUIRE_CHANNEL);
         }
-        return this.proxy;
-    }
-
-    @Override
-    public DimensionalCoord getLocation() {
-        return new DimensionalCoord(getWorld(), getPos());
+        return proxy;
     }
 
     @Override
@@ -110,34 +96,20 @@ public class MetaTileEntityMEItemOutputHatch extends MetaTileEntityItemBus imple
 
     }
 
-    @Nullable
-    @Override
-    public IGridNode getGridNode(@Nonnull AEPartLocation aePartLocation) {
-        AENetworkProxy np = getProxy();
-        return aePartLocation.getFacing().equals(getFrontFacing()) && np != null ? np.getNode() : null;
-    }
-
-    @Nonnull
-    @Override
-    public IGridNode getActionableNode() {
-        AENetworkProxy np = getProxy();
-        return np != null ? np.getNode() : null;
-    }
-
-    private void pushItemsIntoMe()
+    private void pushItemsIntoME()
     {
-        AENetworkProxy p = getProxy();
-        if (proxy == null) return;
+        AENetworkProxy px = getProxy();
+        if (px == null) return;
         IItemList<IAEItemStack> items = AEApi.instance().storage().getStorageChannel(IItemStorageChannel.class).createList();
         for(int i = 0; i<exportItems.getSlots();i++) {
             items.add(AEApi.instance().storage().getStorageChannel(IItemStorageChannel.class).createStack(exportItems.getStackInSlot(i)));
             exportItems.setStackInSlot(0, ItemStack.EMPTY);
         }
         try {
-            IMEMonitor<IAEItemStack> sg = p.getStorage().getInventory(AEApi.instance().storage().getStorageChannel(IItemStorageChannel.class));
+            IMEMonitor<IAEItemStack> sg = px.getStorage().getInventory(AEApi.instance().storage().getStorageChannel(IItemStorageChannel.class));
             for (IAEItemStack s: items ) {
                 if (s.getStackSize() == 0) continue;
-                IAEItemStack rest = Platform.poweredInsert(p.getEnergy(), sg, s, getRequest());
+                IAEItemStack rest = Platform.poweredInsert(px.getEnergy(), sg, s, getRequest());
                 if (rest != null && rest.getStackSize() > 0) {
                     s.setStackSize(rest.getStackSize());
                     break;

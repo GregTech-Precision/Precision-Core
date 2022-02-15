@@ -9,10 +9,7 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.api.pattern.BlockPattern;
-import gregtech.api.pattern.BlockWorldState;
-import gregtech.api.pattern.FactoryBlockPattern;
-import gregtech.api.pattern.TraceabilityPredicate;
+import gregtech.api.pattern.*;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -38,7 +35,7 @@ public class Greenhouse extends RecipeMapMultiblockController {
                 .where('S', selfPredicate())
                 .where('G', new TraceabilityPredicate(glassPredicate()))
                 .where('C', new TraceabilityPredicate(glassPredicate())
-                        .or(autoAbilities(true, false, true, true, true, false, false)))
+                        .or(autoAbilities(true, false, true, true, true, false, false).setMaxGlobalLimited(1)))
                 .where('*', air())
                 .where('#', any())
                 .build();

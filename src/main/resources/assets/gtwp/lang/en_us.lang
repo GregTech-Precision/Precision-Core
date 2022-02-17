@@ -26,4 +26,7 @@ tile.iglass.iglass13.name=Green I-Glass
 tile.iglass.iglass14.name=Red I-Glass
 tile.iglass.iglass15.name=Black I-Glass
 
+
+
+tile.pipelineblock.name=Long Distance Pipe
 gtwp.multi.meitemoutputhatch=ME Item Output Bus

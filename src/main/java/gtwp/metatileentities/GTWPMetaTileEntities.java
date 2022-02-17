@@ -7,6 +7,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gtwp.GTWP;
+import gtwp.metatileentities.longpipes.PipelineBase;
 import gtwp.metatileentities.multi.Greenhouse;
 import gtwp.metatileentities.multi.MultiFluidMultiTank;
 import gtwp.metatileentities.multi.SingleFluidMultiTank;
@@ -25,9 +26,9 @@ public class GTWPMetaTileEntities {
     public static MultiFluidMultiTank MULTI_FLUID_MULTI_TANK;
     public static Greenhouse GREENHOUSE;
     public static MetaTileEntityMEItemOutputHatch ME_HATCH;
-    public static final SimpleMachineMetaTileEntity[] WIRE_ASSEMBLER = new SimpleMachineMetaTileEntity[6];
-    public static final SimpleMachineMetaTileEntity[] COMPONENT_ASSEMBLER = new SimpleMachineMetaTileEntity[6];
-    
+    public static PipelineBase PIPELINEBASE;
+
+
     public static void init() {
         GTLog.logger.info("GT:WP Registering New Meta Tile Entities");
 
@@ -40,6 +41,7 @@ public class GTWPMetaTileEntities {
 
         GREENHOUSE = MetaTileEntities.registerMetaTileEntity(id++, new Greenhouse(location("greenhouse")));
         //Simple machines
+        PIPELINEBASE = MetaTileEntities.registerMetaTileEntity(id++, new PipelineBase(location("pipelinebase")));
     }
 
     private static void registerSimpleMetaTileEntity(SimpleMachineMetaTileEntity[] machines,

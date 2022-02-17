@@ -13,6 +13,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class GTWPMetaBlocks {
     public static BlockMultiTank FLUID_STORAGE;
     public static BlockIGlass IGLASS;
+    public static BlockPipeline PIPELINE;
 
     public GTWPMetaBlocks() {
     }
@@ -22,6 +23,8 @@ public class GTWPMetaBlocks {
         FLUID_STORAGE.setRegistryName("multi_tank");
         IGLASS = new BlockIGlass();
         IGLASS.setRegistryName("iglass");
+        PIPELINE = new BlockPipeline();
+        PIPELINE.setRegistryName("blockpipeline");
     }
 
     @SideOnly(Side.CLIENT)
@@ -29,6 +32,7 @@ public class GTWPMetaBlocks {
     {
         registerItemModel(FLUID_STORAGE);
         registerItemModel(IGLASS);
+        registerItemModel(PIPELINE);
     }
 
     @SideOnly(Side.CLIENT)

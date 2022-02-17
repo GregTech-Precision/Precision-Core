@@ -8,6 +8,7 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gtwp.GTWP;
 import gtwp.metatileentities.longpipes.PipelineBase;
+import gtwp.metatileentities.longpipes.PipelineFluid;
 import gtwp.metatileentities.multi.Greenhouse;
 import gtwp.metatileentities.multi.MultiFluidMultiTank;
 import gtwp.metatileentities.multi.SingleFluidMultiTank;
@@ -41,7 +42,7 @@ public class GTWPMetaTileEntities {
 
         GREENHOUSE = MetaTileEntities.registerMetaTileEntity(id++, new Greenhouse(location("greenhouse")));
         //Simple machines
-        PIPELINEBASE = MetaTileEntities.registerMetaTileEntity(id++, new PipelineBase(location("pipelinebase")));
+        PIPELINEBASE = MetaTileEntities.registerMetaTileEntity(id++, new PipelineFluid(location("pipelinefluid")));
     }
 
     private static void registerSimpleMetaTileEntity(SimpleMachineMetaTileEntity[] machines,

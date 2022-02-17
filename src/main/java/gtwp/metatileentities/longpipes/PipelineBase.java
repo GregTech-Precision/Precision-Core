@@ -12,11 +12,14 @@ import gregtech.client.renderer.texture.Textures;
 import gtwp.blocks.BlockPipeline;
 import gtwp.blocks.GTWPMetaBlocks;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import scala.tools.cmd.Meta;
 
 import javax.annotation.Nonnull;
@@ -26,7 +29,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 
-public class PipelineBase extends MetaTileEntity {
+public abstract class PipelineBase extends MetaTileEntity {
 
     private PipelineBase pair = null;
 
@@ -65,6 +68,8 @@ public class PipelineBase extends MetaTileEntity {
         getPair();
     }
 
+    public abstract int getPipeType();
+
     public void findPair(BlockPos pos, Queue<BlockPos> visited)
     {
         if(!isPaired()) {
@@ -74,7 +79,6 @@ public class PipelineBase extends MetaTileEntity {
                 if (!visited.contains(nextPos) && !getWorld().isAirBlock(nextPos)) {
                     Block pipe = getWorld().getBlockState(nextPos).getBlock();
                     if (pipe instanceof BlockPipeline) {
-                        if(((BlockPipeline) pipe).getState(pipe.getBlockState()).)
                         findPair(nextPos, visited);
                     } else {
                         TileEntity te = getWorld().getTileEntity(nextPos);

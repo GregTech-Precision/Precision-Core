@@ -1,31 +1,25 @@
 package gtwp.metatileentities.longpipes;
 
+import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import com.sun.jmx.remote.internal.ArrayQueue;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.util.GTLog;
 import gregtech.client.renderer.texture.Textures;
 import gtwp.blocks.BlockPipeline;
-import gtwp.blocks.GTWPMetaBlocks;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.property.IExtendedBlockState;
-import scala.tools.cmd.Meta;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayDeque;
-import java.util.EnumSet;
-import java.util.LinkedList;
 import java.util.Queue;
 
 
@@ -49,11 +43,11 @@ public abstract class PipelineBase extends MetaTileEntity {
     }
 
     public void setPair(@Nonnull PipelineBase newPair){
-
+        pair = newPair;
     }
 
     public void invalidatePair() {
-
+        pair = null;
     }
 
     public PipelineBase getPair() {
@@ -99,10 +93,20 @@ public abstract class PipelineBase extends MetaTileEntity {
         }
     }
 
+    public boolean isInput(){
+        if(!getWorld().isAirBlock(getPos().offset(getFrontFacing().getOpposite()))) {
+            if (getWorld().getBlockState(getPos().offset(getFrontFacing().getOpposite())).getBlock() instanceof BlockPipeline) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void onRemoval() {
         super.onRemoval();
-
+        if(pair != null) pair.invalidatePair();
+        invalidatePair();
     }
 
     @Override
@@ -111,14 +115,15 @@ public abstract class PipelineBase extends MetaTileEntity {
         if(isPaired() && getOffsetTimer() % 20 == 18) GTLog.logger.info("paired");
     }
 
+    @Override
+    public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide, CuboidRayTraceResult hitResult) {
+        setFrontFacing(wrenchSide);
+        return super.onWrenchClick(playerIn, hand, wrenchSide, hitResult);
+    }
+
     public boolean checkPipeType()
     {
         return true;
-    }
-
-    @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder metaTileEntityHolder) {
-        return new PipelineBase(metaTileEntityId);
     }
 
     @Override
@@ -134,7 +139,8 @@ public abstract class PipelineBase extends MetaTileEntity {
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        Textures.PIPE_IN_OVERLAY.renderSided(getFrontFacing().getOpposite(), renderState, translation, pipeline);
-        Textures.PIPE_OUT_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
+        Textures.PIPE_IN_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
+        Textures.FLUID_HATCH_INPUT_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
+        Textures.PIPE_OUT_OVERLAY.renderSided(getFrontFacing().getOpposite(), renderState, translation, pipeline);
     }
 }

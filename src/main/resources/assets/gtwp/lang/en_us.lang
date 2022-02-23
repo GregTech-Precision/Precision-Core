@@ -7,7 +7,7 @@ tile.multi_tank.fluid_storage_t2.name=Fluid storage field T2
 tile.multi_tank.fluid_storage_t3.name=Fluid storage field T3
 tile.multi_tank.fluid_storage_t4.name=Fluid storage field T4
 gtwp.block.storage_field.single=Maximum fluid amount in single tank:
-gtwp.block.storage_field.multi=Maximum fluid amount in multi tank is the 1/25 sum of all storages
+gtwp.block.storage_field.multi=Maximum fluid amount per in multi tank is the 1/25 sum of all storages per one 1 fluid:
 #iglass
 tile.iglass.iglass0.name=White I-Glass
 tile.iglass.iglass1.name=Orange I-Glass

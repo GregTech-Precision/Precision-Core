@@ -37,7 +37,7 @@ public class BlockMultiTank extends VariantBlock<BlockMultiTank.MultiTankFluidSt
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
-        //int capacity = (IBlockState(getBlockState()).get
+        //long capacity = MultiTankFluidStorage.valueOf(VARIANT.getName()).getCapacity();
         tooltip.add(I18n.format("gtwp.block.storage_field.single"));
         tooltip.add(I18n.format("gtwp.block.storage_field.multi"));
     }
@@ -56,13 +56,10 @@ public class BlockMultiTank extends VariantBlock<BlockMultiTank.MultiTankFluidSt
             this.capacity = capacity;
         }
 
-        @Nonnull
-        @Override
         public String getName() {
             return this.name;
         }
 
-        @Nonnull
         public int getCapacity() { return this.capacity; }
     }
 

@@ -62,8 +62,6 @@ public abstract class PipelineBase extends MetaTileEntity {
         getPair();
     }
 
-    public abstract int getPipeType();
-
     public void findPair(BlockPos pos, Queue<BlockPos> visited)
     {
         if(!isPaired()) {
@@ -73,7 +71,8 @@ public abstract class PipelineBase extends MetaTileEntity {
                 if (!visited.contains(nextPos) && !getWorld().isAirBlock(nextPos)) {
                     Block pipe = getWorld().getBlockState(nextPos).getBlock();
                     if (pipe instanceof BlockPipeline) {
-                        findPair(nextPos, visited);
+                        if(checkPipeType(((BlockPipeline) pipe), nextPos))
+                            findPair(nextPos, visited);
                     } else {
                         TileEntity te = getWorld().getTileEntity(nextPos);
                         if (te instanceof MetaTileEntityHolder) {
@@ -95,11 +94,25 @@ public abstract class PipelineBase extends MetaTileEntity {
 
     public boolean isInput(){
         if(!getWorld().isAirBlock(getPos().offset(getFrontFacing().getOpposite()))) {
-            if (getWorld().getBlockState(getPos().offset(getFrontFacing().getOpposite())).getBlock() instanceof BlockPipeline) {
-                return true;
-            }
+            return getWorld().getBlockState(getPos().offset(getFrontFacing().getOpposite())).getBlock() instanceof BlockPipeline;
         }
         return false;
+    }
+
+    public TileEntity getInput(){
+        if(isInput() && isPaired()){
+            if(!getWorld().isAirBlock(getPos().offset(getFrontFacing())))
+                return getWorld().getTileEntity(getPos().offset(getFrontFacing()));
+        }
+        return null;
+    }
+
+    public TileEntity getOutput(){
+        if(!isInput() && isPaired()){
+            if(!getWorld().isAirBlock(getPos().offset(getFrontFacing().getOpposite())))
+                return getWorld().getTileEntity(getPos().offset(getFrontFacing().getOpposite()));
+        }
+        return null;
     }
 
     @Override
@@ -110,21 +123,12 @@ public abstract class PipelineBase extends MetaTileEntity {
     }
 
     @Override
-    public void update() {
-        super.update();
-        if(isPaired() && getOffsetTimer() % 20 == 18) GTLog.logger.info("paired");
-    }
-
-    @Override
     public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide, CuboidRayTraceResult hitResult) {
         setFrontFacing(wrenchSide);
         return super.onWrenchClick(playerIn, hand, wrenchSide, hitResult);
     }
 
-    public boolean checkPipeType()
-    {
-        return true;
-    }
+    public abstract boolean checkPipeType(BlockPipeline pipe, BlockPos location);
 
     @Override
     protected boolean openGUIOnRightClick() {

@@ -18,16 +18,18 @@ public class BlockPipeline extends VariantBlock<BlockPipeline.PipelineType> {
         setDefaultState(getState(PipelineType.FLUID));
     }
 
-    enum PipelineType implements IStringSerializable{
-        FLUID("fluidpipeline", 0);
+    public enum PipelineType implements IStringSerializable{
+        FLUID("fluidpipeline", 0),
+        ENERGY("energypipeline", 1),
+        ITEM("itempipeline", 2);
 
-        final String name;
-        final int type; //0 - fluid, 1 - energy, 2 - item
-
-        public String getName() { return name; }
-
-        public int getType() { return type; }
+        private final String name;
+        private final int type; //0 - fluid, 1 - energy, 2 - item
 
         PipelineType(String name, int type) { this.name = name; this.type = type; }
+
+        public String getName() { return this.name; }
+
+        public int getPipeType() { return this.type; }
     }
 }

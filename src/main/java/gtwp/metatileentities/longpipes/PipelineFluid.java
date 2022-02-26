@@ -2,7 +2,6 @@ package gtwp.metatileentities.longpipes;
 
 import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.capability.impl.GTEnergyWrapper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
@@ -38,14 +37,15 @@ public class PipelineFluid extends PipelineBase {
     @Override
     public void update() {
         super.update();
-        if(getOffsetTimer() % 20 == 8) {
+        if(getOffsetTimer() % 5 == 0) {
             if(isInput() && getPair() != null){
-                IFluidHandler fromHandler = null, toHandler = null;
                 if(getInput() != null && getPair().getOutput() != null) {
-                    fromHandler = getInput().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getFrontFacing().getOpposite());
-                    toHandler = getPair().getOutput().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getPair().getFrontFacing());
-                    if(fromHandler != null && toHandler != null)
-                        GTFluidUtils.transferFluids(fromHandler, toHandler, Integer.MAX_VALUE);
+                    IFluidHandler fromHandler = getInput().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getFrontFacing().getOpposite());
+                    if(fromHandler == null) return;
+                    IFluidHandler toHandler = getPair().getOutput().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getPair().getFrontFacing());
+                    if(toHandler == null) return;
+
+                    GTFluidUtils.transferFluids(fromHandler, toHandler, Integer.MAX_VALUE);
                 }
             }
         }

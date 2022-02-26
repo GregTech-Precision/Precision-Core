@@ -34,12 +34,12 @@ public class PipelineEnergy extends PipelineBase{
         if (isInput() && getPair() != null) {
             if (getInput() != null && getPair().getOutput() != null) {
                 IEnergyContainer fromHandler = getInput().getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, getFrontFacing().getOpposite());
+                if(fromHandler == null) return;
                 IEnergyContainer toHandler = getPair().getOutput().getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, getPair().getFrontFacing());
-                if (fromHandler != null && toHandler != null) {
-                    long accepted = toHandler.acceptEnergyFromNetwork(getPair().getFrontFacing().getOpposite(), fromHandler.getOutputVoltage(), fromHandler.getOutputVoltage());
-                    fromHandler.removeEnergy(accepted);
-                    EnergyContainerHandler.emitterContainer()
-                }
+                if(toHandler == null) return;
+
+                if(toHandler.acceptEnergyFromNetwork(getPair().getFrontFacing().getOpposite(), fromHandler.getOutputVoltage(), fromHandler.getOutputVoltage()) > 0)
+                    fromHandler.removeEnergy(fromHandler.getOutputVoltage()*fromHandler.getOutputAmperage());
             }
         }
     }

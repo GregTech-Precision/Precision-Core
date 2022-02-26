@@ -71,7 +71,7 @@ public class MetaTileEntityMEItemOutputHatch extends MetaTileEntityItemBus {
 
     private IActionSource getRequest() {
         if (source == null)
-            source = new MachineSource((IActionHost)this);
+            source = new MachineSource((IActionHost)this.getHolder());
         return source;
     }
 

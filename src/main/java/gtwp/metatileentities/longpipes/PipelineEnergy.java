@@ -19,13 +19,19 @@ import net.minecraftforge.energy.IEnergyStorage;
 
 public class PipelineEnergy extends PipelineBase{
 
-    public PipelineEnergy(ResourceLocation metaTileEntityId) {
+    private final int tier;
+    public PipelineEnergy(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId);
+        this.tier = tier;
     }
 
     @Override
-    public boolean checkPipeType(BlockPipeline pipe, BlockPos location) {
-        return true;
+    public int getPipeMeta() {
+        return 1+getTier();
+    }
+
+    public int getTier() {
+        return tier;
     }
 
     @Override
@@ -46,6 +52,6 @@ public class PipelineEnergy extends PipelineBase{
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder metaTileEntityHolder) {
-        return new PipelineEnergy(metaTileEntityId);
+        return new PipelineEnergy(metaTileEntityId, getTier());
     }
 }

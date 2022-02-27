@@ -127,8 +127,11 @@ public abstract class PipelineBase extends MetaTileEntity {
         setFrontFacing(wrenchSide);
         return super.onWrenchClick(playerIn, hand, wrenchSide, hitResult);
     }
+    private boolean checkPipeType(BlockPipeline pipe, BlockPos location){
+        return pipe.getState(getWorld().getBlockState(location)).getPipeType() == getPipeMeta();
+    }
 
-    public abstract boolean checkPipeType(BlockPipeline pipe, BlockPos location);
+    public abstract int getPipeMeta();
 
     @Override
     protected boolean openGUIOnRightClick() {

@@ -1,15 +1,13 @@
 package gtwp;
 
-import gtwp.blocks.GTWPMetaBlocks;
-import gtwp.recipes.GTWPRecipeLoader;
+import gtwp.common.CommonProxy;
+import gtwp.common.blocks.GTWPMetaBlocks;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 
-import gtwp.metatileentities.GTWPMetaTileEntities;
+import gtwp.common.metatileentities.GTWPMetaTileEntities;
 
 @Mod(modid = GTWP.MODID,
         name = GTWP.NAME,
@@ -23,7 +21,7 @@ public class GTWP {
     public static final String NAME = "GT:WP";
     public static final String VERSION = "0.0.1";
 
-    @SidedProxy(modId = MODID, clientSide = "gtwp.ClientProxy", serverSide = "gtwp.CommonProxy")
+    @SidedProxy(modId = MODID, clientSide = "gtwp.common.ClientProxy", serverSide = "gtwp.common.CommonProxy")
     public static CommonProxy proxy;
 
     @EventHandler

@@ -2,6 +2,7 @@ package gtwp;
 
 import gtwp.common.CommonProxy;
 import gtwp.common.blocks.GTWPMetaBlocks;
+import gtwp.common.items.GTWPMetaItems;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -30,6 +31,7 @@ public class GTWP {
 
 
         GTWPMetaBlocks.init();
+        GTWPMetaItems.init();
         GTWPMetaTileEntities.init();
 
         proxy.preLoad();

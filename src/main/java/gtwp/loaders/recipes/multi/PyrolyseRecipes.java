@@ -15,7 +15,7 @@ public class PyrolyseRecipes {
 
     public static void init(){
         PYROLYSE.recipeBuilder()
-                .input(log, Wood, 16)
+                .input(dust, Wood, 8)
                 .timedFluidOutput(CarbonMonoxide.getFluid(72), 7*20)
                 .timedFluidOutput(Hydrogen.getFluid(288), 14*20)
                 .timedFluidOutput(Methane.getFluid(144), 21*20)

@@ -1,4 +1,4 @@
-package gtwp.common.metatileentities.multi.multiblockparts;
+package gtwp.common.metatileentities.multi.tanks;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
@@ -50,27 +50,12 @@ public class MetaTileEntityIOHatch extends MetaTileEntityMultiblockPart implemen
 
     @Override
     public ICubeRenderer getBaseTexture() {
-        if (getController() == null) {
-            return Textures.INERT_PTFE_CASING;
-        }
-        return super.getBaseTexture();
+        return Textures.INERT_PTFE_CASING;
     }
 
     @Override
     public int getDefaultPaintingColor() {
         return 0xFFFFFF;
-    }
-
-    @Override
-    public void update() {
-        super.update();
-        if (!getWorld().isRemote && getOffsetTimer() % 5 == 0L && isAttachedToMultiBlock() && getFrontFacing() == EnumFacing.DOWN) {
-            TileEntity tileEntity = getWorld().getTileEntity(getPos().offset(getFrontFacing()));
-            IFluidHandler fluidHandler = tileEntity == null ? null : tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getFrontFacing().getOpposite());
-            if (fluidHandler != null) {
-                GTFluidUtils.transferFluids(fluidInventory, fluidHandler, Integer.MAX_VALUE);
-            }
-        }
     }
 
     @Override
@@ -80,31 +65,9 @@ public class MetaTileEntityIOHatch extends MetaTileEntityMultiblockPart implemen
     }
 
     @Override
-    public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide, CuboidRayTraceResult hitResult) {
-        boolean wasRotated = super.onWrenchClick(playerIn, hand, wrenchSide, hitResult);
-        if (wasRotated && !getWorld().isRemote) {
-            reinitializeFluidInventory(getFrontFacing());
-        }
-        return wasRotated;
-    }
-
-    @Override
     public void addToMultiBlock(MultiblockControllerBase controllerBase) {
         super.addToMultiBlock(controllerBase);
-        if (getFrontFacing() == EnumFacing.DOWN) {
-            this.fluidInventory = new FluidHandlerProxy(new FluidTankList(false), controllerBase.getImportFluids());
-        } else {
-            this.fluidInventory = new FluidHandlerProxy(new FluidTankList(false, controllerBase.getImportFluids()), controllerBase.getImportFluids());
-        }
-    }
-
-    private void reinitializeFluidInventory(EnumFacing facing) {
-        FluidHandlerProxy proxy = (FluidHandlerProxy) fluidInventory;
-        if (facing == EnumFacing.DOWN) {
-            proxy.reinitializeHandler(new FluidTankList(false), proxy.output);
-        } else {
-            proxy.reinitializeHandler(proxy.output, proxy.output);
-        }
+        this.fluidInventory = new FluidHandlerProxy(new FluidTankList(false, controllerBase.getImportFluids()), controllerBase.getExportFluids());
     }
 
     @Override

@@ -1,4 +1,4 @@
-package gtwp.common.metatileentities.multi;
+package gtwp.common.metatileentities.multi.tanks;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
@@ -47,7 +47,7 @@ import java.util.function.Predicate;
 
 public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
 
-    private int capacity = 0;
+    private boolean recalc = true;
     private FilteredFluidHandler fluidHandler;
 
     public SingleFluidMultiTank(ResourceLocation metaTileEntityId)
@@ -71,7 +71,7 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
     @Nonnull
     private List<FluidTank> makeFluidTanks() {
         List<FluidTank> fluidTankList = new ArrayList<>(1);
-        fluidHandler = new FilteredFluidHandler(capacity);
+        fluidHandler = new FilteredFluidHandler(0);
         fluidTankList.add(fluidHandler);
         return fluidTankList;
     }
@@ -83,7 +83,7 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
 
     private int countCapacity() {
         BlockPos storagePos = getPos();
-        int l_capacity = 0;
+        int outCapacity = 0;
         for (int i = 0; i < 5; i++)
         {
             storagePos = storagePos.down();
@@ -92,25 +92,28 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
                 IBlockState storageState = getWorld().getBlockState(storagePos);
                 Block storage = storageState.getBlock();
                 if(storage instanceof BlockMultiTank)
-                {
-                    l_capacity += ((BlockMultiTank) storage).getState(storageState).getCapacity();
-                }
+                    outCapacity += ((BlockMultiTank) storage).getState(storageState).getCapacity();
                 else return 0;
             }
             else return 0;
         }
-        return l_capacity;
+        return outCapacity;
     }
 
+    @Override
+    public void update() {
+        super.update();
+        if(!recalc && !isStructureFormed()) {
+            recalc = true;
+            fluidHandler.setCapacity(0);
+        }
+    }
 
     @Override
     protected void updateFormedValid() {
-        if(getOffsetTimer() % 8 == 0) {
-            int l_capacity = countCapacity();
-            if (l_capacity != capacity) {
-                capacity = l_capacity;
-                fluidHandler.setCapacity(capacity);
-            }
+        if(recalc) {
+            recalc = false;
+            fluidHandler.setCapacity(countCapacity());
         }
     }
 
@@ -150,7 +153,7 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
 
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (!isStructureFormed() || capacity == 0) return false;
+        if (!isStructureFormed() || fluidHandler.getCapacity() == 0) return false;
         return super.onRightClick(playerIn, hand, facing, hitResult);
     }
 
@@ -169,7 +172,7 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
     protected ModularUI.Builder createUITemplate(@Nonnull EntityPlayer entityPlayer) {
         return ModularUI.defaultBuilder()
                 .widget(new LabelWidget(6, 6, getMetaFullName()))
-                .widget(new TankWidget(importFluids.getTankAt(0), 52, 18, 72, 61)
+                .widget(new TankWidget(exportFluids.getTankAt(0), 52, 18, 72, 61)
                         .setBackgroundTexture(GuiTextures.SLOT)
                         .setContainerClicking(true, true))
                 .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 0);

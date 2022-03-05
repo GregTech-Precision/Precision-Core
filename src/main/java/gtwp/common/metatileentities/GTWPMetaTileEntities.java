@@ -9,11 +9,11 @@ import gregtech.common.metatileentities.MetaTileEntities;
 import gtwp.GTWP;
 import gtwp.common.metatileentities.longpipes.PipelineEnergy;
 import gtwp.common.metatileentities.longpipes.PipelineFluid;
-import gtwp.common.metatileentities.multi.Greenhouse;
-import gtwp.common.metatileentities.multi.MultiFluidMultiTank;
-import gtwp.common.metatileentities.multi.PyrolyseOven;
-import gtwp.common.metatileentities.multi.SingleFluidMultiTank;
-import gtwp.common.metatileentities.multi.multiblockparts.MetaTileEntityIOHatch;
+import gtwp.common.metatileentities.multi.processing.Greenhouse;
+import gtwp.common.metatileentities.multi.tanks.MultiFluidMultiTank;
+import gtwp.common.metatileentities.multi.processing.PyrolyseOven;
+import gtwp.common.metatileentities.multi.tanks.SingleFluidMultiTank;
+import gtwp.common.metatileentities.multi.tanks.MetaTileEntityIOHatch;
 import gtwp.common.metatileentities.multi.multiblockparts.MetaTileEntityMEItemOutputHatch;
 import net.minecraft.util.ResourceLocation;
 

@@ -1,4 +1,4 @@
-package gtwp.common.metatileentities.multi;
+package gtwp.common.metatileentities.multi.processing;
 
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;

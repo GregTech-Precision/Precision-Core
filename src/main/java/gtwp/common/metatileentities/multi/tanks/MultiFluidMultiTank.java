@@ -1,4 +1,4 @@
-package gtwp.common.metatileentities.multi;
+package gtwp.common.metatileentities.multi.tanks;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
@@ -42,7 +42,7 @@ import java.util.function.Predicate;
 
 public class MultiFluidMultiTank extends MultiblockControllerBase {
 
-    private int capacity = 0;
+    private boolean recalc = true;
     private List<FilteredFluidHandler> fluidHandlers;
 
     public MultiFluidMultiTank(ResourceLocation metaTileEntityId)
@@ -68,7 +68,7 @@ public class MultiFluidMultiTank extends MultiblockControllerBase {
         fluidHandlers = new ArrayList<>(25);
         for(int i = 0;i<25;i++)
         {
-            FilteredFluidHandler fluidHandler = new FilteredFluidHandler(capacity/25);
+            FilteredFluidHandler fluidHandler = new FilteredFluidHandler(0);
             fluidTankList.add(fluidHandler);
             fluidHandlers.add(fluidHandler);
         }
@@ -87,38 +87,40 @@ public class MultiFluidMultiTank extends MultiblockControllerBase {
 
     private int countCapacity() {
         BlockPos storagePos = getPos();
-        int l_capacity = 0;
+        int outCapacity = 0;
         for (int y = -1; y >= -7; y--)
         {
             for(int x = -1; x<1;x++)
             {
                 for(int z = -1; z<1;z++)
                 {
-                    int n_cap = getCapacityAt(storagePos.add(x,y,z));
-                    if(n_cap == 0) return 0;
-                    l_capacity += n_cap/25;
+                    int storageCap = getCapacityAt(storagePos.add(x,y,z));
+                    if(storageCap == 0) return 0;
+                    outCapacity += storageCap/25;
                 }
             }
         }
-        return l_capacity;
+        return outCapacity;
     }
 
-    private void onCapacityChange()
+    private void onCapacityChange(int capacity)
     {
-        for(int i = 0;i<25;i++) {
-            fluidHandlers.get(i).setCapacity(capacity);
+        for(FilteredFluidHandler handler : fluidHandlers)
+            handler.setCapacity(capacity);
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        if(getOffsetTimer() % 8 == 0 && !recalc && !isStructureFormed()){
+            recalc = true;
+            onCapacityChange(0);
         }
     }
 
     @Override
     protected void updateFormedValid() {
-        if(getOffsetTimer() % 8 == 0) {
-            int l_capacity = countCapacity();
-            if(capacity != l_capacity) {
-                capacity = l_capacity;
-                onCapacityChange();
-            }
-        }
+        if(recalc) onCapacityChange(countCapacity());
     }
 
     @Override

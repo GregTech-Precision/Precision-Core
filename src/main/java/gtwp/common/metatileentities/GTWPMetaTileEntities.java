@@ -11,6 +11,7 @@ import gtwp.common.metatileentities.longpipes.PipelineEnergy;
 import gtwp.common.metatileentities.longpipes.PipelineFluid;
 import gtwp.common.metatileentities.multi.Greenhouse;
 import gtwp.common.metatileentities.multi.MultiFluidMultiTank;
+import gtwp.common.metatileentities.multi.PyrolyseOven;
 import gtwp.common.metatileentities.multi.SingleFluidMultiTank;
 import gtwp.common.metatileentities.multi.multiblockparts.MetaTileEntityIOHatch;
 import gtwp.common.metatileentities.multi.multiblockparts.MetaTileEntityMEItemOutputHatch;
@@ -26,6 +27,7 @@ public class GTWPMetaTileEntities {
     public static SingleFluidMultiTank SINGLE_FLUID_MULTI_TANK;
     public static MultiFluidMultiTank MULTI_FLUID_MULTI_TANK;
     public static Greenhouse GREENHOUSE;
+    public static PyrolyseOven PYROLYSE_OVEN;
     public static MetaTileEntityMEItemOutputHatch ME_HATCH;
     public static PipelineFluid PIPELINEFLUID;
     public static PipelineEnergy PIPELINEENERGY;
@@ -42,6 +44,8 @@ public class GTWPMetaTileEntities {
         ME_HATCH = MetaTileEntities.registerMetaTileEntity(id++, new MetaTileEntityMEItemOutputHatch(location("item_hatch.me")));
 
         GREENHOUSE = MetaTileEntities.registerMetaTileEntity(id++, new Greenhouse(location("greenhouse")));
+
+        PYROLYSE_OVEN = MetaTileEntities.registerMetaTileEntity(1004, new PyrolyseOven(location("pyrolyse_oven")));
         //Simple machines
         PIPELINEFLUID = MetaTileEntities.registerMetaTileEntity(id++, new PipelineFluid(location("pipelinefluid")));
         PIPELINEENERGY = MetaTileEntities.registerMetaTileEntity(id++, new PipelineEnergy(location("pipelineenergy"), 0));

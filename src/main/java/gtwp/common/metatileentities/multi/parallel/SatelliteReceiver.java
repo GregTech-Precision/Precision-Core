@@ -1,6 +1,9 @@
 package gtwp.common.metatileentities.multi.parallel;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
@@ -10,6 +13,7 @@ import gtwp.api.capability.IReceiver;
 import gtwp.api.utils.GTWPChatUtils;
 import gtwp.api.utils.ParallelAPI;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
@@ -70,6 +74,10 @@ public class SatelliteReceiver extends MetaTileEntityMultiblockPart implements I
         return isConnected();
     }
 
+    public SatelliteTransmitter getConnection(){
+        return pair;
+    }
+
     @Override
     public boolean isConnected() {
         return pair != null;
@@ -83,7 +91,21 @@ public class SatelliteReceiver extends MetaTileEntityMultiblockPart implements I
     @Override
     public void update() {
         super.update();
-        if(getOffsetTimer() % 8 == 0 && setConnection(netAddress) && pair.isTransmitting())
-            GTLog.logger.info("receiving");
+        if (getOffsetTimer() % 8 == 0)
+            setConnection(netAddress);
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        data.setUniqueId("netAddress", netAddress);
+        data.setInteger("frequency", frequency);
+        return super.writeToNBT(data);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        netAddress = data.getUniqueId("netAddress");
+        frequency = data.getInteger("frequency");
+        super.readFromNBT(data);
     }
 }

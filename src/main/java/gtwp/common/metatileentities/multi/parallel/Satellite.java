@@ -1,5 +1,8 @@
 package gtwp.common.metatileentities.multi.parallel;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -13,6 +16,7 @@ import gregtech.common.blocks.MetaBlocks;
 import gtwp.common.metatileentities.GTWPMetaTileEntities;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureUtil;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -68,6 +72,12 @@ public class Satellite extends MultiblockWithDisplayBase {
     @Nonnull
     @Override
     protected ICubeRenderer getFrontOverlay() {
-        return Textures.ASSEMBLER_OVERLAY;
+        return Textures.BLAST_FURNACE_OVERLAY;
+    }
+
+    @Override
+    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        super.renderMetaTileEntity(renderState, translation, pipeline);
+        getFrontOverlay().renderSided(getFrontFacing(), renderState, translation, pipeline);
     }
 }

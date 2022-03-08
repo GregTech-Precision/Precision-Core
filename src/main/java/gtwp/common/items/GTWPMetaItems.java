@@ -1,6 +1,6 @@
 package gtwp.common.items;
 
-import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.items.toolitem.ToolMetaItem;
 
 public class GTWPMetaItems {
 

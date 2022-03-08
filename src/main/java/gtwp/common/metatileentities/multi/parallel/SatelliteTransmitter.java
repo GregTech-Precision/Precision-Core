@@ -9,6 +9,7 @@ import gtwp.api.capability.ITransmitter;
 import gtwp.api.utils.GTWPChatUtils;
 import gtwp.api.utils.ParallelAPI;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
@@ -69,5 +70,19 @@ public class SatelliteTransmitter extends MetaTileEntityMultiblockPart implement
         if(getController() != null)
             return getController().isActive();
         return false;
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        data.setUniqueId("netAddress", netAddress);
+        data.setInteger("frequency", frequency);
+        return super.writeToNBT(data);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        netAddress = data.getUniqueId("netAddress");
+        frequency = data.getInteger("frequency");
+        super.readFromNBT(data);
     }
 }

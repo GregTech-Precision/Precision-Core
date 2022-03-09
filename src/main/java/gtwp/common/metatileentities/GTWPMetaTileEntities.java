@@ -1,6 +1,5 @@
 package gtwp.common.metatileentities;
 
-import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTLog;
@@ -13,13 +12,12 @@ import gtwp.common.metatileentities.longpipes.PipelineFluid;
 import gtwp.common.metatileentities.multi.parallel.*;
 import gtwp.common.metatileentities.multi.processing.Greenhouse;
 import gtwp.common.metatileentities.multi.processing.Sawmill;
-import gtwp.common.metatileentities.multi.tanks.MultiFluidMultiTank;
+import gtwp.common.metatileentities.multi.tanks.MultiTank;
 import gtwp.common.metatileentities.multi.processing.PyrolyseOven;
-import gtwp.common.metatileentities.multi.tanks.SingleFluidMultiTank;
-import gtwp.common.metatileentities.multi.tanks.MetaTileEntityIOHatch;
+import gtwp.common.metatileentities.multi.tanks.SingleTank;
+import gtwp.common.metatileentities.multi.tanks.IOHatch;
 import gtwp.common.metatileentities.multi.multiblockparts.MetaTileEntityMEItemOutputHatch;
 import net.minecraft.util.ResourceLocation;
-import scala.tools.cmd.Meta;
 
 import java.util.function.Function;
 
@@ -29,7 +27,7 @@ public class GTWPMetaTileEntities {
     private static int id = 11000;
 
     //HATCHES
-    public static MetaTileEntityIOHatch IO_HATCH;
+    public static IOHatch IO_HATCH;
     public static MetaTileEntityMEItemOutputHatch ME_HATCH;
     public static SatelliteTransmitter TRANSMITTER;
     public static SatelliteReceiver RECEIVER;
@@ -37,8 +35,8 @@ public class GTWPMetaTileEntities {
     public static ParallelHatch PARALLEL_RECEIVER;
     public static ParallelComputerRack PARALLEL_RACK;
     //CONTROLLERS
-    public static SingleFluidMultiTank SINGLE_FLUID_MULTI_TANK;
-    public static MultiFluidMultiTank MULTI_FLUID_MULTI_TANK;
+    public static SingleTank SINGLE_FLUID_MULTI_TANK;
+    public static MultiTank MULTI_FLUID_MULTI_TANK;
     public static Greenhouse GREENHOUSE;
     public static PyrolyseOven PYROLYSE_OVEN;
     public static Sawmill SAWMILL;
@@ -53,7 +51,7 @@ public class GTWPMetaTileEntities {
         GTLog.logger.info("GT:WP Registering New Meta Tile Entities");
 
         //HATCHES
-        IO_HATCH = MetaTileEntities.registerMetaTileEntity(id++, new MetaTileEntityIOHatch(location("fluid_hatch.io")));
+        IO_HATCH = MetaTileEntities.registerMetaTileEntity(id++, new IOHatch(location("fluid_hatch.io")));
 
         ME_HATCH = MetaTileEntities.registerMetaTileEntity(id++, new MetaTileEntityMEItemOutputHatch(location("item_hatch.me")));
         TRANSMITTER = MetaTileEntities.registerMetaTileEntity(id++, new SatelliteTransmitter(location("satellite_transmitter")));
@@ -63,8 +61,8 @@ public class GTWPMetaTileEntities {
         PARALLEL_RACK = MetaTileEntities.registerMetaTileEntity(id++, new ParallelComputerRack(location("parallel_rack")));
 
         //CONTROLLERS
-        SINGLE_FLUID_MULTI_TANK = MetaTileEntities.registerMetaTileEntity(id++, new SingleFluidMultiTank(location("fluid_tank.single")));
-        MULTI_FLUID_MULTI_TANK = MetaTileEntities.registerMetaTileEntity(id++, new MultiFluidMultiTank(location("fluid_tank.multi")));
+        SINGLE_FLUID_MULTI_TANK = MetaTileEntities.registerMetaTileEntity(id++, new SingleTank(location("fluid_tank.single")));
+        MULTI_FLUID_MULTI_TANK = MetaTileEntities.registerMetaTileEntity(id++, new MultiTank(location("fluid_tank.multi")));
         GREENHOUSE = MetaTileEntities.registerMetaTileEntity(id++, new Greenhouse(location("greenhouse")));
         PYROLYSE_OVEN = MetaTileEntities.registerMetaTileEntity(1004, new PyrolyseOven(location("pyrolyse_oven")));
         SAWMILL = MetaTileEntities.registerMetaTileEntity(id++, new Sawmill(location("sawmill")));

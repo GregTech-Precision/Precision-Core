@@ -7,9 +7,12 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.util.GTLog;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import gtwp.api.capability.IReceiver;
+import gtwp.api.metatileentities.GTWPMultiblockAbility;
 import gtwp.api.utils.GTWPChatUtils;
 import gtwp.api.utils.ParallelAPI;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,9 +21,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.List;
 import java.util.UUID;
 
-public class SatelliteReceiver extends MetaTileEntityMultiblockPart implements IReceiver {
+public class SatelliteReceiver extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IReceiver>, IReceiver {
 
     private int frequency = 0;
     private UUID netAddress;
@@ -84,11 +88,6 @@ public class SatelliteReceiver extends MetaTileEntityMultiblockPart implements I
     }
 
     @Override
-    public void breakConnection() {
-        pair = null;
-    }
-
-    @Override
     public void update() {
         super.update();
         if (getOffsetTimer() % 8 == 0)
@@ -107,5 +106,15 @@ public class SatelliteReceiver extends MetaTileEntityMultiblockPart implements I
         netAddress = data.getUniqueId("netAddress");
         frequency = data.getInteger("frequency");
         super.readFromNBT(data);
+    }
+
+    @Override
+    public MultiblockAbility<IReceiver> getAbility() {
+        return GTWPMultiblockAbility.RECEIVER;
+    }
+
+    @Override
+    public void registerAbilities(List<IReceiver> list) {
+        list.add(this);
     }
 }

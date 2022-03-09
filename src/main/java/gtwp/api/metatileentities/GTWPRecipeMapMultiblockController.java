@@ -7,6 +7,7 @@ import gregtech.api.util.GTLog;
 import gtwp.api.capability.IParallelHatch;
 import gtwp.api.capability.IParallelMultiblock;
 import gtwp.api.capability.impl.ParallelRecipeLogic;
+import gtwp.api.utils.GTWPChatUtils;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
@@ -33,11 +34,11 @@ public abstract class GTWPRecipeMapMultiblockController extends MultiMapMultiblo
         return parallel.isEmpty() ? 1 : parallel.get(0).getParallel();
     }
 
-//    @Override
-//    public TraceabilityPredicate autoAbilities(boolean checkEnergyIn, boolean checkMaintenance, boolean checkItemIn, boolean checkItemOut, boolean checkFluidIn, boolean checkFluidOut, boolean checkMuffler) {
-//        TraceabilityPredicate predicate = super.autoAbilities(checkEnergyIn, checkMaintenance, checkItemIn, checkItemOut, checkFluidIn, checkFluidOut, checkMuffler);
-//        if (isParallel())
-//            predicate = predicate.or(abilities(GTWPMultiblockAbility.PARALLEL_HATCH));
-//        return predicate;
-//    }
+    @Override
+    public TraceabilityPredicate autoAbilities(boolean checkEnergyIn, boolean checkMaintenance, boolean checkItemIn, boolean checkItemOut, boolean checkFluidIn, boolean checkFluidOut, boolean checkMuffler) {
+        TraceabilityPredicate predicate = super.autoAbilities(checkEnergyIn, checkMaintenance, checkItemIn, checkItemOut, checkFluidIn, checkFluidOut, checkMuffler);
+        if (isParallel())
+            predicate = predicate.or(abilities(GTWPMultiblockAbility.PARALLEL_HATCH).setMaxGlobalLimited(1).setPreviewCount(1));
+        return predicate;
+    }
 }

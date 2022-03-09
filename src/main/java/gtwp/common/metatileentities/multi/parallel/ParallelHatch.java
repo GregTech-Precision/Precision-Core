@@ -4,8 +4,11 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import gtwp.api.capability.IParallelHatch;
+import gtwp.api.metatileentities.GTWPMultiblockAbility;
 import gtwp.api.utils.GTWPChatUtils;
 import gtwp.common.items.GTWPMetaItems;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,7 +20,9 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
-public class ParallelHatch extends MetaTileEntityMultiblockPart implements IParallelHatch {
+import java.util.List;
+
+public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IParallelHatch>, IParallelHatch {
 
     private final boolean transmitter;
     private ParallelHatch pair = null;
@@ -33,6 +38,7 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IPara
     }
 
     public void setConnection(ParallelHatch pair){
+        pair.pair = this;
         this.pair = pair;
     }
 
@@ -47,8 +53,8 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IPara
     }
 
     public void breakConnection(){
-        if(this.pair != null) {
-            pair.breakConnection();
+        if(isConnected()) {
+            this.pair.pair = null;
             this.pair = null;
         }
     }
@@ -57,9 +63,10 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IPara
         return this.pair != null;
     }
 
+    @Override
     public int getParallel(){
         if (transmitter) {
-            if(getController().isActive()) {
+            if(((ParallelComputer) getController()).isReceivingSignal()) {
                 TileEntity te = getWorld().getTileEntity(getPos().offset(getFrontFacing().getOpposite()));
                 if (te instanceof MetaTileEntityHolder) {
                     MetaTileEntity mte = ((MetaTileEntityHolder) te).getMetaTileEntity();
@@ -86,6 +93,7 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IPara
         NBTTagCompound nbt = item.getTagCompound();
         if (nbt != null) {
             if (playerIn.isSneaking()) {
+                breakConnection();
                 nbt.setInteger("inX", getPos().getX());
                 nbt.setInteger("inY", getPos().getY());
                 nbt.setInteger("inZ", getPos().getZ());
@@ -107,5 +115,15 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IPara
             }
         }
         return super.onRightClick(playerIn, hand, facing, hitResult);
+    }
+
+    @Override
+    public MultiblockAbility<IParallelHatch> getAbility() {
+        return transmitter ? null : GTWPMultiblockAbility.PARALLEL_HATCH;
+    }
+
+    @Override
+    public void registerAbilities(List<IParallelHatch> list) {
+        if(!transmitter) list.add(this);
     }
 }

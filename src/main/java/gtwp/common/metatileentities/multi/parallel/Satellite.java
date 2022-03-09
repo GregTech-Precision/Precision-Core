@@ -13,6 +13,8 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
+import gtwp.common.blocks.BlockCasing;
+import gtwp.common.blocks.GTWPMetaBlocks;
 import gtwp.common.metatileentities.GTWPMetaTileEntities;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureUtil;
@@ -46,7 +48,7 @@ public class Satellite extends MultiblockWithDisplayBase {
     }
 
     private IBlockState casingState(){
-        return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID);
+        return GTWPMetaBlocks.CASING.getState(BlockCasing.Casings.SATELLITE);
     }
 
     @Override

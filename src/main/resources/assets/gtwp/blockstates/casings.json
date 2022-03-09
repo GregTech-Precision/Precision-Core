@@ -1,0 +1,17 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "variant=computer": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/parallel/COMPUTER_CASING"
+      }
+    }
+  },
+  "variant=satellite": {
+    "model": "minecraft:cube_all",
+    "textures": {
+      "all": "gregtech:blocks/parallel/SATELLITE_CASING"
+    }
+  }
+}

@@ -14,6 +14,7 @@ public class GTWPMetaBlocks {
     public static BlockMultiTank FLUID_STORAGE;
     public static BlockIGlass IGLASS;
     public static BlockPipeline PIPELINE;
+    public static BlockCasing CASING;
 
     public GTWPMetaBlocks() {
     }
@@ -25,6 +26,8 @@ public class GTWPMetaBlocks {
         IGLASS.setRegistryName("iglass");
         PIPELINE = new BlockPipeline();
         PIPELINE.setRegistryName("blockpipeline");
+        CASING = new BlockCasing();
+        CASING.setRegistryName("casing");
     }
 
     @SideOnly(Side.CLIENT)

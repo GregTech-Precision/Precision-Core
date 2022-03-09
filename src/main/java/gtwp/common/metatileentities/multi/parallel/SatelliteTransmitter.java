@@ -73,6 +73,12 @@ public class SatelliteTransmitter extends MetaTileEntityMultiblockPart implement
     }
 
     @Override
+    public void onFirstTick() {
+        super.onFirstTick();
+        ParallelAPI.addSatelliteTransmitter(netAddress, this);
+    }
+
+    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         data.setUniqueId("netAddress", netAddress);
         data.setInteger("frequency", frequency);

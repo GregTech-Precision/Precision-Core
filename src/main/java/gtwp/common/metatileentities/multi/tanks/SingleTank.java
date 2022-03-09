@@ -45,12 +45,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
+public class SingleTank extends MultiblockWithDisplayBase {
 
     private boolean recalc = true;
     private FilteredFluidHandler fluidHandler;
 
-    public SingleFluidMultiTank(ResourceLocation metaTileEntityId)
+    public SingleTank(ResourceLocation metaTileEntityId)
     {
         super(metaTileEntityId);
         initializeAbilities();
@@ -59,7 +59,7 @@ public class SingleFluidMultiTank extends MultiblockWithDisplayBase {
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder metaTileEntityHolder) {
-        return new SingleFluidMultiTank(metaTileEntityId);
+        return new SingleTank(metaTileEntityId);
     }
 
     protected void initializeAbilities() {

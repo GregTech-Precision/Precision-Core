@@ -9,10 +9,12 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.util.GTLog;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
+import gtwp.api.render.GTWPTextures;
 import gtwp.common.blocks.BlockCasing;
 import gtwp.common.blocks.GTWPMetaBlocks;
 import gtwp.common.metatileentities.GTWPMetaTileEntities;
@@ -30,9 +32,7 @@ public class Satellite extends MultiblockWithDisplayBase {
     }
 
     @Override
-    protected void updateFormedValid() {
-
-    }
+    protected void updateFormedValid() {}
 
     @Override
     protected BlockPattern createStructurePattern() {
@@ -53,7 +53,7 @@ public class Satellite extends MultiblockWithDisplayBase {
 
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart iMultiblockPart) {
-        return Textures.SOLID_STEEL_CASING;
+        return GTWPTextures.SATELLITE_CASING;
     }
 
     @Override

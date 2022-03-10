@@ -19,10 +19,10 @@ public class GTWPTextures {
 
     public static void preInit() {
         GTLog.logger.info("GT:WP pre initializing textures");
-        for(int i = 1; i<=4;i++) MULTI_TANK_FLUID_STORAGE[i-1] = new SimpleOverlayRenderer("multi_tank/fluid_storage_t"+i+".png");
-        for(int i = 0; i<=15;i++) IGLASS[i] = new SimpleOverlayRenderer("iglass/iglass"+i+".png");
-        PIPELINE = new SimpleOverlayRenderer("blockpipeline/fluid.png");
-        COMPUTER_CASING = new SimpleOverlayRenderer("parallel/COMPUTER_CASING.png");
-        SATELLITE_CASING = new SimpleOverlayRenderer("parallel/SATELLITE_CASING.png");
+        for(int i = 1; i<=4;i++) MULTI_TANK_FLUID_STORAGE[i-1] = new SimpleOverlayRenderer("multi_tank/fluid_storage_t"+i);
+        for(int i = 0; i<=15;i++) IGLASS[i] = new SimpleOverlayRenderer("iglass/iglass"+i);
+        PIPELINE = new SimpleOverlayRenderer("blockpipeline/fluid");
+        COMPUTER_CASING = new SimpleOverlayRenderer("parallel/computer_casing");
+        SATELLITE_CASING = new SimpleOverlayRenderer("parallel/satellite_casing");
     }
 }

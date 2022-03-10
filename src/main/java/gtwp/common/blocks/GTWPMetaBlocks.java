@@ -36,6 +36,7 @@ public class GTWPMetaBlocks {
         registerItemModel(FLUID_STORAGE);
         registerItemModel(IGLASS);
         registerItemModel(PIPELINE);
+        registerItemModel(CASING);
     }
 
     @SideOnly(Side.CLIENT)

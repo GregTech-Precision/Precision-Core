@@ -94,19 +94,19 @@ public class SatelliteReceiver extends MetaTileEntityMultiblockPart implements I
             setConnection(netAddress);
     }
 
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        data.setUniqueId("netAddress", netAddress);
-        data.setInteger("frequency", frequency);
-        return super.writeToNBT(data);
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound data) {
-        netAddress = data.getUniqueId("netAddress");
-        frequency = data.getInteger("frequency");
-        super.readFromNBT(data);
-    }
+//    @Override
+//    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+//        data.setUniqueId("netAddress", netAddress);
+//        data.setInteger("frequency", frequency);
+//        return super.writeToNBT(data);
+//    }
+//
+//    @Override
+//    public void readFromNBT(NBTTagCompound data) {
+//        netAddress = data.getUniqueId("netAddress");
+//        frequency = data.getInteger("frequency");
+//        super.readFromNBT(data);
+//    }
 
     @Override
     public MultiblockAbility<IReceiver> getAbility() {

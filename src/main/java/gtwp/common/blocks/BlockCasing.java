@@ -13,12 +13,12 @@ public class BlockCasing extends VariantBlock<BlockCasing.Casings> {
         setHardness(5.0f);
         setResistance(5.0f);
         setSoundType(SoundType.METAL);
-        setDefaultState(getState(Casings.PARALLEL));
+        setDefaultState(getState(Casings.COMPUTER));
         setLightOpacity(0);
     }
 
     public enum Casings implements IStringSerializable {
-        PARALLEL("parallel"),
+        COMPUTER("computer"),
         SATELLITE("satellite");
 
         private final String name;

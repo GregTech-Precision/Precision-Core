@@ -72,23 +72,17 @@ public class SatelliteTransmitter extends MetaTileEntityMultiblockPart implement
         return false;
     }
 
-    @Override
-    public void onFirstTick() {
-        super.onFirstTick();
-        ParallelAPI.addSatelliteTransmitter(netAddress, this);
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        data.setUniqueId("netAddress", netAddress);
-        data.setInteger("frequency", frequency);
-        return super.writeToNBT(data);
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound data) {
-        netAddress = data.getUniqueId("netAddress");
-        frequency = data.getInteger("frequency");
-        super.readFromNBT(data);
-    }
+//    @Override
+//    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+//        data.setUniqueId("netAddress", netAddress);
+//        data.setInteger("frequency", frequency);
+//        return super.writeToNBT(data);
+//    }
+//
+//    @Override
+//    public void readFromNBT(NBTTagCompound data) {
+//        netAddress = data.getUniqueId("netAddress");
+//        frequency = data.getInteger("frequency");
+//        super.readFromNBT(data);
+//    }
 }

@@ -17,15 +17,21 @@ import gregtech.common.blocks.MetaBlocks;
 import gtwp.api.capability.IParallelHatch;
 import gtwp.api.capability.IReceiver;
 import gtwp.api.metatileentities.GTWPMultiblockAbility;
+import gtwp.api.render.GTWPTextures;
 import gtwp.common.blocks.BlockCasing;
 import gtwp.common.blocks.GTWPMetaBlocks;
 import gtwp.common.metatileentities.GTWPMetaTileEntities;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentBase;
+import net.minecraft.util.text.TextComponentString;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+
+import static gregtech.api.util.RelativeDirection.*;
 
 public class ParallelComputer extends MultiblockWithDisplayBase {
 
@@ -34,13 +40,23 @@ public class ParallelComputer extends MultiblockWithDisplayBase {
     }
 
     @Override
-    protected void updateFormedValid() {}
+    protected void updateFormedValid() {
+        if(isReceivingSignal())
+            GTLog.logger.info("receiving signal");
+    }
+
+    @Override
+    protected void addDisplayText(List<ITextComponent> textList) {
+        textList.add(new TextComponentString(isReceivingSignal() ? "online" : "offline"));
+        super.addDisplayText(textList);
+    }
 
     @Override
     protected BlockPattern createStructurePattern() {
-        return FactoryBlockPattern.start()
-                .aisle("CC", "RT", "RT", "CC").setRepeatable(1, 14)
-                .aisle("CC", "SC", "CC", "CC")
+        return FactoryBlockPattern.start(LEFT, UP, FRONT)
+                .aisle("CC", "CS", "CC", "CC")
+                .aisle("CC", "TR", "TR", "CC").setRepeatable(1, 14)
+                .aisle("CC", "CC", "CC", "CC")
                 .where('S', selfPredicate())
                 .where('C', states(casingState()).or(autoAbilities(true, false)).or(abilities(GTWPMultiblockAbility.RECEIVER).setMaxGlobalLimited(1).setPreviewCount(1)))
                 .where('R', metaTileEntities(GTWPMetaTileEntities.PARALLEL_RACK)) //parallel rack
@@ -54,12 +70,12 @@ public class ParallelComputer extends MultiblockWithDisplayBase {
     }
 
     private IBlockState casingState(){
-        return GTWPMetaBlocks.CASING.getState(BlockCasing.Casings.PARALLEL);
+        return GTWPMetaBlocks.CASING.getState(BlockCasing.Casings.COMPUTER);
     }
 
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart iMultiblockPart) {
-        return Textures.SOLID_STEEL_CASING;
+        return GTWPTextures.COMPUTER_CASING;
     }
 
     @Override
@@ -68,10 +84,9 @@ public class ParallelComputer extends MultiblockWithDisplayBase {
     }
 
     public boolean isReceivingSignal(){
-        List<IReceiver> receivers = getAbilities(GTWPMultiblockAbility.RECEIVER);
-        if(!receivers.isEmpty()){
-            if(receivers.get(0).isConnected())
-                return ((SatelliteReceiver) receivers.get(0)).getConnection().isTransmitting();
+        if(isActive()) {
+            List<IReceiver> receivers = getAbilities(GTWPMultiblockAbility.RECEIVER);
+            return !receivers.isEmpty() && receivers.get(0).isConnected() && ((SatelliteReceiver) receivers.get(0)).getConnection().isTransmitting();
         }
         return false;
     }

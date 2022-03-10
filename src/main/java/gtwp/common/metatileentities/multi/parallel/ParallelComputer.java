@@ -41,13 +41,13 @@ public class ParallelComputer extends MultiblockWithDisplayBase {
 
     @Override
     protected void updateFormedValid() {
-        if(isReceivingSignal())
-            GTLog.logger.info("receiving signal");
+        if(getOffsetTimer() % 8 == 0)
+            scheduleRenderUpdate();
     }
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        textList.add(new TextComponentString(isReceivingSignal() ? "online" : "offline"));
+        textList.add(new TextComponentString("Satellite is " + (isReceivingSignal() ? "online" : "offline")));
         super.addDisplayText(textList);
     }
 
@@ -83,17 +83,12 @@ public class ParallelComputer extends MultiblockWithDisplayBase {
         return new ParallelComputer(metaTileEntityId);
     }
 
-    public boolean isReceivingSignal(){
-        if(isActive()) {
+    public boolean isReceivingSignal() {
+        if (isActive()) {
             List<IReceiver> receivers = getAbilities(GTWPMultiblockAbility.RECEIVER);
             return !receivers.isEmpty() && receivers.get(0).isConnected() && ((SatelliteReceiver) receivers.get(0)).getConnection().isTransmitting();
         }
         return false;
-    }
-
-    @Override
-    public boolean hasFrontFacing() {
-        return true;
     }
 
     @Nonnull

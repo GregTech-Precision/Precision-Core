@@ -1,16 +1,23 @@
 package gtwp.common.metatileentities.multi.parallel;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import gtwp.api.capability.IParallelHatch;
 import gtwp.api.metatileentities.GTWPMultiblockAbility;
+import gtwp.api.render.GTWPTextures;
 import gtwp.api.utils.GTWPChatUtils;
 import gtwp.common.items.GTWPMetaItems;
+import jdk.nashorn.internal.ir.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -103,7 +110,7 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
                 int y = nbt.getInteger("inY");
                 int z = nbt.getInteger("inZ");
                 BlockPos connectionPos = new BlockPos(x, y, z);
-                if(getPos() == connectionPos){
+                if(getPos().equals(connectionPos)){
                     GTWPChatUtils.sendMessage(playerIn, "Cannot connect to self");
                 }else {
                     setConnection(connectionPos);
@@ -115,6 +122,17 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
             }
         }
         return super.onRightClick(playerIn, hand, facing, hitResult);
+    }
+
+    private SimpleOverlayRenderer getHatchOverlay(){
+        if(!isConnected()) return GTWPTextures.PARALLEL_HATCH_RED;
+        return (transmitter ? this.pair : this).getController().isActive() ? GTWPTextures.PARALLEL_HATCH_GREEN : GTWPTextures.PARALLEL_HATCH_YELLOW;
+    }
+
+    @Override
+    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        super.renderMetaTileEntity(renderState, translation, pipeline);
+        getHatchOverlay().renderSided(getFrontFacing(), renderState, translation, pipeline);
     }
 
     @Override

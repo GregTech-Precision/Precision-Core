@@ -10,9 +10,11 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.util.GTLog;
+import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import gtwp.api.capability.IReceiver;
 import gtwp.api.metatileentities.GTWPMultiblockAbility;
+import gtwp.api.render.GTWPTextures;
 import gtwp.api.utils.GTWPChatUtils;
 import gtwp.api.utils.ParallelAPI;
 import net.minecraft.entity.player.EntityPlayer;
@@ -94,19 +96,26 @@ public class SatelliteReceiver extends MetaTileEntityMultiblockPart implements I
             setConnection(netAddress);
     }
 
-//    @Override
-//    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-//        data.setUniqueId("netAddress", netAddress);
-//        data.setInteger("frequency", frequency);
-//        return super.writeToNBT(data);
-//    }
-//
-//    @Override
-//    public void readFromNBT(NBTTagCompound data) {
-//        netAddress = data.getUniqueId("netAddress");
-//        frequency = data.getInteger("frequency");
-//        super.readFromNBT(data);
-//    }
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        data.setUniqueId("netAddress", this.netAddress);
+        data.setInteger("frequency", this.frequency);
+        return data;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        this.netAddress = data.getUniqueId("netAddress");
+        this.frequency = data.getInteger("frequency");
+    }
+
+    @Override
+    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        super.renderMetaTileEntity(renderState, translation, pipeline);
+        (isConnected() ? GTWPTextures.PARALLEL_HATCH_GREEN : GTWPTextures.PARALLEL_HATCH_RED).renderSided(getFrontFacing(), renderState, translation, pipeline);
+    }
 
     @Override
     public MultiblockAbility<IReceiver> getAbility() {

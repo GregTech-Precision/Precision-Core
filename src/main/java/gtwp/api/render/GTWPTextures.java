@@ -1,5 +1,6 @@
 package gtwp.api.render;
 
+import gregtech.client.renderer.texture.cube.SimpleCubeRenderer;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.api.util.GTLog;
 import gtwp.GTWP;
@@ -15,6 +16,12 @@ public class GTWPTextures {
     public static SimpleOverlayRenderer PIPELINE;
     public static SimpleOverlayRenderer COMPUTER_CASING;
     public static SimpleOverlayRenderer SATELLITE_CASING;
+    public static SimpleOverlayRenderer PARALLEL_HATCH_GREEN;
+    public static SimpleOverlayRenderer PARALLEL_HATCH_YELLOW;
+    public static SimpleOverlayRenderer PARALLEL_HATCH_RED;
+    public static SimpleOverlayRenderer PARALLEL_RACK;
+    public static SimpleOverlayRenderer PARALLEL_RACK_ACTIVE;
+
 
 
     public static void preInit() {
@@ -24,5 +31,10 @@ public class GTWPTextures {
         PIPELINE = new SimpleOverlayRenderer("blockpipeline/fluid");
         COMPUTER_CASING = new SimpleOverlayRenderer("parallel/computer_casing");
         SATELLITE_CASING = new SimpleOverlayRenderer("parallel/satellite_casing");
+        PARALLEL_HATCH_GREEN = new SimpleOverlayRenderer("parallel/hatch_green");
+        PARALLEL_HATCH_YELLOW = new SimpleOverlayRenderer("parallel/hatch_yellow");
+        PARALLEL_HATCH_RED = new SimpleOverlayRenderer("parallel/hatch_red");
+        PARALLEL_RACK = new SimpleOverlayRenderer("parallel/rack_overlay");
+        PARALLEL_RACK_ACTIVE = new SimpleOverlayRenderer("parallel/rack_overlay_active");
     }
 }

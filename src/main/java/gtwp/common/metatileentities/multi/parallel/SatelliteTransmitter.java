@@ -1,11 +1,16 @@
 package gtwp.common.metatileentities.multi.parallel;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import gtwp.api.capability.ITransmitter;
+import gtwp.api.render.GTWPTextures;
 import gtwp.api.utils.GTWPChatUtils;
 import gtwp.api.utils.ParallelAPI;
 import net.minecraft.entity.player.EntityPlayer;
@@ -71,18 +76,24 @@ public class SatelliteTransmitter extends MetaTileEntityMultiblockPart implement
             return getController().isActive();
         return false;
     }
+    @Override
+    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        super.renderMetaTileEntity(renderState, translation, pipeline);
+        (getController() == null ? GTWPTextures.PARALLEL_HATCH_RED : isTransmitting() ? GTWPTextures.PARALLEL_HATCH_GREEN : GTWPTextures.PARALLEL_HATCH_YELLOW).renderSided(getFrontFacing(), renderState, translation, pipeline);
+    }
 
-//    @Override
-//    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-//        data.setUniqueId("netAddress", netAddress);
-//        data.setInteger("frequency", frequency);
-//        return super.writeToNBT(data);
-//    }
-//
-//    @Override
-//    public void readFromNBT(NBTTagCompound data) {
-//        netAddress = data.getUniqueId("netAddress");
-//        frequency = data.getInteger("frequency");
-//        super.readFromNBT(data);
-//    }
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        data.setUniqueId("netAddress", this.netAddress);
+        data.setInteger("frequency", this.frequency);
+        return data;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        this.netAddress = data.getUniqueId("netAddress");
+        this.frequency = data.getInteger("frequency");
+    }
 }

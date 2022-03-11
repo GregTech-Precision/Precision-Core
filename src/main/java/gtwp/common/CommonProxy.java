@@ -57,6 +57,7 @@ public class CommonProxy {
         registry.register(createItemBlock(GTWPMetaBlocks.IGLASS, VariantItemBlock::new));
         registry.register(createItemBlock(GTWPMetaBlocks.PIPELINE, VariantItemBlock::new));
         registry.register(createItemBlock(GTWPMetaBlocks.CASING, VariantItemBlock::new));
+        registry.register(createItemBlock(GTWPMetaBlocks.PARALLEL_CASING, VariantItemBlock::new));
     }
 
     private static <T extends Block> ItemBlock createItemBlock(T block, Function<T, ItemBlock> producer) {

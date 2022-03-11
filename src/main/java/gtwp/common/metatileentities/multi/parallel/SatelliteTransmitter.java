@@ -42,6 +42,7 @@ public class SatelliteTransmitter extends MetaTileEntityMultiblockPart implement
         ParallelAPI.removeSatelliteTransmitter(netAddress);
         netAddress = generateNetAddress(playerIn, frequency);
         ParallelAPI.addSatelliteTransmitter(netAddress, this);
+        scheduleRenderUpdate();
         if (getWorld().isRemote){
             GTWPChatUtils.sendMessage(playerIn, "Transmitter frequency: " + frequency);
             GTWPChatUtils.sendMessage(playerIn, "UUID: " + netAddress);
@@ -72,28 +73,12 @@ public class SatelliteTransmitter extends MetaTileEntityMultiblockPart implement
 
     @Override
     public boolean isTransmitting() {
-        if(getController() != null)
-            return getController().isActive();
-        return false;
+        scheduleRenderUpdate();
+        return getController() != null && getController().isActive();
     }
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        (getController() == null ? GTWPTextures.PARALLEL_HATCH_RED : isTransmitting() ? GTWPTextures.PARALLEL_HATCH_GREEN : GTWPTextures.PARALLEL_HATCH_YELLOW).renderSided(getFrontFacing(), renderState, translation, pipeline);
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
-        data.setUniqueId("netAddress", this.netAddress);
-        data.setInteger("frequency", this.frequency);
-        return data;
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
-        this.netAddress = data.getUniqueId("netAddress");
-        this.frequency = data.getInteger("frequency");
+        (getController() == null ? GTWPTextures.PARALLEL_HATCH_RED : getController() != null && getController().isActive() ? GTWPTextures.PARALLEL_HATCH_GREEN : GTWPTextures.PARALLEL_HATCH_YELLOW).renderSided(getFrontFacing(), renderState, translation, pipeline);
     }
 }

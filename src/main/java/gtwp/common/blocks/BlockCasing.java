@@ -14,7 +14,6 @@ public class BlockCasing extends VariantBlock<BlockCasing.Casings> {
         setResistance(5.0f);
         setSoundType(SoundType.METAL);
         setDefaultState(getState(Casings.COMPUTER));
-        setLightOpacity(0);
     }
 
     public enum Casings implements IStringSerializable {

@@ -77,6 +77,7 @@ public class SatelliteReceiver extends MetaTileEntityMultiblockPart implements I
     @Override
     public boolean setConnection(UUID netAddress) {
         pair = ParallelAPI.satelliteTransmitters.getOrDefault(netAddress, null);
+        scheduleRenderUpdate();
         return isConnected();
     }
 
@@ -97,24 +98,9 @@ public class SatelliteReceiver extends MetaTileEntityMultiblockPart implements I
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
-        data.setUniqueId("netAddress", this.netAddress);
-        data.setInteger("frequency", this.frequency);
-        return data;
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
-        this.netAddress = data.getUniqueId("netAddress");
-        this.frequency = data.getInteger("frequency");
-    }
-
-    @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        (isConnected() ? GTWPTextures.PARALLEL_HATCH_GREEN : GTWPTextures.PARALLEL_HATCH_RED).renderSided(getFrontFacing(), renderState, translation, pipeline);
+        (isConnected() ? (getConnection().isTransmitting() ? GTWPTextures.PARALLEL_HATCH_GREEN : GTWPTextures.PARALLEL_HATCH_YELLOW) : GTWPTextures.PARALLEL_HATCH_RED).renderSided(getFrontFacing(), renderState, translation, pipeline);
     }
 
     @Override

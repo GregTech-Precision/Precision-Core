@@ -45,7 +45,7 @@ public class Satellite extends MultiblockWithDisplayBase {
                 .aisle("CCCCC", "CCSCC", "CCCCC", "*C*C*")
                 .aisle("*C*C*", "*C*C*", "*C*C*", "*C*C*")
                 .where('S', selfPredicate())
-                .where('C', states(casingState()).or(metaTileEntities(GTWPMetaTileEntities.TRANSMITTER)))
+                .where('C', states(casingState()).or(metaTileEntities(GTWPMetaTileEntities.TRANSMITTER).setMaxGlobalLimited(1,1)))
                 .where('*', any())
                 .build();
     }

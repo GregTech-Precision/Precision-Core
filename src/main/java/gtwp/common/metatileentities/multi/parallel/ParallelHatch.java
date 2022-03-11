@@ -33,6 +33,7 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
 
     private final boolean transmitter;
     private ParallelHatch pair = null;
+    private BlockPos pairPos;
 
     public ParallelHatch(ResourceLocation metaTileEntityId, boolean transmitter) {
         super(metaTileEntityId, 4);
@@ -44,26 +45,34 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
         return new ParallelHatch(metaTileEntityId, transmitter);
     }
 
-    public void setConnection(ParallelHatch pair){
-        pair.pair = this;
-        this.pair = pair;
+    public boolean setConnection(ParallelHatch pair){
+        if( pair != null && pair.transmitter != transmitter) {
+            pair.pair = this;
+            pair.scheduleRenderUpdate();
+            this.pair = pair;
+            scheduleRenderUpdate();
+        }
+        return isConnected();
     }
 
-    public void setConnection(BlockPos position){
+    public boolean setConnection(BlockPos position){
         TileEntity te = getWorld().getTileEntity(position);
         if(te instanceof MetaTileEntityHolder){
             MetaTileEntityHolder mteh = ((MetaTileEntityHolder) te);
             if(mteh.getMetaTileEntity() instanceof ParallelHatch){
-                setConnection(((ParallelHatch) mteh.getMetaTileEntity()));
+                return setConnection(((ParallelHatch) mteh.getMetaTileEntity()));
             }
         }
+        return false;
     }
 
     public void breakConnection(){
         if(isConnected()) {
             this.pair.pair = null;
+            this.pair.scheduleRenderUpdate();
             this.pair = null;
         }
+        scheduleRenderUpdate();
     }
 
     public boolean isConnected(){
@@ -72,6 +81,7 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
 
     @Override
     public int getParallel(){
+        scheduleRenderUpdate();
         if (transmitter) {
             if(((ParallelComputer) getController()).isReceivingSignal()) {
                 TileEntity te = getWorld().getTileEntity(getPos().offset(getFrontFacing().getOpposite()));
@@ -113,11 +123,13 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
                 if(getPos().equals(connectionPos)){
                     GTWPChatUtils.sendMessage(playerIn, "Cannot connect to self");
                 }else {
-                    setConnection(connectionPos);
-                    GTWPChatUtils.sendMessage(playerIn, "Connection successful " + x + " " + y + " " + z);
-                    nbt.removeTag("inX");
-                    nbt.removeTag("inY");
-                    nbt.removeTag("inZ");
+                    if(setConnection(connectionPos)) {
+                        GTWPChatUtils.sendMessage(playerIn, "Connection successful " + x + " " + y + " " + z);
+                        nbt.removeTag("inX");
+                        nbt.removeTag("inY");
+                        nbt.removeTag("inZ");
+                    } else GTWPChatUtils.sendMessage(playerIn,
+                            "Cannot connect "+(transmitter?"transmitter to transmitter":"receiver to receiver"));
                 }
             }
         }

@@ -41,8 +41,6 @@ public class ParallelComputer extends MultiblockWithDisplayBase {
 
     @Override
     protected void updateFormedValid() {
-        if(getOffsetTimer() % 8 == 0)
-            scheduleRenderUpdate();
     }
 
     @Override
@@ -59,8 +57,8 @@ public class ParallelComputer extends MultiblockWithDisplayBase {
                 .aisle("CC", "CC", "CC", "CC")
                 .where('S', selfPredicate())
                 .where('C', states(casingState()).or(autoAbilities(true, false)).or(abilities(GTWPMultiblockAbility.RECEIVER).setMaxGlobalLimited(1).setPreviewCount(1)))
-                .where('R', metaTileEntities(GTWPMetaTileEntities.PARALLEL_RACK)) //parallel rack
-                .where('T', metaTileEntities(GTWPMetaTileEntities.PARALLEL_TRANSMITTER)) //parallel transmitter
+                .where('R', metaTileEntities(GTWPMetaTileEntities.PARALLEL_RACK))
+                .where('T', metaTileEntities(GTWPMetaTileEntities.PARALLEL_TRANSMITTER))
                 .build();
     }
 

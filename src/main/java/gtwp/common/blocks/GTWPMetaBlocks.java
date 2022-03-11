@@ -15,7 +15,7 @@ public class GTWPMetaBlocks {
     public static BlockIGlass IGLASS;
     public static BlockPipeline PIPELINE;
     public static BlockCasing CASING;
-    public static BlockParallel PARALLEL_CASING;
+    public static BlockCasingParallel PARALLEL_CASING;
 
     public GTWPMetaBlocks() {
     }
@@ -29,8 +29,8 @@ public class GTWPMetaBlocks {
         PIPELINE.setRegistryName("blockpipeline");
         CASING = new BlockCasing();
         CASING.setRegistryName("casing");
-        PARALLEL_CASING = new BlockParallel();
-        PARALLEL_CASING.setRegistryName("parallelCasing");
+        PARALLEL_CASING = new BlockCasingParallel();
+        PARALLEL_CASING.setRegistryName("casing_parallel");
     }
 
     @SideOnly(Side.CLIENT)

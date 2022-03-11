@@ -1,0 +1,29 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "variant=casing_parallel_t1": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/iglass/casing_parallel_t1"
+      }
+    },
+    "variant=casing_parallel_t2": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/iglass/casing_parallel_t2"
+      }
+    },
+    "variant=casing_parallel_t3": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/iglass/casing_parallel_t3"
+      }
+    },
+    "variant=casing_parallel_t4": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/iglass/casing_parallel_t4"
+      }
+    }
+  }
+}

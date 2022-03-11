@@ -4,6 +4,7 @@ import gregtech.api.util.GTLog;
 import gregtech.common.blocks.VariantItemBlock;
 import gtwp.GTWP;
 import gtwp.common.blocks.GTWPMetaBlocks;
+import gtwp.common.items.GTWPMetaItems;
 import gtwp.loaders.recipes.GTWPRecipeLoader;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -25,7 +26,7 @@ import java.util.function.Function;
 public class CommonProxy {
 
     public void preLoad() {
-//        GAMetaItems.init();
+        GTWPMetaItems.init();
 //        GAMetaFluids.init();
     }
 

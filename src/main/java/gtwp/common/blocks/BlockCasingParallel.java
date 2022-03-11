@@ -5,12 +5,12 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.IStringSerializable;
 
-public class BlockParallel extends VariantBlock<BlockParallel.ParallelCasing> {
+public class BlockCasingParallel extends VariantBlock<BlockCasingParallel.ParallelCasing> {
 
 
-    public BlockParallel() {
+    public BlockCasingParallel() {
         super(Material.IRON);
-        setUnlocalizedName("parallelCasing");
+        setUnlocalizedName("casing_parallel");
         setHardness(5.0f);
         setResistance(5.0f);
         setSoundType(SoundType.METAL);
@@ -24,11 +24,11 @@ public class BlockParallel extends VariantBlock<BlockParallel.ParallelCasing> {
         PARALLEL_CASING_T4("parallel_casing_t4", 256);
 
         private final String name;
-        private final int parallelCount;
+        private final int parallelPoints;
 
-        ParallelCasing(String name, int parallelCount){
+        ParallelCasing(String name, int parallelPoints){
             this.name = name;
-            this.parallelCount = parallelCount;
+            this.parallelPoints = parallelPoints;
         }
 
         @Override
@@ -36,8 +36,8 @@ public class BlockParallel extends VariantBlock<BlockParallel.ParallelCasing> {
             return name;
         }
 
-        public int getParallelCount() {
-            return parallelCount;
+        public int getParallelPoints() {
+            return this.parallelPoints;
         }
     }
 }

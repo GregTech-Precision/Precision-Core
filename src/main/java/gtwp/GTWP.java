@@ -31,7 +31,6 @@ public class GTWP {
 
 
         GTWPMetaBlocks.init();
-        GTWPMetaItems.init();
         GTWPMetaTileEntities.init();
 
         proxy.preLoad();

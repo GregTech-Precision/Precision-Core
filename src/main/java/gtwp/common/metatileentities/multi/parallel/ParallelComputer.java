@@ -16,6 +16,7 @@ import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gtwp.api.capability.IParallelHatch;
 import gtwp.api.capability.IReceiver;
+import gtwp.api.capability.impl.ParallelRecipeLogic;
 import gtwp.api.metatileentities.GTWPMultiblockAbility;
 import gtwp.api.render.GTWPTextures;
 import gtwp.common.blocks.BlockCasing;
@@ -27,6 +28,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextComponentString;
+import scala.collection.Parallel;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -35,12 +37,16 @@ import static gregtech.api.util.RelativeDirection.*;
 
 public class ParallelComputer extends MultiblockWithDisplayBase {
 
+    private final ParallelRecipeLogic parallelRecipeLogic;
+
     public ParallelComputer(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
+        this.parallelRecipeLogic = new ParallelRecipeLogic(this);
     }
 
     @Override
     protected void updateFormedValid() {
+        //this.parallelRecipeLogic.dr
     }
 
     @Override
@@ -53,7 +59,7 @@ public class ParallelComputer extends MultiblockWithDisplayBase {
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start(LEFT, UP, FRONT)
                 .aisle("CC", "CS", "CC", "CC")
-                .aisle("CC", "TR", "TR", "CC").setRepeatable(1, 14)
+                .aisle("CC", "RT", "RT", "CC").setRepeatable(1, 14)
                 .aisle("CC", "CC", "CC", "CC")
                 .where('S', selfPredicate())
                 .where('C', states(casingState()).or(autoAbilities(true, false)).or(abilities(GTWPMultiblockAbility.RECEIVER).setMaxGlobalLimited(1).setPreviewCount(1)))
@@ -87,6 +93,11 @@ public class ParallelComputer extends MultiblockWithDisplayBase {
             return !receivers.isEmpty() && receivers.get(0).isConnected() && ((SatelliteReceiver) receivers.get(0)).getConnection().isTransmitting();
         }
         return false;
+    }
+
+    @Override
+    public boolean isActive() {
+        return parallelRecipeLogic.getEnergyContainer().getEnergyStored() > 0 && super.isActive();
     }
 
     @Nonnull

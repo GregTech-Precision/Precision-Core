@@ -32,7 +32,7 @@ public abstract class GTWPRecipeMapMultiblockController extends MultiMapMultiblo
     @Override
     public int getMaxParallel() {
         List<IParallelHatch> parallel = getAbilities(GTWPMultiblockAbility.PARALLEL_HATCH);
-        return parallel.isEmpty() ? 1 : GTWPUtility.clamp(1,256, parallel.get(0).getParallel());
+        return parallel.isEmpty() ? 1 : parallel.get(0).getParallel();
     }
 
     @Override

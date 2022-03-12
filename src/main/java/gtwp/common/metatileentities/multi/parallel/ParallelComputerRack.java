@@ -44,7 +44,7 @@ public class ParallelComputerRack extends MetaTileEntityMultiblockPart {
 
     private SimpleOverlayRenderer getRackOverlay(){
         if(getParallelPoints() > 0) {
-            if (getController() != null && ((ParallelComputer) getController()).isReceivingSignal()) return GTWPTextures.PARALLEL_RACK_ACTIVE;
+            if (getController() != null && ((ParallelComputer) getController()).isActive()) return GTWPTextures.PARALLEL_RACK_ACTIVE;
             else return  GTWPTextures.PARALLEL_RACK_INACTIVE;
         }else return GTWPTextures.PARALLEL_RACK_EMPTY;
     }
@@ -56,6 +56,7 @@ public class ParallelComputerRack extends MetaTileEntityMultiblockPart {
     }
 
     public int getParallelPoints() {
+        scheduleRenderUpdate();
         return parallelPoints;
     }
 
@@ -137,7 +138,6 @@ public class ParallelComputerRack extends MetaTileEntityMultiblockPart {
         protected void onContentsChanged(int slot) {
             super.onContentsChanged(slot);
             parallelPoints = countParallelPoints();
-            ((ParallelComputer) getController()).updateParallelPoints();
             scheduleRenderUpdate();
         }
     }

@@ -73,20 +73,14 @@ public class SatelliteTransmitter extends MetaTileEntityMultiblockPart implement
 
     @Override
     public boolean isTransmitting() {
-        if(getWorld().isRemote) scheduleRenderUpdate();
+        scheduleRenderUpdate();
         return getController() != null && getController().isActive();
     }
+
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         (getController() == null ? GTWPTextures.PARALLEL_HATCH_RED : getController() != null && getController().isActive() ? GTWPTextures.PARALLEL_HATCH_GREEN : GTWPTextures.PARALLEL_HATCH_YELLOW).renderSided(getFrontFacing(), renderState, translation, pipeline);
-    }
-
-    @Override
-    public void update() {
-        super.update();
-        if(getOffsetTimer() % 8 == 0)
-            scheduleRenderUpdate();
     }
 
     @Override

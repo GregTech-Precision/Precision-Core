@@ -76,8 +76,13 @@ public class SatelliteReceiver extends MetaTileEntityMultiblockPart implements I
 
     @Override
     public boolean setConnection(UUID netAddress) {
-        pair = ParallelAPI.getTransmitterByNetAddress(netAddress);
-        scheduleRenderUpdate();
+        SatelliteTransmitter newPair = ParallelAPI.getTransmitterByNetAddress(netAddress);
+        if(newPair != pair) {
+            pair = newPair;
+            if(pair != null)
+                pair.scheduleRenderUpdate();
+            scheduleRenderUpdate();
+        }
         return isConnected();
     }
 

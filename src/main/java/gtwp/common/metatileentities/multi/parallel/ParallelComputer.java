@@ -3,9 +3,11 @@ package gtwp.common.metatileentities.multi.parallel;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.gui.Widget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
@@ -14,8 +16,10 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.metatileentities.MetaTileEntities;
 import gtwp.api.capability.IParallelHatch;
 import gtwp.api.capability.IReceiver;
+import gtwp.api.capability.impl.ParallelComputerLogic;
 import gtwp.api.capability.impl.ParallelRecipeLogic;
 import gtwp.api.metatileentities.GTWPMultiblockAbility;
 import gtwp.api.render.GTWPTextures;
@@ -37,21 +41,21 @@ import static gregtech.api.util.RelativeDirection.*;
 
 public class ParallelComputer extends MultiblockWithDisplayBase {
 
-    private final ParallelRecipeLogic parallelRecipeLogic;
+    private int parallelPoints = 0;
 
     public ParallelComputer(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
-        this.parallelRecipeLogic = new ParallelRecipeLogic(this);
     }
 
     @Override
     protected void updateFormedValid() {
-        //this.parallelRecipeLogic.dr
+
     }
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         textList.add(new TextComponentString("Satellite is " + (isReceivingSignal() ? "online" : "offline")));
+        textList.add(new TextComponentString("Current parallel points: "+getCurrentParallelPoints()));
         super.addDisplayText(textList);
     }
 
@@ -62,7 +66,7 @@ public class ParallelComputer extends MultiblockWithDisplayBase {
                 .aisle("CC", "RT", "RT", "CC").setRepeatable(1, 14)
                 .aisle("CC", "CC", "CC", "CC")
                 .where('S', selfPredicate())
-                .where('C', states(casingState()).or(autoAbilities(true, false)).or(abilities(GTWPMultiblockAbility.RECEIVER).setMaxGlobalLimited(1).setPreviewCount(1)))
+                .where('C', states(casingState()).or(autoAbilities(true, false)).or(abilities(GTWPMultiblockAbility.RECEIVER).setMaxGlobalLimited(1).setPreviewCount(1)).or(abilities(MultiblockAbility.INPUT_ENERGY).setMaxGlobalLimited(1)))
                 .where('R', metaTileEntities(GTWPMetaTileEntities.PARALLEL_RACK))
                 .where('T', metaTileEntities(GTWPMetaTileEntities.PARALLEL_TRANSMITTER))
                 .build();
@@ -71,6 +75,17 @@ public class ParallelComputer extends MultiblockWithDisplayBase {
     @Override
     public boolean hasMufflerMechanics() {
         return false;
+    }
+
+    public int getCurrentParallelPoints(){
+        return parallelPoints;
+    }
+
+    public void updateParallelPoints(){
+        parallelPoints = 0;
+        for(IMultiblockPart imp : getMultiblockParts())
+            if(imp instanceof ParallelComputerRack)
+                parallelPoints += ((ParallelComputerRack) imp).getParallelPoints();
     }
 
     private IBlockState casingState(){
@@ -93,11 +108,6 @@ public class ParallelComputer extends MultiblockWithDisplayBase {
             return !receivers.isEmpty() && receivers.get(0).isConnected() && ((SatelliteReceiver) receivers.get(0)).getConnection().isTransmitting();
         }
         return false;
-    }
-
-    @Override
-    public boolean isActive() {
-        return parallelRecipeLogic.getEnergyContainer().getEnergyStored() > 0 && super.isActive();
     }
 
     @Nonnull

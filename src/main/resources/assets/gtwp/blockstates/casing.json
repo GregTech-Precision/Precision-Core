@@ -4,13 +4,13 @@
     "variant=computer": {
       "model": "minecraft:cube_all",
       "textures": {
-        "all": "gregtech:blocks/parallel/computer_casing"
+        "all": "gregtech:blocks/parallel/casing_computer"
       }
     },
     "variant=satellite": {
       "model": "minecraft:cube_all",
       "textures": {
-        "all": "gregtech:blocks/parallel/satellite_casing"
+        "all": "gregtech:blocks/parallel/casing_satellite"
       }
     }
   }

@@ -15,9 +15,11 @@ import gtwp.api.utils.GTWPChatUtils;
 import gtwp.api.utils.ParallelAPI;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import scala.collection.Parallel;
 
 import java.util.UUID;
 
@@ -27,7 +29,7 @@ public class SatelliteTransmitter extends MetaTileEntityMultiblockPart implement
     private UUID netAddress;
 
     public SatelliteTransmitter(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, 4);
+        super(metaTileEntityId, 5);
     }
 
     @Override
@@ -37,17 +39,15 @@ public class SatelliteTransmitter extends MetaTileEntityMultiblockPart implement
 
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (playerIn.isSneaking()) frequency--;
-        else frequency++;
-        ParallelAPI.removeSatelliteTransmitter(netAddress);
-        netAddress = generateNetAddress(playerIn, frequency);
-        ParallelAPI.addSatelliteTransmitter(netAddress, this);
-        scheduleRenderUpdate();
-        if (getWorld().isRemote){
+        if (facing == getFrontFacing()) {
+            if (playerIn.isSneaking()) frequency--;
+            else frequency++;
+            ParallelAPI.removeSatelliteTransmitter(netAddress);
+            netAddress = generateNetAddress(playerIn, frequency);
+            ParallelAPI.addSatelliteTransmitter(netAddress, this);
             GTWPChatUtils.sendMessage(playerIn, "Transmitter frequency: " + frequency);
             GTWPChatUtils.sendMessage(playerIn, "UUID: " + netAddress);
         }
-
         return super.onScrewdriverClick(playerIn, hand, facing, hitResult);
     }
 
@@ -73,12 +73,73 @@ public class SatelliteTransmitter extends MetaTileEntityMultiblockPart implement
 
     @Override
     public boolean isTransmitting() {
-        scheduleRenderUpdate();
+        if(getWorld().isRemote) scheduleRenderUpdate();
         return getController() != null && getController().isActive();
     }
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         (getController() == null ? GTWPTextures.PARALLEL_HATCH_RED : getController() != null && getController().isActive() ? GTWPTextures.PARALLEL_HATCH_GREEN : GTWPTextures.PARALLEL_HATCH_YELLOW).renderSided(getFrontFacing(), renderState, translation, pipeline);
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        if(getOffsetTimer() % 8 == 0)
+            scheduleRenderUpdate();
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        data.setInteger("frequency", this.frequency);
+        data.setUniqueId("netAddress", this.netAddress);
+        super.writeToNBT(data);
+        return data;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        this.frequency = data.getInteger("frequency");
+        this.netAddress = data.getUniqueId("netAddress");
+        super.readFromNBT(data);
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeInt(frequency);
+        buf.writeUniqueId(netAddress);
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        this.frequency = buf.readInt();
+        this.netAddress = buf.readUniqueId();
+        getHolder().scheduleChunkForRenderUpdate();
+    }
+
+    @Override
+    public void onRemoval() {
+        super.onRemoval();
+        ParallelAPI.removeSatelliteTransmitter(netAddress);
+    }
+
+    @Override
+    public void onUnload() {
+        super.onUnload();
+        ParallelAPI.removeSatelliteTransmitter(netAddress);
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        ParallelAPI.addSatelliteTransmitter(netAddress, this);
+    }
+
+    @Override
+    public void onFirstTick() {
+        super.onFirstTick();
+        ParallelAPI.addSatelliteTransmitter(netAddress, this);
     }
 }

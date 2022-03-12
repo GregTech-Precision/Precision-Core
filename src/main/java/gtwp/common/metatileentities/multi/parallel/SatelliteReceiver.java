@@ -19,6 +19,7 @@ import gtwp.api.utils.GTWPChatUtils;
 import gtwp.api.utils.ParallelAPI;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
@@ -33,7 +34,7 @@ public class SatelliteReceiver extends MetaTileEntityMultiblockPart implements I
     private SatelliteTransmitter pair = null;
 
     public SatelliteReceiver(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, 4);
+        super(metaTileEntityId, 5);
     }
 
     @Override
@@ -53,11 +54,10 @@ public class SatelliteReceiver extends MetaTileEntityMultiblockPart implements I
 
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if(playerIn.isSneaking()) frequency--;
-        else frequency++;
-        netAddress = generateNetAddress(playerIn, frequency);
-
-        if(getWorld().isRemote) {
+        if (facing == getFrontFacing()) {
+            if (playerIn.isSneaking()) frequency--;
+            else frequency++;
+            netAddress = generateNetAddress(playerIn, frequency);
             GTWPChatUtils.sendMessage(playerIn, "Receiver frequency: " + frequency);
             GTWPChatUtils.sendMessage(playerIn, "UUID: " + netAddress);
         }
@@ -76,7 +76,7 @@ public class SatelliteReceiver extends MetaTileEntityMultiblockPart implements I
 
     @Override
     public boolean setConnection(UUID netAddress) {
-        pair = ParallelAPI.satelliteTransmitters.getOrDefault(netAddress, null);
+        pair = ParallelAPI.getTransmitterByNetAddress(netAddress);
         scheduleRenderUpdate();
         return isConnected();
     }
@@ -93,7 +93,7 @@ public class SatelliteReceiver extends MetaTileEntityMultiblockPart implements I
     @Override
     public void update() {
         super.update();
-        if (getOffsetTimer() % 8 == 0)
+        if (getOffsetTimer() % 20 == 0)
             setConnection(netAddress);
     }
 
@@ -111,5 +111,34 @@ public class SatelliteReceiver extends MetaTileEntityMultiblockPart implements I
     @Override
     public void registerAbilities(List<IReceiver> list) {
         list.add(this);
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        data.setInteger("frequency", this.frequency);
+        data.setUniqueId("netAddress", this.netAddress);
+        return data;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        this.frequency = data.getInteger("frequency");
+        this.netAddress = data.getUniqueId("netAddress");
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeInt(frequency);
+        buf.writeUniqueId(netAddress);
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        this.frequency = buf.readInt();
+        this.netAddress = buf.readUniqueId();
     }
 }

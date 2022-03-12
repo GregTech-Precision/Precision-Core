@@ -4,23 +4,22 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import gtwp.api.capability.IParallelHatch;
 import gtwp.api.metatileentities.GTWPMultiblockAbility;
 import gtwp.api.render.GTWPTextures;
 import gtwp.api.utils.GTWPChatUtils;
-import gtwp.common.items.GTWPMetaItems;
-import jdk.nashorn.internal.ir.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -28,15 +27,16 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IParallelHatch>, IParallelHatch {
 
     private final boolean transmitter;
     private ParallelHatch pair = null;
-    private BlockPos pairPos;
+    private BlockPos pairPos = null;
 
     public ParallelHatch(ResourceLocation metaTileEntityId, boolean transmitter) {
-        super(metaTileEntityId, 4);
+        super(metaTileEntityId, 5);
         this.transmitter = transmitter;
     }
 
@@ -56,11 +56,16 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
     }
 
     public boolean setConnection(BlockPos position){
-        TileEntity te = getWorld().getTileEntity(position);
-        if(te instanceof MetaTileEntityHolder){
-            MetaTileEntityHolder mteh = ((MetaTileEntityHolder) te);
-            if(mteh.getMetaTileEntity() instanceof ParallelHatch){
-                return setConnection(((ParallelHatch) mteh.getMetaTileEntity()));
+        if(getWorld().isBlockLoaded(position)) {
+            TileEntity te = getWorld().getTileEntity(position);
+            if (te instanceof MetaTileEntityHolder) {
+                MetaTileEntityHolder mteh = ((MetaTileEntityHolder) te);
+                if (mteh.getMetaTileEntity() instanceof ParallelHatch) {
+                    if (setConnection(((ParallelHatch) mteh.getMetaTileEntity()))) {
+                        pairPos = position;
+                        return true;
+                    }
+                }
             }
         }
         return false;
@@ -69,8 +74,10 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
     public void breakConnection(){
         if(isConnected()) {
             this.pair.pair = null;
+            this.pair.pairPos = null;
             this.pair.scheduleRenderUpdate();
             this.pair = null;
+            this.pairPos = null;
         }
         scheduleRenderUpdate();
     }
@@ -88,7 +95,7 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
                 if (te instanceof MetaTileEntityHolder) {
                     MetaTileEntity mte = ((MetaTileEntityHolder) te).getMetaTileEntity();
                     if (mte instanceof ParallelComputerRack) {
-                        return ((ParallelComputerRack) mte).getParallel();
+                        return ((ParallelComputerRack) mte).getParallelPoints();
                     }
                 }
             }
@@ -128,8 +135,7 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
                         nbt.removeTag("inX");
                         nbt.removeTag("inY");
                         nbt.removeTag("inZ");
-                    } else GTWPChatUtils.sendMessage(playerIn,
-                            "Cannot connect "+(transmitter?"transmitter to transmitter":"receiver to receiver"));
+                    } else GTWPChatUtils.sendMessage(playerIn, "Connection failed");
                 }
             }
         }
@@ -137,7 +143,7 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
     }
 
     private SimpleOverlayRenderer getHatchOverlay(){
-        if(!isConnected()) return GTWPTextures.PARALLEL_HATCH_RED;
+        if(!isConnected() || (transmitter ? this.pair : this).getController() == null) return GTWPTextures.PARALLEL_HATCH_RED;
         return (transmitter ? this.pair : this).getController().isActive() ? GTWPTextures.PARALLEL_HATCH_GREEN : GTWPTextures.PARALLEL_HATCH_YELLOW;
     }
 
@@ -155,5 +161,11 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
     @Override
     public void registerAbilities(List<IParallelHatch> list) {
         if(!transmitter) list.add(this);
+    }
+
+    @Override
+    public void onRemoval() {
+        super.onRemoval();
+        breakConnection();
     }
 }

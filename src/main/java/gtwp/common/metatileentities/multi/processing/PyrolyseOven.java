@@ -36,7 +36,7 @@ public class PyrolyseOven extends GTWPRecipeMapMultiblockController {
                 .where('S', selfPredicate())
                 .where('P', states(getPipeCasing()))
                 .where('F', states(getFrameState()))
-                .where('C', states(getCasingState()).or(autoAbilities(true, true, true, true,false, true, false).setMaxGlobalLimited(6)).or(metaTileEntities(GTWPMetaTileEntities.PARALLEL_RECEIVER)))
+                .where('C', states(getCasingState()).or(autoAbilities(true, true, true, true,false, true, false).setMaxGlobalLimited(6)))
                 .where('#', any())
                 .where('*', air())
                 .build();

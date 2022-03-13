@@ -18,10 +18,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.io.IOException;
 
@@ -56,7 +58,6 @@ public class ParallelComputerRack extends MetaTileEntityMultiblockPart {
     }
 
     public int getParallelPoints() {
-        scheduleRenderUpdate();
         return parallelPoints;
     }
 
@@ -99,6 +100,13 @@ public class ParallelComputerRack extends MetaTileEntityMultiblockPart {
         } catch (IOException e) {
             GTLog.logger.error("Null initial sync data inventory compound tag");
         }
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        parallelPoints = inventory.countParallelPoints();
+        scheduleRenderUpdate();
     }
 
     @Override

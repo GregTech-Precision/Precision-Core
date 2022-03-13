@@ -73,7 +73,6 @@ public class SatelliteTransmitter extends MetaTileEntityMultiblockPart implement
 
     @Override
     public boolean isTransmitting() {
-        scheduleRenderUpdate();
         return getController() != null && getController().isActive();
     }
 
@@ -110,13 +109,6 @@ public class SatelliteTransmitter extends MetaTileEntityMultiblockPart implement
         super.receiveInitialSyncData(buf);
         this.frequency = buf.readInt();
         this.netAddress = buf.readUniqueId();
-        getHolder().scheduleChunkForRenderUpdate();
-    }
-
-    @Override
-    public void onRemoval() {
-        super.onRemoval();
-        ParallelAPI.removeSatelliteTransmitter(netAddress);
     }
 
     @Override
@@ -129,6 +121,12 @@ public class SatelliteTransmitter extends MetaTileEntityMultiblockPart implement
     public void onLoad() {
         super.onLoad();
         ParallelAPI.addSatelliteTransmitter(netAddress, this);
+    }
+
+    @Override
+    public void onRemoval() {
+        super.onRemoval();
+        ParallelAPI.removeSatelliteTransmitter(netAddress);
     }
 
     @Override

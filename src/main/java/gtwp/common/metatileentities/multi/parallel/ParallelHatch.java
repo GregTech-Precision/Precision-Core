@@ -16,6 +16,7 @@ import gtwp.api.capability.IParallelHatch;
 import gtwp.api.metatileentities.GTWPMultiblockAbility;
 import gtwp.api.render.GTWPTextures;
 import gtwp.api.utils.GTWPChatUtils;
+import gtwp.api.utils.GTWPUtility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -33,7 +34,6 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
 
     private final boolean transmitter;
     private ParallelHatch pair = null;
-    private BlockPos pairPos = null;
 
     public ParallelHatch(ResourceLocation metaTileEntityId, boolean transmitter) {
         super(metaTileEntityId, 5);
@@ -47,6 +47,7 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
 
     public boolean setConnection(ParallelHatch pair){
         if( pair != null && pair.transmitter != transmitter) {
+            breakConnection();
             pair.pair = this;
             pair.scheduleRenderUpdate();
             this.pair = pair;
@@ -60,12 +61,8 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
             TileEntity te = getWorld().getTileEntity(position);
             if (te instanceof MetaTileEntityHolder) {
                 MetaTileEntityHolder mteh = ((MetaTileEntityHolder) te);
-                if (mteh.getMetaTileEntity() instanceof ParallelHatch) {
-                    if (setConnection(((ParallelHatch) mteh.getMetaTileEntity()))) {
-                        pairPos = position;
-                        return true;
-                    }
-                }
+                if (mteh.getMetaTileEntity() instanceof ParallelHatch)
+                    return setConnection(((ParallelHatch) mteh.getMetaTileEntity()));
             }
         }
         return false;
@@ -74,10 +71,8 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
     public void breakConnection(){
         if(isConnected()) {
             this.pair.pair = null;
-            this.pair.pairPos = null;
             this.pair.scheduleRenderUpdate();
             this.pair = null;
-            this.pairPos = null;
         }
         scheduleRenderUpdate();
     }
@@ -104,6 +99,11 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
                 return pair.getParallel();
         }
         return 1;
+    }
+
+    @Override
+    protected boolean openGUIOnRightClick() {
+        return false;
     }
 
     @Override
@@ -139,7 +139,7 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
                 }
             }
         }
-        return super.onRightClick(playerIn, hand, facing, hitResult);
+        return super.onScrewdriverClick(playerIn, hand, facing, hitResult);
     }
 
     private SimpleOverlayRenderer getHatchOverlay(){
@@ -163,9 +163,66 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
         if(!transmitter) list.add(this);
     }
 
+    private BlockPos pairPos;
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        if(isConnected())
+            data.setIntArray("pairPos", GTWPUtility.BlockPosToInt3(pair.getPos()));
+        else if(pairPos != null) data.setIntArray("pairPos", GTWPUtility.BlockPosToInt3(pairPos));
+        return data;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        pairPos = GTWPUtility.Int3ToBlockPos(data.getIntArray("pairPos"));
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        //buf.writeBoolean(isConnected() || pairPos != null);
+        if(isConnected())
+            buf.writeBlockPos(pair.getPos());
+        else if(pairPos != null) buf.writeBlockPos(pairPos);
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        //boolean b = buf.readBoolean();
+        //if(b)
+        pairPos = buf.readBlockPos();
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if(pairPos != null)
+            if(setConnection(pairPos))
+                pairPos = null;
+    }
+
+    @Override
+    public void onUnload() {
+        super.onUnload();
+        if(pair != null) pairPos = pair.getPos();
+        breakConnection();
+    }
+
     @Override
     public void onRemoval() {
         super.onRemoval();
         breakConnection();
+    }
+
+    @Override
+    public void onFirstTick() {
+        super.onFirstTick();
+        if(pairPos != null)
+            if(setConnection(pairPos))
+                pairPos = null;
     }
 }

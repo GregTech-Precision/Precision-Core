@@ -9,29 +9,25 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
-import gregtech.api.util.GTLog;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.blocks.BlockMetalCasing;
-import gregtech.common.blocks.MetaBlocks;
 import gtwp.api.render.GTWPTextures;
+import gtwp.common.GTWPConfigHolder;
 import gtwp.common.blocks.BlockCasing;
 import gtwp.common.blocks.GTWPMetaBlocks;
 import gtwp.common.metatileentities.GTWPMetaTileEntities;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.texture.TextureUtil;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 
 public class Satellite extends MultiblockWithDisplayBase {
 
+    private int requiredDimensionId;
+
     public Satellite(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
+        this.requiredDimensionId = GTWPConfigHolder.machineOptions.devMode ? 0 : ( GTWPConfigHolder.machineOptions.satelliteRequireMoon ? -28 : -27);
     }
 
     @Override
@@ -62,6 +58,10 @@ public class Satellite extends MultiblockWithDisplayBase {
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder metaTileEntityHolder) {
         return new Satellite(metaTileEntityId);
+    }
+
+    public boolean checkDimension(){
+        return getWorld().provider.getDimension() == requiredDimensionId;
     }
 
     @Override

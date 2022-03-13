@@ -73,7 +73,7 @@ public class SatelliteTransmitter extends MetaTileEntityMultiblockPart implement
 
     @Override
     public boolean isTransmitting() {
-        return getController() != null && getController().isActive();
+        return getController() != null && getController().isActive() && ((Satellite) getController()).checkDimension();
     }
 
     @Override
@@ -84,17 +84,18 @@ public class SatelliteTransmitter extends MetaTileEntityMultiblockPart implement
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
         data.setInteger("frequency", this.frequency);
         data.setUniqueId("netAddress", this.netAddress);
-        super.writeToNBT(data);
         return data;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+
         this.frequency = data.getInteger("frequency");
         this.netAddress = data.getUniqueId("netAddress");
-        super.readFromNBT(data);
     }
 
     @Override

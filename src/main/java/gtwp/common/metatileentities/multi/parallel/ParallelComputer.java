@@ -41,16 +41,12 @@ import static gregtech.api.util.RelativeDirection.*;
 
 public class ParallelComputer extends MultiblockWithDisplayBase {
 
-    private int parallelPoints = 0;
-
     public ParallelComputer(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
     }
 
     @Override
-    protected void updateFormedValid() {
-
-    }
+    protected void updateFormedValid() {}
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
@@ -63,7 +59,7 @@ public class ParallelComputer extends MultiblockWithDisplayBase {
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start(LEFT, UP, FRONT)
                 .aisle("CC", "CS", "CC", "CC")
-                .aisle("CC", "RT", "RT", "CC").setRepeatable(1, 14)
+                .aisle("CC", "RT", "RT", "CC").setRepeatable(2, 16)
                 .aisle("CC", "CC", "CC", "CC")
                 .where('S', selfPredicate())
                 .where('C', states(casingState()).or(autoAbilities(true, false)).or(abilities(GTWPMultiblockAbility.RECEIVER).setMaxGlobalLimited(1).setPreviewCount(1)).or(abilities(MultiblockAbility.INPUT_ENERGY).setMaxGlobalLimited(1)))
@@ -78,14 +74,11 @@ public class ParallelComputer extends MultiblockWithDisplayBase {
     }
 
     public int getCurrentParallelPoints(){
-        return parallelPoints;
-    }
-
-    public void updateParallelPoints(){
-        parallelPoints = 0;
+        int parallelPoints = 0;
         for(IMultiblockPart imp : getMultiblockParts())
             if(imp instanceof ParallelComputerRack)
                 parallelPoints += ((ParallelComputerRack) imp).getParallelPoints();
+        return parallelPoints;
     }
 
     private IBlockState casingState(){

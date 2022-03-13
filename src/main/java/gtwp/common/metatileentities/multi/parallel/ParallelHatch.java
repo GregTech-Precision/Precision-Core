@@ -183,7 +183,6 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        //buf.writeBoolean(isConnected() || pairPos != null);
         if(isConnected())
             buf.writeBlockPos(pair.getPos());
         else if(pairPos != null) buf.writeBlockPos(pairPos);
@@ -192,23 +191,21 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
-        //boolean b = buf.readBoolean();
-        //if(b)
         pairPos = buf.readBlockPos();
     }
 
     @Override
     public void onLoad() {
         super.onLoad();
-        if(pairPos != null)
-            if(setConnection(pairPos))
-                pairPos = null;
+        if(pairPos != null && setConnection(pairPos))
+            pairPos = null;
     }
 
     @Override
     public void onUnload() {
         super.onUnload();
-        if(pair != null) pairPos = pair.getPos();
+        if(pair != null)
+            pairPos = pair.getPos();
         breakConnection();
     }
 
@@ -221,8 +218,7 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
     @Override
     public void onFirstTick() {
         super.onFirstTick();
-        if(pairPos != null)
-            if(setConnection(pairPos))
-                pairPos = null;
+        if(pairPos != null && setConnection(pairPos))
+            pairPos = null;
     }
 }

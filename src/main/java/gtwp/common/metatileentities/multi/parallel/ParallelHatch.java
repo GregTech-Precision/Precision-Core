@@ -12,6 +12,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
+import gtwp.api.capability.GTWPDataCodes;
 import gtwp.api.capability.IParallelHatch;
 import gtwp.api.metatileentities.GTWPMultiblockAbility;
 import gtwp.api.render.GTWPTextures;
@@ -183,22 +184,24 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        if(isConnected())
-            buf.writeBlockPos(pair.getPos());
-        else if(pairPos != null) buf.writeBlockPos(pairPos);
+        if(pair != null)
+            writeCustomData(GTWPDataCodes.RECEIVE_PAIR_POS, b -> b.writeBlockPos(pair.getPos()));
+        else if(pairPos != null) writeCustomData(GTWPDataCodes.RECEIVE_PAIR_POS, b -> b.writeBlockPos(pairPos));
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
-        pairPos = buf.readBlockPos();
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if(dataId == GTWPDataCodes.RECEIVE_PAIR_POS)
+            pairPos = buf.readBlockPos();
     }
 
     @Override
     public void onLoad() {
         super.onLoad();
-        if(pairPos != null && setConnection(pairPos))
-            pairPos = null;
+        if(pairPos != null)
+            setConnection(pairPos);
+        pairPos = null;
     }
 
     @Override
@@ -218,7 +221,8 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
     @Override
     public void onFirstTick() {
         super.onFirstTick();
-        if(pairPos != null && setConnection(pairPos))
-            pairPos = null;
+        if(pairPos != null)
+            setConnection(pairPos);
+        pairPos = null;
     }
 }

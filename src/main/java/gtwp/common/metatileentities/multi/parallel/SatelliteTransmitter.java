@@ -9,6 +9,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
+import gtwp.api.capability.GTWPDataCodes;
 import gtwp.api.capability.ITransmitter;
 import gtwp.api.render.GTWPTextures;
 import gtwp.api.utils.GTWPChatUtils;
@@ -26,7 +27,7 @@ import java.util.UUID;
 public class SatelliteTransmitter extends MetaTileEntityMultiblockPart implements ITransmitter {
 
     private int frequency = 0;
-    private UUID netAddress;
+    private UUID netAddress = null;
 
     public SatelliteTransmitter(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 5);
@@ -73,7 +74,7 @@ public class SatelliteTransmitter extends MetaTileEntityMultiblockPart implement
 
     @Override
     public boolean isTransmitting() {
-        return getController() != null && getController().isActive() && ((Satellite) getController()).checkDimension();
+        return getController() != null && getController().isActive() && ((Satellite) getController()).isAbleToWork();
     }
 
     @Override
@@ -93,7 +94,6 @@ public class SatelliteTransmitter extends MetaTileEntityMultiblockPart implement
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-
         this.frequency = data.getInteger("frequency");
         this.netAddress = data.getUniqueId("netAddress");
     }
@@ -102,14 +102,21 @@ public class SatelliteTransmitter extends MetaTileEntityMultiblockPart implement
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeInt(frequency);
-        buf.writeUniqueId(netAddress);
+        if(netAddress != null)
+            writeCustomData(GTWPDataCodes.NET_ADDRESS_UPDATE, b -> b.writeUniqueId(netAddress));
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.frequency = buf.readInt();
-        this.netAddress = buf.readUniqueId();
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if(dataId == GTWPDataCodes.NET_ADDRESS_UPDATE)
+            netAddress = buf.readUniqueId();
     }
 
     @Override

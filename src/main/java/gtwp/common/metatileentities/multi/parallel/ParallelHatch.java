@@ -12,6 +12,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
+import gtwp.api.capability.GTWPDataCodes;
 import gtwp.api.capability.IParallelHatch;
 import gtwp.api.metatileentities.GTWPMultiblockAbility;
 import gtwp.api.render.GTWPTextures;
@@ -52,6 +53,7 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
             pair.scheduleRenderUpdate();
             this.pair = pair;
             scheduleRenderUpdate();
+            writeCustomData(GTWPDataCodes.RECEIVE_PAIR_POS, b -> b.writeBlockPos(pair.getPos()));
         }
         return isConnected();
     }
@@ -61,8 +63,9 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
             TileEntity te = getWorld().getTileEntity(position);
             if (te instanceof MetaTileEntityHolder) {
                 MetaTileEntityHolder mteh = ((MetaTileEntityHolder) te);
-                if (mteh.getMetaTileEntity() instanceof ParallelHatch)
+                if (mteh.getMetaTileEntity() instanceof ParallelHatch) {
                     return setConnection(((ParallelHatch) mteh.getMetaTileEntity()));
+                }
             }
         }
         return false;
@@ -170,35 +173,23 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
         super.writeToNBT(data);
         if(isConnected())
             data.setIntArray("pairPos", GTWPUtility.BlockPosToInt3(pair.getPos()));
-        else if(pairPos != null) data.setIntArray("pairPos", GTWPUtility.BlockPosToInt3(pairPos));
+        else if(pairPos != null)
+            data.setIntArray("pairPos", GTWPUtility.BlockPosToInt3(pairPos));
         return data;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        pairPos = GTWPUtility.Int3ToBlockPos(data.getIntArray("pairPos"));
+        if(data.hasKey("pairPos"))
+            pairPos = GTWPUtility.Int3ToBlockPos(data.getIntArray("pairPos"));
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
-        if(isConnected())
-            buf.writeBlockPos(pair.getPos());
-        else if(pairPos != null) buf.writeBlockPos(pairPos);
-    }
-
-    @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
-        pairPos = buf.readBlockPos();
-    }
-
-    @Override
-    public void onLoad() {
-        super.onLoad();
-        if(pairPos != null && setConnection(pairPos))
-            pairPos = null;
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if(dataId == GTWPDataCodes.RECEIVE_PAIR_POS)
+            pairPos = buf.readBlockPos();
     }
 
     @Override
@@ -216,9 +207,9 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
     }
 
     @Override
-    public void onFirstTick() {
-        super.onFirstTick();
-        if(pairPos != null && setConnection(pairPos))
+    public void update() {
+        super.update();
+        if(pairPos != null && getOffsetTimer() % 20 == 0 && setConnection(pairPos))
             pairPos = null;
     }
 }

@@ -12,6 +12,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.util.GTLog;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
+import gtwp.api.capability.GTWPDataCodes;
 import gtwp.api.capability.IReceiver;
 import gtwp.api.metatileentities.GTWPMultiblockAbility;
 import gtwp.api.render.GTWPTextures;
@@ -30,7 +31,7 @@ import java.util.UUID;
 public class SatelliteReceiver extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IReceiver>, IReceiver {
 
     private int frequency = 0;
-    private UUID netAddress;
+    private UUID netAddress = UUID.randomUUID();
     private SatelliteTransmitter pair = null;
 
     public SatelliteReceiver(ResourceLocation metaTileEntityId) {
@@ -136,8 +137,8 @@ public class SatelliteReceiver extends MetaTileEntityMultiblockPart implements I
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        buf.writeInt(frequency);
-        buf.writeUniqueId(netAddress);
+        buf.writeInt(this.frequency);
+        buf.writeUniqueId(this.netAddress);
     }
 
     @Override

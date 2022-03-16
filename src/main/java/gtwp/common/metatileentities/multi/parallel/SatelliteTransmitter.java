@@ -9,6 +9,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
+import gtwp.api.capability.GTWPDataCodes;
 import gtwp.api.capability.ITransmitter;
 import gtwp.api.render.GTWPTextures;
 import gtwp.api.utils.GTWPChatUtils;
@@ -26,7 +27,7 @@ import java.util.UUID;
 public class SatelliteTransmitter extends MetaTileEntityMultiblockPart implements ITransmitter {
 
     private int frequency = 0;
-    private UUID netAddress;
+    private UUID netAddress = UUID.randomUUID();
 
     public SatelliteTransmitter(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 5);
@@ -93,7 +94,6 @@ public class SatelliteTransmitter extends MetaTileEntityMultiblockPart implement
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-
         this.frequency = data.getInteger("frequency");
         this.netAddress = data.getUniqueId("netAddress");
     }

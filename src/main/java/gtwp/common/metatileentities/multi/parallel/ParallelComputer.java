@@ -62,7 +62,7 @@ public class ParallelComputer extends MultiblockWithDisplayBase {
                 .aisle("CC", "RT", "RT", "CC").setRepeatable(2, 16)
                 .aisle("CC", "CC", "CC", "CC")
                 .where('S', selfPredicate())
-                .where('C', states(casingState()).or(autoAbilities(true, false)).or(abilities(GTWPMultiblockAbility.RECEIVER).setMaxGlobalLimited(1).setPreviewCount(1)).or(abilities(MultiblockAbility.INPUT_ENERGY).setMaxGlobalLimited(1)))
+                .where('C', states(casingState()).or(autoAbilities(true, false)).or(abilities(GTWPMultiblockAbility.RECEIVER).setMaxGlobalLimited(1,1)).or(abilities(MultiblockAbility.INPUT_ENERGY).setMaxGlobalLimited(1)))
                 .where('R', metaTileEntities(GTWPMetaTileEntities.PARALLEL_RACK))
                 .where('T', metaTileEntities(GTWPMetaTileEntities.PARALLEL_TRANSMITTER))
                 .build();

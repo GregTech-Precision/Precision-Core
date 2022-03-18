@@ -31,7 +31,7 @@ public abstract class GTWPRecipeMapMultiblockController extends MultiMapMultiblo
 
     @Override
     public int getMaxParallel() {
-        List<IParallelHatch> parallel = getAbilities(GTWPMultiblockAbility.PARALLEL_HATCH);
+        List<IParallelHatch> parallel = getAbilities(GTWPMultiblockAbility.PARALLEL_HATCH_IN);
         return parallel.isEmpty() ? 1 : parallel.get(0).getParallel();
     }
 
@@ -39,7 +39,7 @@ public abstract class GTWPRecipeMapMultiblockController extends MultiMapMultiblo
     public TraceabilityPredicate autoAbilities(boolean checkEnergyIn, boolean checkMaintenance, boolean checkItemIn, boolean checkItemOut, boolean checkFluidIn, boolean checkFluidOut, boolean checkMuffler) {
         TraceabilityPredicate predicate = super.autoAbilities(checkEnergyIn, checkMaintenance, checkItemIn, checkItemOut, checkFluidIn, checkFluidOut, checkMuffler);
         if (isParallel())
-            predicate = predicate.or(abilities(GTWPMultiblockAbility.PARALLEL_HATCH).setMaxGlobalLimited(1,1));
+            predicate = predicate.or(abilities(GTWPMultiblockAbility.PARALLEL_HATCH_IN).setMaxGlobalLimited(1,1));
         return predicate;
     }
 }

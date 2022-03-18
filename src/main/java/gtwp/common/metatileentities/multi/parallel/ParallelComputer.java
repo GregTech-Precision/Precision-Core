@@ -21,6 +21,7 @@ import gtwp.api.capability.IParallelHatch;
 import gtwp.api.capability.IReceiver;
 import gtwp.api.capability.impl.ParallelComputerLogic;
 import gtwp.api.capability.impl.ParallelRecipeLogic;
+import gtwp.api.metatileentities.GTWPFrequencyMultiblock;
 import gtwp.api.metatileentities.GTWPMultiblockAbility;
 import gtwp.api.render.GTWPTextures;
 import gtwp.common.blocks.BlockCasing;
@@ -39,7 +40,7 @@ import java.util.List;
 
 import static gregtech.api.util.RelativeDirection.*;
 
-public class ParallelComputer extends MultiblockWithDisplayBase {
+public class ParallelComputer extends GTWPFrequencyMultiblock {
 
     public ParallelComputer(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -64,7 +65,7 @@ public class ParallelComputer extends MultiblockWithDisplayBase {
                 .where('S', selfPredicate())
                 .where('C', states(casingState()).or(autoAbilities(true, false)).or(abilities(GTWPMultiblockAbility.RECEIVER).setMaxGlobalLimited(1,1)).or(abilities(MultiblockAbility.INPUT_ENERGY).setMaxGlobalLimited(1)))
                 .where('R', metaTileEntities(GTWPMetaTileEntities.PARALLEL_RACK))
-                .where('T', metaTileEntities(GTWPMetaTileEntities.PARALLEL_TRANSMITTER))
+                .where('T', abilities(GTWPMultiblockAbility.PARALLEL_HATCH_OUT))
                 .build();
     }
 

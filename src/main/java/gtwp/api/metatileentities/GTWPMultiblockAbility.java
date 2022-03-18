@@ -10,5 +10,8 @@ public class GTWPMultiblockAbility {
 
     public static final MultiblockAbility<ITransmitter> TRANSMITTER = new MultiblockAbility<>("transmitter");
 
-    public static final MultiblockAbility<IParallelHatch> PARALLEL_HATCH = new MultiblockAbility<>("parallel_hatch");
+    public static final MultiblockAbility<IParallelHatch> PARALLEL_HATCH_IN = new MultiblockAbility<>("parallel_hatch_in");
+
+    public static final MultiblockAbility<IParallelHatch> PARALLEL_HATCH_OUT = new MultiblockAbility<>("parallel_hatch_out");
+
 }

@@ -56,8 +56,12 @@ public class GTWPMetaTileEntities {
         ME_HATCH = MetaTileEntities.registerMetaTileEntity(id++, new MetaTileEntityMEItemOutputHatch(location("item_hatch.me")));
         TRANSMITTER = MetaTileEntities.registerMetaTileEntity(id++, new SatelliteTransmitter(location("satellite_transmitter")));
         RECEIVER = MetaTileEntities.registerMetaTileEntity(id++, new SatelliteReceiver(location("satellite_receiver")));
-        PARALLEL_TRANSMITTER = MetaTileEntities.registerMetaTileEntity(id++, new ParallelHatch(location("parallel_transmitter"), true));
-        PARALLEL_RECEIVER = MetaTileEntities.registerMetaTileEntity(id++, new ParallelHatch(location("parallel_receiver"), false));
+        for(int i = 0; i<4;i++){
+            PARALLEL_TRANSMITTER = MetaTileEntities.registerMetaTileEntity(id++, new ParallelHatch(location("parallel_transmitter_" + (int)Math.pow(4, i+1) + "p"), 5 + i, true));
+        }
+        for(int i = 0; i<4;i++) {
+            PARALLEL_RECEIVER = MetaTileEntities.registerMetaTileEntity(id++, new ParallelHatch(location("parallel_receiver_" + (int) Math.pow(4, i+1) + "p"), 5 + i, false));
+        }
         PARALLEL_RACK = MetaTileEntities.registerMetaTileEntity(id++, new ParallelComputerRack(location("parallel_rack")));
 
         //CONTROLLERS

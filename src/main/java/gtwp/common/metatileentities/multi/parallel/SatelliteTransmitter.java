@@ -74,7 +74,7 @@ public class SatelliteTransmitter extends MetaTileEntityMultiblockPart implement
 
     @Override
     public boolean isTransmitting() {
-        return getController() != null && getController().isActive() && ((Satellite) getController()).checkDimension();
+        return getController() != null && getController().isActive() && ((Satellite) getController()).isAbleToWork();
     }
 
     @Override

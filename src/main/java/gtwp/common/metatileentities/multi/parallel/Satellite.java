@@ -11,6 +11,7 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gtwp.api.metatileentities.GTWPFrequencyMultiblock;
 import gtwp.api.render.GTWPTextures;
 import gtwp.common.GTWPConfigHolder;
 import gtwp.common.blocks.BlockCasing;
@@ -21,7 +22,7 @@ import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
 
-public class Satellite extends MultiblockWithDisplayBase {
+public class Satellite extends GTWPFrequencyMultiblock {
 
     private boolean ableToWork;
 

@@ -13,6 +13,7 @@ import gtwp.api.capability.IAddresable;
 import gtwp.api.capability.IParallelHatch;
 import gtwp.api.capability.IParallelMultiblock;
 import gtwp.api.capability.impl.ParallelRecipeLogic;
+import gtwp.api.gui.FrequencyGUI;
 import gtwp.api.gui.GTWPGuiTextures;
 import gtwp.api.utils.GTWPChatUtils;
 import gtwp.api.utils.GTWPUtility;
@@ -79,32 +80,9 @@ public abstract class GTWPRecipeMapMultiblockController extends MultiMapMultiblo
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        ModularUI ui = screwDriverClick ? frequencyUI(entityPlayer) : super.createUI(entityPlayer);
+        ModularUI ui = screwDriverClick ? new FrequencyGUI(getHolder(), entityPlayer, frequency).createFrequencyUI() : super.createUI(entityPlayer);
         screwDriverClick = false;
         return ui;
-    }
-
-    private EntityPlayer currentPlayer;
-
-    public void incFrequency(Widget.ClickData data){
-        frequency++;
-    }
-
-    public void decFrequency(Widget.ClickData data){
-        frequency--;
-    }
-
-    public void setFrequency(Widget.ClickData data){
-        if(!getWorld().isRemote) {
-            if (currentPlayer != null) {
-                netAddress = generateNetAddress(currentPlayer, frequency);
-                GTWPChatUtils.sendMessage(currentPlayer, "Frequency: " + frequency);
-            }
-        }
-    }
-
-    public void closeListener(){
-        currentPlayer = null;
     }
 
     @Override
@@ -112,28 +90,16 @@ public abstract class GTWPRecipeMapMultiblockController extends MultiMapMultiblo
         return netAddress;
     }
 
-    private String getStringFrequency(){
-        return "Frequency: "+frequency;
-    }
-
-    private ModularUI frequencyUI(EntityPlayer player){
-        currentPlayer = player;
-        return ModularUI.builder(GTWPGuiTextures.FREQUENCY, 176, 166)
-                .bindPlayerInventory(player.inventory)
-                .bindCloseListener(this::closeListener)
-                .widget(new ClickButtonWidget(8, 8, 16, 16, "+", this::incFrequency))
-                .widget(new ClickButtonWidget(8, 26, 16, 16, "-", this::decFrequency))
-                .widget(new ClickButtonWidget(8,55, 16, 16, "=", this::setFrequency))
-                .dynamicLabel(34, 20, this::getStringFrequency, 0xFFFFFF)
-                .build(getHolder(), player);
+    @Override
+    public void setNetAddress(UUID netAddress) {
+        this.netAddress = netAddress;
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setInteger("frequency", frequency);
-        if(netAddress != null)
-            data.setUniqueId("netAddress", netAddress);
+        data.setUniqueId("netAddress", netAddress);
         return data;
     }
 
@@ -141,25 +107,20 @@ public abstract class GTWPRecipeMapMultiblockController extends MultiMapMultiblo
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         frequency = data.getInteger("frequency");
-        if(data.hasKey("netAddress"))
-            netAddress = data.getUniqueId("netAddress");
+        netAddress = data.getUniqueId("netAddress");
     }
 
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        buf.writeInt(this.frequency);
-        buf.writeBoolean(netAddress != null);
-        if(netAddress != null)
-            buf.writeUniqueId(netAddress);
+        buf.writeInt(frequency);
+        buf.writeUniqueId(netAddress);
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
-        this.frequency = buf.readInt();
-        if(buf.readBoolean())
-            netAddress = buf.readUniqueId();
-        else netAddress = null;
+        frequency = buf.readInt();
+        netAddress = buf.readUniqueId();
     }
 }

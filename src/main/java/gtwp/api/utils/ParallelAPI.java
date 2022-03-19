@@ -1,9 +1,7 @@
 package gtwp.api.utils;
 
-import com.google.common.collect.Sets;
-import gregtech.api.util.GTLog;
 import gtwp.common.metatileentities.multi.parallel.CommunicationTower;
-import gtwp.common.metatileentities.multi.parallel.SatelliteTransmitter;
+import gtwp.common.metatileentities.multi.parallel.SatelliteHatch;
 import io.netty.util.internal.ConcurrentSet;
 import net.minecraft.util.math.BlockPos;
 
@@ -13,11 +11,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ParallelAPI {
 
-    public static final Map<UUID, SatelliteTransmitter> satelliteTransmitters = new ConcurrentHashMap<>();
+    public static final Map<UUID, SatelliteHatch> satelliteTransmitters = new ConcurrentHashMap<>();
 
     public static final Map<UUID, Set<CommunicationTower>> communicationTowers = new ConcurrentHashMap<>();
 
-    public static void addSatelliteTransmitter(UUID address, SatelliteTransmitter transmitter){
+    public static void addSatelliteTransmitter(UUID address, SatelliteHatch transmitter){
         if(address != null && transmitter != null && !satelliteTransmitters.containsKey(address))
             satelliteTransmitters.put(address, transmitter);
     }
@@ -27,7 +25,7 @@ public class ParallelAPI {
             satelliteTransmitters.remove(address);
     }
 
-    public static SatelliteTransmitter getTransmitterByNetAddress(UUID netAddress){
+    public static SatelliteHatch getTransmitterByNetAddress(UUID netAddress){
         if(netAddress != null && !satelliteTransmitters.isEmpty() && satelliteTransmitters.containsKey(netAddress))
             return satelliteTransmitters.get(netAddress);
         else return null;

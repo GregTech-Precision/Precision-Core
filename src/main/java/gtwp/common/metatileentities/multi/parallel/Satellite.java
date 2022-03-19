@@ -11,7 +11,6 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
-import gtwp.api.metatileentities.GTWPFrequencyMultiblock;
 import gtwp.api.render.GTWPTextures;
 import gtwp.common.GTWPConfigHolder;
 import gtwp.common.blocks.BlockCasing;
@@ -22,7 +21,7 @@ import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
 
-public class Satellite extends GTWPFrequencyMultiblock {
+public class Satellite extends MultiblockWithDisplayBase {
 
     public Satellite(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -39,7 +38,7 @@ public class Satellite extends GTWPFrequencyMultiblock {
                 .aisle("CCCCC", "CCSCC", "CCCCC", "*C*C*")
                 .aisle("*C*C*", "*C*C*", "*C*C*", "*C*C*")
                 .where('S', selfPredicate())
-                .where('C', states(casingState()).or(metaTileEntities(GTWPMetaTileEntities.TRANSMITTER).setMaxGlobalLimited(1,1)))
+                .where('C', states(casingState()).or(metaTileEntities(GTWPMetaTileEntities.SATELLITE_TRANSMITTER).setMaxGlobalLimited(1,1)))
                 .where('*', any())
                 .build();
     }
@@ -75,7 +74,7 @@ public class Satellite extends GTWPFrequencyMultiblock {
     @Nonnull
     @Override
     protected ICubeRenderer getFrontOverlay() {
-        return Textures.BLAST_FURNACE_OVERLAY;
+        return Textures.QUANTUM_TANK_OVERLAY;
     }
 
     @Override

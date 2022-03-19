@@ -1,47 +1,69 @@
 package gtwp.common.metatileentities.multi.parallel;
 
+import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.gui.Widget;
+import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
+import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
-import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.util.GTLog;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.MetaBlocks;
+import gtwp.api.capability.GTWPDataCodes;
 import gtwp.api.capability.IAddresable;
-import gtwp.api.capability.IReceiver;
-import gtwp.api.metatileentities.GTWPFrequencyMultiblock;
+import gtwp.api.gui.FrequencyGUI;
 import gtwp.api.metatileentities.GTWPMultiblockAbility;
-import gtwp.api.metatileentities.GTWPRecipeMapMultiblockController;
 import gtwp.api.utils.ParallelAPI;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 
 import java.util.List;
+import java.util.UUID;
 
-public class CommunicationTower extends GTWPFrequencyMultiblock {
+public class CommunicationTower extends MultiblockWithDisplayBase implements IAddresable {
+
+    private UUID netAddress;
+    private int frequency = 0;
 
     public CommunicationTower(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
     }
 
     @Override
-    protected void updateFormedValid() {
+    protected void updateFormedValid() {}
+
+    @Override
+    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder metaTileEntityHolder) {
+        return new CommunicationTower(metaTileEntityId);
     }
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
+        textList.add(new TextComponentString("Network address: "+getNetAddress()));
         textList.add(new TextComponentString("Satellite connection: " + (isReceivingSignal() ? "online" : "offline")));
+    }
+
+    @Override
+    public boolean hasMaintenanceMechanics() {
+        return false;
+    }
+
+    @Override
+    public boolean hasMufflerMechanics() {
+        return false;
     }
 
     @Override
@@ -51,7 +73,7 @@ public class CommunicationTower extends GTWPFrequencyMultiblock {
                 .aisle("#F#", "#S#", "#F#", "#F#", "#F#", "#F#", "#F#", "#F#", "#F#", "RFR")
                 .aisle("###", "###", "###", "###", "###", "###", "###", "###", "###", "#R#")
                 .where('S', selfPredicate())
-                .where('R', abilities(GTWPMultiblockAbility.RECEIVER))
+                .where('R', abilities(GTWPMultiblockAbility.SATELLITE_RECEIVER))
                 .where('F', states(MetaBlocks.FRAMES.get(Materials.Steel).getBlock(Materials.Steel)))
                 .where('#', any())
                 .build();
@@ -60,11 +82,11 @@ public class CommunicationTower extends GTWPFrequencyMultiblock {
     public boolean isReceivingSignal(){
         if(!getWorld().isRemote){
             if(isActive()) {
-                List<IReceiver> receiverList = getAbilities(GTWPMultiblockAbility.RECEIVER);
+                List<IAddresable> receiverList = getAbilities(GTWPMultiblockAbility.SATELLITE_RECEIVER);
                 if (!receiverList.isEmpty()) {
-                    for (IReceiver receiver : receiverList) {
-                        if (receiver instanceof SatelliteReceiver) {
-                            if (!(receiver.isConnected() && ((SatelliteReceiver) receiver).getConnection().isTransmitting())) {
+                    for (IAddresable receiver : receiverList) {
+                        if (receiver instanceof SatelliteHatch) {
+                            if (!(((SatelliteHatch) receiver).isConnected() && ((SatelliteHatch) receiver).getConnection().isTransmitting())) {
                                 return false;
                             }
                         }
@@ -77,23 +99,29 @@ public class CommunicationTower extends GTWPFrequencyMultiblock {
     }
 
     @Override
-    public void setFrequency(Widget.ClickData data) {
+    public void setNetAddress(UUID newNetAddress) {
         if(!getWorld().isRemote) {
-            if (getNetAddress() != null)
-                ParallelAPI.removeCommunicationTower(getNetAddress(), this);
-            super.setFrequency(data);
+            ParallelAPI.removeCommunicationTower(getNetAddress(), this);
+            netAddress = newNetAddress;
             ParallelAPI.addCommunicationTower(getNetAddress(), this);
+            writeCustomData(GTWPDataCodes.NET_ADDRESS_UPDATE, b -> b.writeUniqueId(netAddress));
         }
+    }
+
+    @Override
+    public UUID getNetAddress() {
+        return netAddress;
+    }
+
+    @Override
+    public void setNetAddress(EntityPlayer player, int frequency) {
+        this.frequency = frequency;
+        IAddresable.super.setNetAddress(player, frequency);
     }
 
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart iMultiblockPart) {
         return Textures.SOLID_STEEL_CASING;
-    }
-
-    @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder metaTileEntityHolder) {
-        return new CommunicationTower(metaTileEntityId);
     }
 
     @Override
@@ -105,6 +133,38 @@ public class CommunicationTower extends GTWPFrequencyMultiblock {
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         getFrontOverlay().renderSided(getFrontFacing(), renderState, translation, pipeline);
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        data.setInteger("frequency", frequency);
+        if(netAddress != null)
+            data.setUniqueId("netAddress", netAddress);
+        return data;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        frequency = data.getInteger("frequency");
+        if(data.hasUniqueId("netAddress"))
+            netAddress = data.getUniqueId("netAddress");
+        else netAddress = null;
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeInt(frequency);
+        if(netAddress != null)
+            writeCustomData(GTWPDataCodes.NET_ADDRESS_UPDATE, b -> b.writeUniqueId(netAddress));
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        frequency = buf.readInt();
     }
 
     @Override
@@ -131,13 +191,18 @@ public class CommunicationTower extends GTWPFrequencyMultiblock {
         ParallelAPI.addCommunicationTower(getNetAddress(), this);
     }
 
+    private boolean screwDriverClick;
+
     @Override
-    public boolean hasMaintenanceMechanics() {
+    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        screwDriverClick = true;
         return false;
     }
 
     @Override
-    public boolean hasMufflerMechanics() {
-        return false;
+    protected ModularUI createUI(EntityPlayer entityPlayer) {
+        ModularUI ui = screwDriverClick ? new FrequencyGUI(getHolder(), entityPlayer, frequency).createFrequencyUI() : super.createUI(entityPlayer);
+        screwDriverClick = false;
+        return ui;
     }
 }

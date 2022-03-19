@@ -10,5 +10,11 @@ public interface IAddresable {
         return UUID.nameUUIDFromBytes((player.getName()+frequency).getBytes());
     }
 
+    void setNetAddress(UUID netAddress);
+
+    default void setNetAddress(EntityPlayer player, int frequency){
+        setNetAddress(generateNetAddress(player, frequency));
+    };
+
     UUID getNetAddress();
 }

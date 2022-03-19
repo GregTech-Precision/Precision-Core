@@ -29,11 +29,11 @@ public class GTWPMetaTileEntities {
     //HATCHES
     public static IOHatch IO_HATCH;
     public static MetaTileEntityMEItemOutputHatch ME_HATCH;
-    public static SatelliteTransmitter TRANSMITTER;
-    public static SatelliteReceiver RECEIVER;
-    public static ParallelHatch PARALLEL_TRANSMITTER;
-    public static ParallelHatch PARALLEL_RECEIVER;
-    public static ParallelComputerRack PARALLEL_RACK;
+    public static SatelliteHatch SATELLITE_TRANSMITTER;
+    public static SatelliteHatch SATELLITE_RECEIVER;
+//    public static ParallelHatch PARALLEL_TRANSMITTER;
+//    public static ParallelHatch PARALLEL_RECEIVER;
+//    public static ParallelComputerRack PARALLEL_RACK;
     public static CommunicationTower COMMUNICATION_TOWER;
     //CONTROLLERS
     public static SingleTank SINGLE_FLUID_MULTI_TANK;
@@ -42,7 +42,7 @@ public class GTWPMetaTileEntities {
     public static PyrolyseOven PYROLYSE_OVEN;
     public static Sawmill SAWMILL;
     public static Satellite SATELLITE;
-    public static ParallelComputer PARALLEL_COMPUTER;
+//    public static ParallelComputer PARALLEL_COMPUTER;
 
     public static PipelineFluid PIPELINEFLUID;
     public static PipelineEnergy PIPELINEENERGY;
@@ -55,15 +55,15 @@ public class GTWPMetaTileEntities {
         IO_HATCH = MetaTileEntities.registerMetaTileEntity(id++, new IOHatch(location("fluid_hatch.io")));
 
         ME_HATCH = MetaTileEntities.registerMetaTileEntity(id++, new MetaTileEntityMEItemOutputHatch(location("item_hatch.me")));
-        TRANSMITTER = MetaTileEntities.registerMetaTileEntity(id++, new SatelliteTransmitter(location("satellite_transmitter")));
-        RECEIVER = MetaTileEntities.registerMetaTileEntity(id++, new SatelliteReceiver(location("satellite_receiver")));
+        SATELLITE_TRANSMITTER = MetaTileEntities.registerMetaTileEntity(id++, new SatelliteHatch(location("satellite_transmitter"), true));
+        SATELLITE_RECEIVER = MetaTileEntities.registerMetaTileEntity(id++, new SatelliteHatch(location("satellite_receiver"), false));
         for(int i = 0; i<4;i++){
-            PARALLEL_TRANSMITTER = MetaTileEntities.registerMetaTileEntity(id++, new ParallelHatch(location("parallel_transmitter_" + (int)Math.pow(4, i+1) + "p"), 5 + i, true));
+            //PARALLEL_TRANSMITTER = MetaTileEntities.registerMetaTileEntity(id++, new ParallelHatch(location("parallel_transmitter_" + (int)Math.pow(4, i+1) + "p"), 5 + i, true));
         }
         for(int i = 0; i<4;i++) {
-            PARALLEL_RECEIVER = MetaTileEntities.registerMetaTileEntity(id++, new ParallelHatch(location("parallel_receiver_" + (int) Math.pow(4, i+1) + "p"), 5 + i, false));
+            //PARALLEL_RECEIVER = MetaTileEntities.registerMetaTileEntity(id++, new ParallelHatch(location("parallel_receiver_" + (int) Math.pow(4, i+1) + "p"), 5 + i, false));
         }
-        PARALLEL_RACK = MetaTileEntities.registerMetaTileEntity(id++, new ParallelComputerRack(location("parallel_rack")));
+        //PARALLEL_RACK = MetaTileEntities.registerMetaTileEntity(id++, new ParallelComputerRack(location("parallel_rack")));
 
         //CONTROLLERS
         SINGLE_FLUID_MULTI_TANK = MetaTileEntities.registerMetaTileEntity(id++, new SingleTank(location("fluid_tank.single")));
@@ -72,7 +72,7 @@ public class GTWPMetaTileEntities {
         PYROLYSE_OVEN = MetaTileEntities.registerMetaTileEntity(1004, new PyrolyseOven(location("pyrolyse_oven")));
         SAWMILL = MetaTileEntities.registerMetaTileEntity(id++, new Sawmill(location("sawmill")));
         SATELLITE = MetaTileEntities.registerMetaTileEntity(id++, new Satellite(location("satellite")));
-        PARALLEL_COMPUTER = MetaTileEntities.registerMetaTileEntity(id++, new ParallelComputer(location("parallel_computer")));
+        //PARALLEL_COMPUTER = MetaTileEntities.registerMetaTileEntity(id++, new ParallelComputer(location("parallel_computer")));
         COMMUNICATION_TOWER = MetaTileEntities.registerMetaTileEntity(id++, new CommunicationTower(location("communication_tower")));
         //SIMPLE MACHINES
         PIPELINEFLUID = MetaTileEntities.registerMetaTileEntity(id++, new PipelineFluid(location("pipelinefluid")));

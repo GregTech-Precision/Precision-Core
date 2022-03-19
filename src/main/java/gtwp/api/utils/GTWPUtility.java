@@ -18,4 +18,8 @@ public class GTWPUtility {
         if(Int3.length == 3) return new BlockPos(Int3[0], Int3[1], Int3[2]);
         return new BlockPos(0,0,0);
     }
+
+    public static double getDistance(BlockPos from, BlockPos to){
+        return from.getDistance(to.getX(), to.getY(), to.getZ());
+    }
 }

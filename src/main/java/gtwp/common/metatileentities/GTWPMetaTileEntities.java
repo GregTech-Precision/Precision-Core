@@ -34,6 +34,7 @@ public class GTWPMetaTileEntities {
     public static ParallelHatch PARALLEL_TRANSMITTER;
     public static ParallelHatch PARALLEL_RECEIVER;
     public static ParallelComputerRack PARALLEL_RACK;
+    public static CommunicationTower COMMUNICATION_TOWER;
     //CONTROLLERS
     public static SingleTank SINGLE_FLUID_MULTI_TANK;
     public static MultiTank MULTI_FLUID_MULTI_TANK;
@@ -72,6 +73,7 @@ public class GTWPMetaTileEntities {
         SAWMILL = MetaTileEntities.registerMetaTileEntity(id++, new Sawmill(location("sawmill")));
         SATELLITE = MetaTileEntities.registerMetaTileEntity(id++, new Satellite(location("satellite")));
         PARALLEL_COMPUTER = MetaTileEntities.registerMetaTileEntity(id++, new ParallelComputer(location("parallel_computer")));
+        COMMUNICATION_TOWER = MetaTileEntities.registerMetaTileEntity(id++, new CommunicationTower(location("communication_tower")));
         //SIMPLE MACHINES
         PIPELINEFLUID = MetaTileEntities.registerMetaTileEntity(id++, new PipelineFluid(location("pipelinefluid")));
         PIPELINEENERGY = MetaTileEntities.registerMetaTileEntity(id++, new PipelineEnergy(location("pipelineenergy"), 0));

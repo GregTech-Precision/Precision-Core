@@ -31,7 +31,7 @@ import java.util.UUID;
 public class SatelliteReceiver extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IReceiver>, IReceiver {
 
     private int frequency = 0;
-    private UUID netAddress = UUID.randomUUID();
+    private UUID netAddress;
     private SatelliteTransmitter pair = null;
 
     public SatelliteReceiver(ResourceLocation metaTileEntityId) {
@@ -55,19 +55,16 @@ public class SatelliteReceiver extends MetaTileEntityMultiblockPart implements I
 
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (facing == getFrontFacing()) {
-            if (playerIn.isSneaking()) frequency--;
-            else frequency++;
-            netAddress = generateNetAddress(playerIn, frequency);
-            GTWPChatUtils.sendMessage(playerIn, "Receiver frequency: " + frequency);
-            GTWPChatUtils.sendMessage(playerIn, "UUID: " + netAddress);
+        if(!getWorld().isRemote) {
+            if (facing == getFrontFacing()) {
+                if (playerIn.isSneaking()) frequency--;
+                else frequency++;
+                netAddress = generateNetAddress(playerIn, frequency);
+                GTWPChatUtils.sendMessage(playerIn, "Receiver frequency: " + frequency);
+                GTWPChatUtils.sendMessage(playerIn, "UUID: " + netAddress);
+            }
         }
         return super.onScrewdriverClick(playerIn, hand, facing, hitResult);
-    }
-
-    @Override
-    public UUID generateNetAddress(EntityPlayer player, int frequency) {
-        return UUID.nameUUIDFromBytes((player.getName()+frequency).getBytes());
     }
 
     @Override
@@ -77,12 +74,14 @@ public class SatelliteReceiver extends MetaTileEntityMultiblockPart implements I
 
     @Override
     public boolean setConnection(UUID netAddress) {
-        SatelliteTransmitter newPair = ParallelAPI.getTransmitterByNetAddress(netAddress);
-        if (newPair != pair) {
-            pair = newPair;
-            if (pair != null)
-                pair.scheduleRenderUpdate();
-            scheduleRenderUpdate();
+        if(!getWorld().isRemote) {
+            SatelliteTransmitter newPair = ParallelAPI.getTransmitterByNetAddress(netAddress);
+            if (newPair != pair) {
+                pair = newPair;
+                if (pair != null)
+                    pair.writeCustomData(GTWPDataCodes.RENDER_PARALLEL_HATCH, b -> b.writeBoolean(true));
+                writeCustomData(GTWPDataCodes.RENDER_PARALLEL_HATCH, b -> b.writeBoolean(true));
+            }
         }
         return isConnected();
     }
@@ -122,29 +121,41 @@ public class SatelliteReceiver extends MetaTileEntityMultiblockPart implements I
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
-        data.setInteger("frequency", this.frequency);
-        data.setUniqueId("netAddress", this.netAddress);
+        data.setInteger("frequency", frequency);
+        data.setUniqueId("netAddress", netAddress);
         return data;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        this.frequency = data.getInteger("frequency");
-        this.netAddress = data.getUniqueId("netAddress");
+        frequency = data.getInteger("frequency");
+        netAddress = data.getUniqueId("netAddress");
     }
 
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeInt(this.frequency);
-        buf.writeUniqueId(this.netAddress);
+        buf.writeBoolean(netAddress != null);
+        if(netAddress != null)
+            buf.writeUniqueId(netAddress);
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.frequency = buf.readInt();
-        this.netAddress = buf.readUniqueId();
+        if(buf.readBoolean())
+            netAddress = buf.readUniqueId();
+        else netAddress = null;
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if(dataId == GTWPDataCodes.RENDER_PARALLEL_HATCH){
+            if(buf.readBoolean()) scheduleRenderUpdate();
+        }
     }
 }

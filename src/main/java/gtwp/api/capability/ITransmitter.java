@@ -1,8 +1,6 @@
 package gtwp.api.capability;
 
-import java.util.UUID;
-
-public interface ITransmitter extends IConnectible {
+public interface ITransmitter extends IAddresable {
 
     boolean isTransmitting();
 }

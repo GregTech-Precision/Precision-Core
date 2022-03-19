@@ -24,6 +24,8 @@ import gtwp.api.capability.impl.ParallelRecipeLogic;
 import gtwp.api.metatileentities.GTWPFrequencyMultiblock;
 import gtwp.api.metatileentities.GTWPMultiblockAbility;
 import gtwp.api.render.GTWPTextures;
+import gtwp.api.utils.GTWPChatUtils;
+import gtwp.api.utils.ParallelAPI;
 import gtwp.common.blocks.BlockCasing;
 import gtwp.common.blocks.GTWPMetaBlocks;
 import gtwp.common.metatileentities.GTWPMetaTileEntities;
@@ -42,6 +44,8 @@ import static gregtech.api.util.RelativeDirection.*;
 
 public class ParallelComputer extends GTWPFrequencyMultiblock {
 
+    CommunicationTower communicationTower;
+
     public ParallelComputer(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
     }
@@ -51,8 +55,8 @@ public class ParallelComputer extends GTWPFrequencyMultiblock {
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        textList.add(new TextComponentString("Satellite is " + (isReceivingSignal() ? "online" : "offline")));
-        textList.add(new TextComponentString("Current parallel points: "+getCurrentParallelPoints()));
+        textList.add(new TextComponentString("Parallel points: "+getCurrentParallelPoints()));
+        textList.add(new TextComponentString("Satellite connection: " + (isReceivingSignal() ? "online" : "offline")));
         super.addDisplayText(textList);
     }
 
@@ -63,7 +67,7 @@ public class ParallelComputer extends GTWPFrequencyMultiblock {
                 .aisle("CC", "RT", "RT", "CC").setRepeatable(2, 16)
                 .aisle("CC", "CC", "CC", "CC")
                 .where('S', selfPredicate())
-                .where('C', states(casingState()).or(autoAbilities(true, false)).or(abilities(GTWPMultiblockAbility.RECEIVER).setMaxGlobalLimited(1,1)).or(abilities(MultiblockAbility.INPUT_ENERGY).setMaxGlobalLimited(1)))
+                .where('C', states(casingState()).or(autoAbilities(true, false)).or(abilities(MultiblockAbility.INPUT_ENERGY).setMaxGlobalLimited(1)))
                 .where('R', metaTileEntities(GTWPMetaTileEntities.PARALLEL_RACK))
                 .where('T', abilities(GTWPMultiblockAbility.PARALLEL_HATCH_OUT))
                 .build();
@@ -97,10 +101,8 @@ public class ParallelComputer extends GTWPFrequencyMultiblock {
     }
 
     public boolean isReceivingSignal() {
-        if (isActive()) {
-            List<IReceiver> receivers = getAbilities(GTWPMultiblockAbility.RECEIVER);
-            return !receivers.isEmpty() && receivers.get(0).isConnected() && ((SatelliteReceiver) receivers.get(0)).getConnection().isTransmitting();
-        }
+        if (isActive())
+            return communicationTower != null && communicationTower.isReceivingSignal();
         return false;
     }
 
@@ -114,5 +116,15 @@ public class ParallelComputer extends GTWPFrequencyMultiblock {
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         getFrontOverlay().renderSided(getFrontFacing(), renderState, translation, pipeline);
+    }
+
+    @Override
+    public void update() {
+        super.update();
+
+        if(getWorld().isRemote) return;
+
+        if(getOffsetTimer() % 20 == 0)
+            communicationTower = ParallelAPI.getActualTower(getNetAddress(), getPos());
     }
 }

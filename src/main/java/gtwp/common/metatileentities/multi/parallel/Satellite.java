@@ -24,8 +24,6 @@ import javax.annotation.Nonnull;
 
 public class Satellite extends GTWPFrequencyMultiblock {
 
-    private boolean ableToWork;
-
     public Satellite(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
     }
@@ -61,7 +59,7 @@ public class Satellite extends GTWPFrequencyMultiblock {
     }
 
     public boolean isAbleToWork(){
-        return this.ableToWork;
+        return getWorld().provider.getDimension() == (GTWPConfigHolder.machineOptions.devMode ? 0 : ( GTWPConfigHolder.machineOptions.satelliteRequireMoon ? -28 : -27));
     }
 
     @Override
@@ -84,11 +82,5 @@ public class Satellite extends GTWPFrequencyMultiblock {
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         getFrontOverlay().renderSided(getFrontFacing(), renderState, translation, pipeline);
-    }
-
-    @Override
-    public void onLoad() {
-        super.onLoad();
-        ableToWork = getWorld().provider.getDimension() == (GTWPConfigHolder.machineOptions.devMode ? 0 : ( GTWPConfigHolder.machineOptions.satelliteRequireMoon ? -28 : -27));
     }
 }

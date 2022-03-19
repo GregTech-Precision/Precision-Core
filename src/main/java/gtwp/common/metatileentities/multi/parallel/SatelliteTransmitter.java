@@ -27,7 +27,7 @@ import java.util.UUID;
 public class SatelliteTransmitter extends MetaTileEntityMultiblockPart implements ITransmitter {
 
     private int frequency = 0;
-    private UUID netAddress = UUID.randomUUID();
+    private UUID netAddress;
 
     public SatelliteTransmitter(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 5);
@@ -63,11 +63,6 @@ public class SatelliteTransmitter extends MetaTileEntityMultiblockPart implement
     }
 
     @Override
-    public UUID generateNetAddress(EntityPlayer player, int frequency) {
-        return UUID.nameUUIDFromBytes((player.getName()+frequency).getBytes());
-    }
-
-    @Override
     public UUID getNetAddress() {
         return netAddress;
     }
@@ -86,30 +81,34 @@ public class SatelliteTransmitter extends MetaTileEntityMultiblockPart implement
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
-        data.setInteger("frequency", this.frequency);
-        data.setUniqueId("netAddress", this.netAddress);
+        data.setInteger("frequency", frequency);
+        data.setUniqueId("netAddress", netAddress);
         return data;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        this.frequency = data.getInteger("frequency");
-        this.netAddress = data.getUniqueId("netAddress");
+        frequency = data.getInteger("frequency");
+        netAddress = data.getUniqueId("netAddress");
     }
 
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        buf.writeInt(frequency);
-        buf.writeUniqueId(netAddress);
+        buf.writeInt(this.frequency);
+        buf.writeBoolean(netAddress != null);
+        if(netAddress != null)
+            buf.writeUniqueId(netAddress);
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.frequency = buf.readInt();
-        this.netAddress = buf.readUniqueId();
+        if(buf.readBoolean())
+            netAddress = buf.readUniqueId();
+        else netAddress = null;
     }
 
     @Override

@@ -10,14 +10,17 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.util.GTLog;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import gtwp.api.capability.GTWPDataCodes;
+import gtwp.api.capability.IAddresable;
 import gtwp.api.capability.IParallelHatch;
 import gtwp.api.metatileentities.GTWPMultiblockAbility;
 import gtwp.api.render.GTWPTextures;
 import gtwp.api.utils.GTWPChatUtils;
 import gtwp.api.utils.GTWPUtility;
+import gtwp.api.utils.ParallelAPI;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -27,6 +30,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import scala.collection.Parallel;
 
 import java.util.List;
@@ -50,19 +55,19 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
     }
 
     public boolean setConnection(BlockPos position) {
-        if (getWorld().isBlockLoaded(position)) {
-            TileEntity te = getWorld().getTileEntity(position);
-            if (te instanceof MetaTileEntityHolder) {
-                if (((MetaTileEntityHolder) te).getMetaTileEntity() instanceof ParallelHatch) {
-                    if (((ParallelHatch) ((MetaTileEntityHolder) te).getMetaTileEntity()).transmitter != transmitter && ((ParallelHatch) ((MetaTileEntityHolder) te).getMetaTileEntity()).getTier() == getTier()) {
-                        breakConnection();
-                        pairPos = position;
-                        ParallelHatch pair = getPair();
-                        pair.breakConnection();
-                        pair.pairPos = getPos();
-                        pair.scheduleRenderUpdate();
-                        scheduleRenderUpdate();
-                        return true;
+        if(!getWorld().isRemote) {
+            if (getWorld().isBlockLoaded(position)) {
+                TileEntity te = getWorld().getTileEntity(position);
+                if (te instanceof MetaTileEntityHolder) {
+                    if (((MetaTileEntityHolder) te).getMetaTileEntity() instanceof ParallelHatch) {
+                        if (((ParallelHatch) ((MetaTileEntityHolder) te).getMetaTileEntity()).transmitter != transmitter && ((ParallelHatch) ((MetaTileEntityHolder) te).getMetaTileEntity()).getTier() == getTier()) {
+                            breakConnection();
+                            pairPos = position;
+                            ParallelHatch pair = getPair();
+                            pair.breakConnection();
+                            pair.pairPos = getPos();
+                            return true;
+                        }
                     }
                 }
             }
@@ -71,55 +76,53 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
     }
 
     public ParallelHatch getPair() {
-        scheduleRenderUpdate();
-        if (isConnected()) {
-            if (getWorld().isBlockLoaded(pairPos)) {
+        if(!getWorld().isRemote){
+            if(getWorld().isBlockLoaded(pairPos)){
                 TileEntity te = getWorld().getTileEntity(pairPos);
-                if (te != null) {
-                    if (te instanceof MetaTileEntityHolder) {
-                        if (((MetaTileEntityHolder) te).getMetaTileEntity() instanceof ParallelHatch) {
+                if(te instanceof MetaTileEntityHolder){
+                    if(((MetaTileEntityHolder) te).getMetaTileEntity() instanceof ParallelHatch){
+                        if(((ParallelHatch) ((MetaTileEntityHolder) te).getMetaTileEntity()).transmitter != transmitter && ((ParallelHatch) ((MetaTileEntityHolder) te).getMetaTileEntity()).getTier() == getTier()){
                             return ((ParallelHatch) ((MetaTileEntityHolder) te).getMetaTileEntity());
                         }
-                    }
-                } else breakConnection();
+                    } else pairPos = null;
+                } else pairPos = null;
             }
         }
         return null;
     }
 
-    public boolean breakConnection(){
-        if (isConnected()) {
-            ParallelHatch pair = getPair();
-            if (pair != null) {
-                pair.pairPos = null;
-                pair.scheduleRenderUpdate();
+    public void breakConnection(){
+        if(!getWorld().isRemote){
+            if(isConnected()){
+                ParallelHatch pair = getPair();
+                if(pair != null) {
+                    pair.pairPos = null;
+                }
             }
-            pairPos = null;
         }
-        scheduleRenderUpdate();
-        return !isConnected();
     }
 
     public boolean isConnected(){
-        return pairPos != null;
+        return pairPos != null && getPair() != null;
     }
 
     @Override
     public int getParallel(){
-        scheduleRenderUpdate();
-        if (transmitter) {
-            if (((ParallelComputer) getController()).isReceivingSignal()) {
-                TileEntity te = getWorld().getTileEntity(getPos().offset(getFrontFacing().getOpposite()));
-                if (te instanceof MetaTileEntityHolder) {
-                    MetaTileEntity mte = ((MetaTileEntityHolder) te).getMetaTileEntity();
-                    if (mte instanceof ParallelComputerRack) {
-                        return Math.min(tierParallel, ((ParallelComputerRack) mte).getParallelPoints());
+        if(!getWorld().isRemote) {
+            if (transmitter) {
+                if (((ParallelComputer) getController()).isReceivingSignal()) {
+                    TileEntity te = getWorld().getTileEntity(getPos().offset(getFrontFacing().getOpposite()));
+                    if (te instanceof MetaTileEntityHolder) {
+                        MetaTileEntity mte = ((MetaTileEntityHolder) te).getMetaTileEntity();
+                        if (mte instanceof ParallelComputerRack) {
+                            return Math.min(tierParallel, ((ParallelComputerRack) mte).getParallelPoints());
+                        }
                     }
                 }
+            } else {
+                if (isConnected() && ParallelAPI.netAddressEqual(((IAddresable) getPair().getController()).getNetAddress(), ((IAddresable) getController()).getNetAddress()))
+                    return getPair().getParallel();
             }
-        } else {
-            if (isConnected())
-                return getPair().getParallel();
         }
         return 1;
     }
@@ -136,25 +139,22 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
 
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        ItemStack item = playerIn.getHeldItem(hand);
-        NBTTagCompound nbt = item.getTagCompound();
-        if (nbt != null) {
-            if (playerIn.isSneaking()) {
-                breakConnection();
-                nbt.setIntArray("inPos", GTWPUtility.BlockPosToInt3(getPos()));
-                GTWPChatUtils.sendMessage(playerIn, "Start connection");
-            } else {
-                BlockPos connectionPos;
-                if (nbt.hasKey("inPos"))
-                    connectionPos = GTWPUtility.Int3ToBlockPos(nbt.getIntArray("inPos"));
-                else return false;
-                if (getPos().equals(connectionPos)) {
-                    GTWPChatUtils.sendMessage(playerIn, "Cannot connect to self");
+        if(!getWorld().isRemote) {
+            ItemStack item = playerIn.getHeldItem(hand);
+            NBTTagCompound nbt = item.getTagCompound();
+            if (nbt != null) {
+                if (playerIn.isSneaking()) {
+                    breakConnection();
+                    nbt.setIntArray("inPos", GTWPUtility.BlockPosToInt3(getPos()));
+                    GTWPChatUtils.sendMessage(playerIn, "Start connection");
                 } else {
-                    if (setConnection(connectionPos)) {
-                        GTWPChatUtils.sendMessage(playerIn, "Connection successful");
-                        nbt.removeTag("inPos");
-                    } else GTWPChatUtils.sendMessage(playerIn, "Connection failed");
+                    if (nbt.hasKey("inPos")) {
+                        BlockPos connectionPos = GTWPUtility.Int3ToBlockPos(nbt.getIntArray("inPos"));
+                        if (setConnection(connectionPos)) {
+                            GTWPChatUtils.sendMessage(playerIn, "Connection successful");
+                            nbt.removeTag("inPos");
+                        } else GTWPChatUtils.sendMessage(playerIn, "Connection failed");
+                    }
                 }
             }
         }
@@ -203,22 +203,17 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
+        buf.writeBoolean(isConnected());
         if(isConnected())
-            writeCustomData(GTWPDataCodes.RECEIVE_PAIR_POS, b -> b.writeBlockPos(pairPos).writeBoolean(isConnected()));
+            buf.writeBlockPos(pairPos);
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
-        super.receiveCustomData(dataId, buf);
-        if(dataId == GTWPDataCodes.RECEIVE_PAIR_POS)
-            if(buf.readBoolean()) pairPos = buf.readBlockPos();
-            else pairPos = null;
-    }
-
-    @Override
-    public void onUnload() {
-        super.onUnload();
-        breakConnection();
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        if(buf.readBoolean())
+            pairPos = buf.readBlockPos();
+        else pairPos = null;
     }
 
     @Override

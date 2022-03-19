@@ -7,4 +7,6 @@ public class GTWPDataCodes {
     public static final int BREAK_PAIR_POS = 569;
 
     public static final int RENDER_PARALLEL_HATCH = 570;
+
+    public static final int NET_ADDRESS_UPDATE = 571;
 }

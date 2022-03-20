@@ -23,6 +23,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import scala.xml.PrettyPrinter;
 
 import java.util.List;
 import java.util.UUID;
@@ -83,8 +84,23 @@ public class SatelliteHatch extends MetaTileEntityMultiblockPart implements IMul
     }
 
     @Override
-    public void setNetAddress(UUID netAddress) {
-        this.netAddress = netAddress;
+    public void setNetAddress(UUID newNetAddress) {
+        if(!getWorld().isRemote) {
+            if (transmitter) {
+                ParallelAPI.removeSatelliteTransmitter(netAddress);
+                this.netAddress = newNetAddress;
+                ParallelAPI.addSatelliteTransmitter(netAddress, this);
+            } else this.netAddress = newNetAddress;
+            writeCustomData(GTWPDataCodes.NET_ADDRESS_UPDATE, b -> b.writeUniqueId(netAddress));
+        }
+    }
+
+    @Override
+    public void setNetAddress(EntityPlayer player, int frequency) {
+        if(!getWorld().isRemote) {
+            this.frequency = frequency;
+            IAddresable.super.setNetAddress(player, frequency);
+        }
     }
 
     private SimpleOverlayRenderer getHatchOverlay(){
@@ -97,28 +113,6 @@ public class SatelliteHatch extends MetaTileEntityMultiblockPart implements IMul
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         getHatchOverlay().renderSided(getFrontFacing(), renderState, translation, pipeline);
-    }
-
-    @Override
-    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if(!getWorld().isRemote) {
-            if (facing == getFrontFacing()) {
-                if (playerIn.isSneaking()) frequency--;
-                else frequency++;
-
-                if(transmitter) {
-                    ParallelAPI.removeSatelliteTransmitter(netAddress);
-                    setNetAddress(playerIn, frequency);
-                    ParallelAPI.addSatelliteTransmitter(netAddress, this);
-                } else netAddress = generateNetAddress(playerIn, frequency);
-
-                writeCustomData(GTWPDataCodes.NET_ADDRESS_UPDATE, b -> b.writeUniqueId(netAddress));
-
-                GTWPChatUtils.sendMessage(playerIn, "Frequency: " + frequency);
-                GTWPChatUtils.sendMessage(playerIn, "UUID: " + netAddress);
-            }
-        }
-        return super.onScrewdriverClick(playerIn, hand, facing, hitResult);
     }
 
     @Override
@@ -202,9 +196,7 @@ public class SatelliteHatch extends MetaTileEntityMultiblockPart implements IMul
     }
 
     @Override
-    public void onFirstTick() {
-        super.onFirstTick();
-        if(transmitter)
-            ParallelAPI.addSatelliteTransmitter(netAddress, this);
+    public int getFrequency() {
+        return frequency;
     }
 }

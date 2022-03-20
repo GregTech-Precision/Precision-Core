@@ -1,29 +1,17 @@
 package gtwp.api.metatileentities;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.metatileentity.multiblock.MultiMapMultiblockController;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.util.GTLog;
 import gtwp.api.capability.GTWPDataCodes;
 import gtwp.api.capability.IAddresable;
 import gtwp.api.capability.IParallelHatch;
 import gtwp.api.capability.IParallelMultiblock;
 import gtwp.api.capability.impl.ParallelRecipeLogic;
-import gtwp.api.gui.FrequencyGUI;
-import gtwp.api.gui.GTWPGuiTextures;
-import gtwp.api.utils.GTWPChatUtils;
-import gtwp.api.utils.GTWPUtility;
 import gtwp.api.utils.ParallelAPI;
-import gtwp.common.metatileentities.multi.parallel.CommunicationTower;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
@@ -31,7 +19,6 @@ import java.util.UUID;
 
 public abstract class GTWPRecipeMapMultiblockController extends MultiMapMultiblockController implements IParallelMultiblock, IAddresable {
 
-    private CommunicationTower communicationTower;
     private int frequency = 0;
     private UUID netAddress;
 
@@ -52,10 +39,7 @@ public abstract class GTWPRecipeMapMultiblockController extends MultiMapMultiblo
     @Override
     public int getMaxParallel() {
         if(!getWorld().isRemote) {
-            if(communicationTower == null)
-                communicationTower = ParallelAPI.getActualTower(netAddress, getPos());
-
-            if(communicationTower != null){
+            if(ParallelAPI.getActualTower(netAddress, getPos()) != null){
                 List<IParallelHatch> parallel = getAbilities(GTWPMultiblockAbility.PARALLEL_HATCH_IN);
                 return parallel.isEmpty() ? 1 : parallel.get(0).getParallel();
             }
@@ -71,23 +55,6 @@ public abstract class GTWPRecipeMapMultiblockController extends MultiMapMultiblo
         return predicate;
     }
 
-    //shit to merge later
-
-    private boolean screwDriverClick;
-
-    @Override
-    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        screwDriverClick = true;
-        return false;
-    }
-
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        ModularUI ui = screwDriverClick ? new FrequencyGUI(getHolder(), entityPlayer, frequency).createFrequencyUI() : super.createUI(entityPlayer);
-        screwDriverClick = false;
-        return ui;
-    }
-
     @Override
     public UUID getNetAddress(){
         return netAddress;
@@ -95,7 +62,18 @@ public abstract class GTWPRecipeMapMultiblockController extends MultiMapMultiblo
 
     @Override
     public void setNetAddress(UUID netAddress) {
-        this.netAddress = netAddress;
+        if(!getWorld().isRemote) {
+            this.netAddress = netAddress;
+            writeCustomData(GTWPDataCodes.NET_ADDRESS_UPDATE, b -> b.writeUniqueId(netAddress));
+        }
+    }
+
+    @Override
+    public void setNetAddress(EntityPlayer player, int frequency) {
+        if(!getWorld().isRemote){
+            this.frequency = frequency;
+            IAddresable.super.setNetAddress(player, frequency);
+        }
     }
 
     @Override
@@ -135,5 +113,10 @@ public abstract class GTWPRecipeMapMultiblockController extends MultiMapMultiblo
         super.receiveCustomData(dataId, buf);
         if(dataId == GTWPDataCodes.NET_ADDRESS_UPDATE)
             netAddress = buf.readUniqueId();
+    }
+
+    @Override
+    public int getFrequency() {
+        return frequency;
     }
 }

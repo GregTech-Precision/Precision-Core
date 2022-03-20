@@ -4,8 +4,6 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.Widget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -13,20 +11,12 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
-import gregtech.api.util.GTLog;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.blocks.BlockMetalCasing;
-import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.metatileentities.MetaTileEntities;
 import gtwp.api.capability.GTWPDataCodes;
 import gtwp.api.capability.IAddresable;
-import gtwp.api.capability.IParallelHatch;
-import gtwp.api.capability.impl.ParallelRecipeLogic;
-import gtwp.api.gui.FrequencyGUI;
 import gtwp.api.metatileentities.GTWPMultiblockAbility;
 import gtwp.api.render.GTWPTextures;
-import gtwp.api.utils.GTWPChatUtils;
 import gtwp.api.utils.ParallelAPI;
 import gtwp.common.blocks.BlockCasing;
 import gtwp.common.blocks.GTWPMetaBlocks;
@@ -39,9 +29,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextComponentString;
-import scala.collection.Parallel;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -110,17 +98,19 @@ public class ParallelComputer extends MultiblockWithDisplayBase implements IAddr
     }
 
     @Override
-    public void setNetAddress(UUID netAddress) {
+    public void setNetAddress(UUID newNetAddress) {
         if(!getWorld().isRemote) {
-            this.netAddress = netAddress;
+            this.netAddress = newNetAddress;
             writeCustomData(GTWPDataCodes.NET_ADDRESS_UPDATE, b -> b.writeUniqueId(netAddress));
         }
     }
 
     @Override
     public void setNetAddress(EntityPlayer player, int frequency) {
-        this.frequency = frequency;
-        IAddresable.super.setNetAddress(player, frequency);
+        if(!getWorld().isRemote) {
+            this.frequency = frequency;
+            IAddresable.super.setNetAddress(player, frequency);
+        }
     }
 
     @Override
@@ -130,7 +120,7 @@ public class ParallelComputer extends MultiblockWithDisplayBase implements IAddr
 
     public boolean isReceivingSignal() {
         if (isActive())
-            return communicationTower != null && communicationTower.isReceivingSignal();
+            return ParallelAPI.getActualTower(getNetAddress(), getPos()) != null && ParallelAPI.getActualTower(getNetAddress(), getPos()).isReceivingSignal();
         return false;
     }
 
@@ -144,16 +134,6 @@ public class ParallelComputer extends MultiblockWithDisplayBase implements IAddr
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         getFrontOverlay().renderSided(getFrontFacing(), renderState, translation, pipeline);
-    }
-
-    @Override
-    public void update() {
-        super.update();
-
-        if(getWorld().isRemote) return;
-
-        if(getOffsetTimer() % 20 == 0 && communicationTower == null)
-            communicationTower = ParallelAPI.getActualTower(getNetAddress(), getPos());
     }
 
     @Override
@@ -195,18 +175,13 @@ public class ParallelComputer extends MultiblockWithDisplayBase implements IAddr
             netAddress = buf.readUniqueId();
     }
 
-    private boolean screwDriverClick;
-
     @Override
-    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        screwDriverClick = true;
-        return false;
+    public boolean onLaptopClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        return true;
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        ModularUI ui = screwDriverClick ? new FrequencyGUI(getHolder(), entityPlayer, frequency).createFrequencyUI() : super.createUI(entityPlayer);
-        screwDriverClick = false;
-        return ui;
+    public int getFrequency() {
+        return frequency;
     }
 }

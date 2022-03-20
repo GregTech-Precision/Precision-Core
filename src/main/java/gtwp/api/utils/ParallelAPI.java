@@ -13,7 +13,7 @@ public class ParallelAPI {
 
     public static final Map<UUID, SatelliteHatch> satelliteTransmitters = new ConcurrentHashMap<>();
 
-    public static final Map<UUID, Set<CommunicationTower>> communicationTowers = new ConcurrentHashMap<>();
+    public static final Map<UUID, List<CommunicationTower>> communicationTowers = new ConcurrentHashMap<>();
 
     public static void addSatelliteTransmitter(UUID address, SatelliteHatch transmitter){
         if(address != null && transmitter != null && !satelliteTransmitters.containsKey(address))
@@ -25,6 +25,7 @@ public class ParallelAPI {
             satelliteTransmitters.remove(address);
     }
 
+    @Nullable
     public static SatelliteHatch getTransmitterByNetAddress(UUID netAddress){
         if(netAddress != null && !satelliteTransmitters.isEmpty() && satelliteTransmitters.containsKey(netAddress))
             return satelliteTransmitters.get(netAddress);
@@ -36,19 +37,17 @@ public class ParallelAPI {
             if(communicationTowers.containsKey(netAddress)) {
                 communicationTowers.get(netAddress).add(tower);
             } else {
-                Set<CommunicationTower> newSet = new ConcurrentSet<>();
-                newSet.add(tower);
-                communicationTowers.put(netAddress, newSet);
+                List<CommunicationTower> towers = new ArrayList<>();
+                towers.add(tower);
+                communicationTowers.put(netAddress, towers);
             }
         }
     }
 
     public static void removeCommunicationTower(UUID netAddress, CommunicationTower tower){
-        if(!communicationTowers.isEmpty() && netAddress != null && communicationTowers != null) {
+        if(!communicationTowers.isEmpty() && netAddress != null && tower != null) {
             if (communicationTowers.containsKey(netAddress)) {
-                if(communicationTowers.get(netAddress).contains(tower)){
-                    communicationTowers.get(netAddress).remove(tower);
-                }
+                communicationTowers.get(netAddress).remove(tower);
             }
         }
     }

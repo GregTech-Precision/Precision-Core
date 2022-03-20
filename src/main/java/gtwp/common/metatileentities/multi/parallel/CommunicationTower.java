@@ -4,7 +4,6 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -17,7 +16,6 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.MetaBlocks;
 import gtwp.api.capability.GTWPDataCodes;
 import gtwp.api.capability.IAddresable;
-import gtwp.api.gui.FrequencyGUI;
 import gtwp.api.metatileentities.GTWPMultiblockAbility;
 import gtwp.api.utils.ParallelAPI;
 import net.minecraft.entity.player.EntityPlayer;
@@ -52,7 +50,6 @@ public class CommunicationTower extends MultiblockWithDisplayBase implements IAd
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
-        textList.add(new TextComponentString("Network address: "+getNetAddress()));
         textList.add(new TextComponentString("Satellite connection: " + (isReceivingSignal() ? "online" : "offline")));
     }
 
@@ -101,9 +98,9 @@ public class CommunicationTower extends MultiblockWithDisplayBase implements IAd
     @Override
     public void setNetAddress(UUID newNetAddress) {
         if(!getWorld().isRemote) {
-            ParallelAPI.removeCommunicationTower(getNetAddress(), this);
+            ParallelAPI.removeCommunicationTower(netAddress, this);
             netAddress = newNetAddress;
-            ParallelAPI.addCommunicationTower(getNetAddress(), this);
+            ParallelAPI.addCommunicationTower(netAddress, this);
             writeCustomData(GTWPDataCodes.NET_ADDRESS_UPDATE, b -> b.writeUniqueId(netAddress));
         }
     }
@@ -115,8 +112,10 @@ public class CommunicationTower extends MultiblockWithDisplayBase implements IAd
 
     @Override
     public void setNetAddress(EntityPlayer player, int frequency) {
-        this.frequency = frequency;
-        IAddresable.super.setNetAddress(player, frequency);
+        if(!getWorld().isRemote) {
+            this.frequency = frequency;
+            IAddresable.super.setNetAddress(player, frequency);
+        }
     }
 
     @Override
@@ -193,23 +192,12 @@ public class CommunicationTower extends MultiblockWithDisplayBase implements IAd
     }
 
     @Override
-    public void onFirstTick() {
-        super.onFirstTick();
-        ParallelAPI.addCommunicationTower(getNetAddress(), this);
-    }
-
-    private boolean screwDriverClick;
-
-    @Override
-    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        screwDriverClick = true;
-        return false;
+    public boolean onLaptopClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        return true;
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        ModularUI ui = screwDriverClick ? new FrequencyGUI(getHolder(), entityPlayer, frequency).createFrequencyUI() : super.createUI(entityPlayer);
-        screwDriverClick = false;
-        return ui;
+    public int getFrequency() {
+        return frequency;
     }
 }

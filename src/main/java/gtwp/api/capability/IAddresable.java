@@ -17,4 +17,6 @@ public interface IAddresable {
     };
 
     UUID getNetAddress();
+
+    int getFrequency();
 }

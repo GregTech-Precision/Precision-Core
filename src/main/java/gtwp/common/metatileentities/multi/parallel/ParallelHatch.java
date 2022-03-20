@@ -157,7 +157,8 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
     }
 
     @Override
-    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    public boolean onLaptopClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        GTWPChatUtils.sendMessage(playerIn, "laptop click");
         if(!getWorld().isRemote) {
             ItemStack item = playerIn.getHeldItem(hand);
             NBTTagCompound nbt = item.getTagCompound();
@@ -176,9 +177,9 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
                         } else GTWPChatUtils.sendMessage(playerIn, ChatFormatting.RED+"Connection failed");
                     }
                 }
-            }
+            } else GTWPChatUtils.sendMessage(playerIn, "null nbt");
         }
-        return super.onScrewdriverClick(playerIn, hand, facing, hitResult);
+        return super.onLaptopClick(playerIn, hand, facing, hitResult);
     }
 
     private SimpleOverlayRenderer getHatchOverlay(){

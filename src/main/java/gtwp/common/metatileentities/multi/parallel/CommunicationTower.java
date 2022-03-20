@@ -168,6 +168,13 @@ public class CommunicationTower extends MultiblockWithDisplayBase implements IAd
     }
 
     @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if(dataId == GTWPDataCodes.NET_ADDRESS_UPDATE)
+            netAddress = buf.readUniqueId();
+    }
+
+    @Override
     public void onUnload() {
         super.onUnload();
         ParallelAPI.removeCommunicationTower(getNetAddress(), this);

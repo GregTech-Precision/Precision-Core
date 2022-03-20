@@ -52,7 +52,10 @@ public abstract class GTWPRecipeMapMultiblockController extends MultiMapMultiblo
     @Override
     public int getMaxParallel() {
         if(!getWorld().isRemote) {
-            if(ParallelAPI.getActualTower(netAddress, getPos()) != null) {
+            if(communicationTower == null)
+                communicationTower = ParallelAPI.getActualTower(netAddress, getPos());
+
+            if(communicationTower != null){
                 List<IParallelHatch> parallel = getAbilities(GTWPMultiblockAbility.PARALLEL_HATCH_IN);
                 return parallel.isEmpty() ? 1 : parallel.get(0).getParallel();
             }
@@ -99,7 +102,8 @@ public abstract class GTWPRecipeMapMultiblockController extends MultiMapMultiblo
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setInteger("frequency", frequency);
-        data.setUniqueId("netAddress", netAddress);
+        if(netAddress != null)
+            data.setUniqueId("netAddress", netAddress);
         return data;
     }
 
@@ -107,20 +111,29 @@ public abstract class GTWPRecipeMapMultiblockController extends MultiMapMultiblo
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         frequency = data.getInteger("frequency");
-        netAddress = data.getUniqueId("netAddress");
+        if(data.hasUniqueId("netAddress"))
+            netAddress = data.getUniqueId("netAddress");
+        else netAddress = null;
     }
 
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeInt(frequency);
-        buf.writeUniqueId(netAddress);
+        if(netAddress != null)
+            writeCustomData(GTWPDataCodes.NET_ADDRESS_UPDATE, b -> b.writeUniqueId(netAddress));
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         frequency = buf.readInt();
-        netAddress = buf.readUniqueId();
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if(dataId == GTWPDataCodes.NET_ADDRESS_UPDATE)
+            netAddress = buf.readUniqueId();
     }
 }

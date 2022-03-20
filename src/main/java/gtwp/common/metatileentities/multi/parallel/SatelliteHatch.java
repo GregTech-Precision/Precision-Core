@@ -108,7 +108,7 @@ public class SatelliteHatch extends MetaTileEntityMultiblockPart implements IMul
 
                 if(transmitter) {
                     ParallelAPI.removeSatelliteTransmitter(netAddress);
-                    netAddress = generateNetAddress(playerIn, frequency);
+                    setNetAddress(playerIn, frequency);
                     ParallelAPI.addSatelliteTransmitter(netAddress, this);
                 } else netAddress = generateNetAddress(playerIn, frequency);
 

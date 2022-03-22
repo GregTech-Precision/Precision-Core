@@ -1,5 +1,6 @@
 package gtwp.api.capability.impl;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -11,10 +12,10 @@ import java.util.List;
 
 public class ParallelComputerLogic extends AbstractRecipeLogic {
 
-    public ParallelComputerLogic(ParallelComputer tileEntity) {
-        super(tileEntity, null);
-        this.progressTime = 0;
-        this.maxProgressTime = 20;
+    private boolean isWorking = false;
+
+    public ParallelComputerLogic(ParallelComputer parallelComputer) {
+        super(parallelComputer, null);
     }
 
     @Override
@@ -24,71 +25,56 @@ public class ParallelComputerLogic extends AbstractRecipeLogic {
 
     @Override
     public boolean isWorkingEnabled() {
-        return getEnergyStored() > getMaxVoltage();
+        return drawEnergy((int)(GTValues.V[5]+getMetaTileEntity().getCurrentParallelPoints()), true) && getMaxVoltage()*2 >= GTValues.V[5] + getMetaTileEntity().getCurrentParallelPoints();
     }
 
     @Override
     protected long getEnergyInputPerSecond() {
         List<IEnergyContainer> input = getMetaTileEntity().getAbilities(MultiblockAbility.INPUT_ENERGY);
-        int perSec = 0;
-        for(IEnergyContainer energy : input)
-            perSec += energy.getInputPerSec();
-        return perSec;
+        return input.isEmpty() ? 0 : input.get(0).getInputPerSec();
     }
 
     @Override
     protected long getEnergyStored() {
         List<IEnergyContainer> input = getMetaTileEntity().getAbilities(MultiblockAbility.INPUT_ENERGY);
-        int stored = 0;
-        for(IEnergyContainer energy : input)
-            stored += energy.getEnergyStored();
-        return stored;
+        return input.isEmpty() ? 0 : input.get(0).getEnergyStored();
     }
 
     @Override
     protected long getEnergyCapacity() {
         List<IEnergyContainer> input = getMetaTileEntity().getAbilities(MultiblockAbility.INPUT_ENERGY);
-        int capacity = 0;
-        for(IEnergyContainer energy : input)
-            capacity += energy.getEnergyCapacity();
-        return capacity;
-    }
-
-    @SideOnly(Side.SERVER)
-    @Override
-    protected boolean drawEnergy(int i, boolean b) {
-        List<IEnergyContainer> energy = getMetaTileEntity().getAbilities(MultiblockAbility.INPUT_ENERGY);
-        if(!energy.isEmpty())
-            energy.get(0).removeEnergy(i);
-        return true;
+        return input.isEmpty() ? 0 : input.get(0).getEnergyCapacity();
     }
 
     @Override
     protected long getMaxVoltage() {
+        List<IEnergyContainer> input = getMetaTileEntity().getAbilities(MultiblockAbility.INPUT_ENERGY);
+        return input.isEmpty() ? 0 : input.get(0).getInputVoltage();
+    }
+
+    @Override
+    protected boolean drawEnergy(int amount, boolean simulate) {
         List<IEnergyContainer> energy = getMetaTileEntity().getAbilities(MultiblockAbility.INPUT_ENERGY);
-        return energy.isEmpty() ? 0 : energy.get(0).getInputVoltage();
+        if (!energy.isEmpty()) {
+            if (simulate) {
+                return energy.get(0).getEnergyStored() - amount >= 0;
+            } else {
+                return energy.get(0).changeEnergy(-amount) >= 0;
+            }
+        }
+        return false;
     }
 
     @Override
     public void update() {
-        if(progressTime == 0 && isWorkingEnabled())
-            progressTime = 1;
+        if(isWorkingEnabled()){
+            isWorking = true;
+            drawEnergy((int)(GTValues.V[5]+getMetaTileEntity().getCurrentParallelPoints()), false);
+        } else isWorking = false;
     }
 
     @Override
     public boolean isWorking() {
-        return progressTime > 0;
-    }
-
-    @Override
-    protected void updateRecipeProgress() {
-        if(++progressTime > maxProgressTime)
-            completeRecipe();
-        drawEnergy(8192, false);
-    }
-
-    @Override
-    protected void completeRecipe() {
-        progressTime = 0;
+        return isWorking;
     }
 }

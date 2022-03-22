@@ -15,6 +15,7 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gtwp.api.capability.GTWPDataCodes;
 import gtwp.api.capability.IAddresable;
+import gtwp.api.capability.impl.ParallelComputerLogic;
 import gtwp.api.metatileentities.GTWPMultiblockAbility;
 import gtwp.api.render.GTWPTextures;
 import gtwp.api.utils.ParallelAPI;
@@ -42,9 +43,11 @@ public class ParallelComputer extends MultiblockWithDisplayBase implements IAddr
     private CommunicationTower communicationTower;
     private int frequency = 0;
     private UUID netAddress;
+    private final ParallelComputerLogic workingLogic;
 
     public ParallelComputer(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
+        workingLogic = new ParallelComputerLogic(this);
     }
 
     @Override
@@ -119,7 +122,7 @@ public class ParallelComputer extends MultiblockWithDisplayBase implements IAddr
     }
 
     public boolean isReceivingSignal() {
-        if (isActive())
+        if (workingLogic.isWorking())
             return ParallelAPI.getActualTower(getNetAddress(), getPos()) != null && ParallelAPI.getActualTower(getNetAddress(), getPos()).isReceivingSignal();
         return false;
     }

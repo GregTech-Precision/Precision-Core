@@ -34,7 +34,7 @@ public class ParallelAPI {
 
     public static void addCommunicationTower(UUID netAddress, CommunicationTower tower){
         if(netAddress != null && tower != null){
-            if(communicationTowers.containsKey(netAddress)) {
+            if(communicationTowers.containsKey(netAddress) && !communicationTowers.get(netAddress).contains(tower)) {
                 communicationTowers.get(netAddress).add(tower);
             } else {
                 List<CommunicationTower> towers = new ArrayList<>();

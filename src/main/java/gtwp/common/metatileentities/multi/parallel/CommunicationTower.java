@@ -186,8 +186,8 @@ public class CommunicationTower extends MultiblockWithDisplayBase implements IAd
     }
 
     @Override
-    public void onLoad() {
-        super.onLoad();
+    public void onFirstTick() {
+        super.onFirstTick();
         ParallelAPI.addCommunicationTower(getNetAddress(), this);
     }
 

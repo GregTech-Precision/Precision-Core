@@ -189,8 +189,8 @@ public class SatelliteHatch extends MetaTileEntityMultiblockPart implements IMul
     }
 
     @Override
-    public void onLoad() {
-        super.onLoad();
+    public void onFirstTick() {
+        super.onFirstTick();
         if(transmitter)
             ParallelAPI.addSatelliteTransmitter(netAddress, this);
     }

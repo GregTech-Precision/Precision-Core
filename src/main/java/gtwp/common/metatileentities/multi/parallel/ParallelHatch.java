@@ -35,6 +35,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import scala.collection.Parallel;
 
+import java.net.InetAddress;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -68,13 +69,11 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
                             ParallelHatch pair = getPair();
                             pair.breakConnection();
                             pair.pairPos = getPos();
-                            pair.updateRenderState();
                             return true;
                         }
                     }
                 }
             }
-            updateRenderState();
         }
         return false;
     }
@@ -107,7 +106,6 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
                 pairPos = null;
             }
         }
-        updateRenderState();
     }
 
     public boolean isConnected(){
@@ -117,7 +115,6 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
     @Override
     public int getParallel(){
         if(!getWorld().isRemote) {
-            updateRenderState();
             if (transmitter) {
                 if (((ParallelComputer) getController()).isReceivingSignal()) {
                     TileEntity te = getWorld().getTileEntity(getPos().offset(getFrontFacing().getOpposite()));
@@ -139,11 +136,25 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
     private byte updateRenderState(){
         byte newRenderState = 2;
         if(!getWorld().isRemote) {
-            if (isConnected()) {
-                renderState = (byte) ((transmitter ? getPair() : this).getController() != null && (transmitter ? getPair() : this).getController().isActive() ? 0 : 1);
-            }
+            if (isConnected())
+                newRenderState = (byte) ((transmitter ? getPair() : this).getController() != null && (transmitter ? getPair() : this).getController().isActive() ? 0 : 1);
         }
         return newRenderState;
+    }
+
+    @Override
+    public void update() {
+        super.update();
+
+        if(getWorld().isRemote) return;
+
+        if(getOffsetTimer() % 8 == 0) {
+            byte newRenderState = updateRenderState();
+            if (newRenderState != renderState) {
+                renderState = newRenderState;
+                writeCustomData(GTWPDataCodes.RENDER_STATE_UPDATE, b -> b.writeByte(renderState));
+            }
+        }
     }
 
     @Override

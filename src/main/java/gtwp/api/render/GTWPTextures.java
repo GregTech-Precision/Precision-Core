@@ -20,6 +20,8 @@ public class GTWPTextures {
     public static SimpleOverlayRenderer PARALLEL_RACK_EMPTY;
     public static SimpleOverlayRenderer PARALLEL_RACK_ACTIVE;
     public static SimpleOverlayRenderer PARALLEL_RACK_INACTIVE;
+    //multibloc casings
+    public static SimpleOverlayRenderer CASING_EXTRADIFICATION;
 
 
 
@@ -36,5 +38,7 @@ public class GTWPTextures {
         PARALLEL_RACK_EMPTY = new SimpleOverlayRenderer("parallel/rack_overlay_empty");
         PARALLEL_RACK_ACTIVE = new SimpleOverlayRenderer("parallel/rack_overlay_active");
         PARALLEL_RACK_INACTIVE = new SimpleOverlayRenderer("parallel/rack_overlay_inactive");
+        //casings
+        CASING_EXTRADIFICATION = new SimpleOverlayRenderer("casings/casing_extradification");
     }
 }

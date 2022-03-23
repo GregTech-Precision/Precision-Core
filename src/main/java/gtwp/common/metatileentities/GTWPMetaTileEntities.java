@@ -10,6 +10,7 @@ import gtwp.GTWP;
 import gtwp.common.metatileentities.longpipes.PipelineEnergy;
 import gtwp.common.metatileentities.longpipes.PipelineFluid;
 import gtwp.common.metatileentities.multi.parallel.*;
+import gtwp.common.metatileentities.multi.processing.Extradification;
 import gtwp.common.metatileentities.multi.processing.Greenhouse;
 import gtwp.common.metatileentities.multi.processing.Sawmill;
 import gtwp.common.metatileentities.multi.tanks.MultiTank;
@@ -43,6 +44,7 @@ public class GTWPMetaTileEntities {
     public static Sawmill SAWMILL;
     public static Satellite SATELLITE;
     public static ParallelComputer PARALLEL_COMPUTER;
+    public static Extradification EXTRADIFICATION;
 
     public static PipelineFluid PIPELINEFLUID;
     public static PipelineEnergy PIPELINEENERGY;
@@ -74,6 +76,8 @@ public class GTWPMetaTileEntities {
         SATELLITE = MetaTileEntities.registerMetaTileEntity(id++, new Satellite(location("satellite")));
         PARALLEL_COMPUTER = MetaTileEntities.registerMetaTileEntity(id++, new ParallelComputer(location("parallel_computer")));
         COMMUNICATION_TOWER = MetaTileEntities.registerMetaTileEntity(id++, new CommunicationTower(location("communication_tower")));
+        EXTRADIFICATION = MetaTileEntities.registerMetaTileEntity(id++, new Extradification(location("extradification")));
+
         //SIMPLE MACHINES
         PIPELINEFLUID = MetaTileEntities.registerMetaTileEntity(id++, new PipelineFluid(location("pipelinefluid")));
         PIPELINEENERGY = MetaTileEntities.registerMetaTileEntity(id++, new PipelineEnergy(location("pipelineenergy"), 0));

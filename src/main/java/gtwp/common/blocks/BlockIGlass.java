@@ -10,6 +10,8 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
+import javax.annotation.Nonnull;
+
 public class BlockIGlass extends VariantBlock<BlockIGlass.IGlass> {
 
     public BlockIGlass()
@@ -23,23 +25,26 @@ public class BlockIGlass extends VariantBlock<BlockIGlass.IGlass> {
         setLightOpacity(0);
     }
 
+
     @Override
     public BlockRenderLayer getBlockLayer() {
         return BlockRenderLayer.TRANSLUCENT;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean isOpaqueCube(IBlockState state)
     {
         return false;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
         return blockAccess.getBlockState(pos.offset(side)) != blockState || blockState.getBlock() != this && super.shouldSideBeRendered(blockState, blockAccess, pos, side);
     }
 
-    enum IGlass implements IStringSerializable {
+    public enum IGlass implements IStringSerializable {
         WHITE("iglass0"),
         ORANGE("iglass1"),
         MAGENTA("iglass2"),
@@ -63,8 +68,9 @@ public class BlockIGlass extends VariantBlock<BlockIGlass.IGlass> {
             this.name = name;
         }
 
+        @Nonnull
         public String getName() {
-            return name;
+            return this.name;
         }
     }
 }

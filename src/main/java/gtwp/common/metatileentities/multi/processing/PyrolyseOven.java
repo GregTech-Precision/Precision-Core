@@ -12,13 +12,16 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockBoilerCasing;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
+import gtwp.api.metatileentities.GTWPMultiblockAbility;
+import gtwp.api.metatileentities.GTWPRecipeMapMultiblockController;
 import gtwp.api.recipes.GTWPRecipeMaps;
+import gtwp.common.metatileentities.GTWPMetaTileEntities;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
 
-public class PyrolyseOven extends RecipeMapMultiblockController {
+public class PyrolyseOven extends GTWPRecipeMapMultiblockController {
 
     public PyrolyseOven(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, GTWPRecipeMaps.PYROLYSE);

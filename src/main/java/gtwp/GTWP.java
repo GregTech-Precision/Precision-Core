@@ -20,7 +20,7 @@ public class GTWP {
 
     public static final String MODID = "gtwp";
     public static final String NAME = "GT:WP";
-    public static final String VERSION = "0.0.1";
+    public static final String VERSION = "0.0.5";
 
     @SidedProxy(modId = MODID, clientSide = "gtwp.common.ClientProxy", serverSide = "gtwp.common.CommonProxy")
     public static CommonProxy proxy;
@@ -31,7 +31,6 @@ public class GTWP {
 
 
         GTWPMetaBlocks.init();
-        GTWPMetaItems.init();
         GTWPMetaTileEntities.init();
 
         proxy.preLoad();

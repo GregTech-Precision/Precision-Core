@@ -4,6 +4,7 @@ import gregtech.api.util.GTLog;
 import gregtech.common.blocks.VariantItemBlock;
 import gtwp.GTWP;
 import gtwp.common.blocks.GTWPMetaBlocks;
+import gtwp.common.items.GTWPMetaItems;
 import gtwp.loaders.recipes.GTWPRecipeLoader;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -25,7 +26,7 @@ import java.util.function.Function;
 public class CommonProxy {
 
     public void preLoad() {
-//        GAMetaItems.init();
+        GTWPMetaItems.init();
 //        GAMetaFluids.init();
     }
 
@@ -44,6 +45,7 @@ public class CommonProxy {
         registry.register(GTWPMetaBlocks.FLUID_STORAGE);
         registry.register(GTWPMetaBlocks.IGLASS);
         registry.register(GTWPMetaBlocks.PIPELINE);
+        registry.register(GTWPMetaBlocks.CASING);
     }
 
 
@@ -55,6 +57,8 @@ public class CommonProxy {
         registry.register(createItemBlock(GTWPMetaBlocks.FLUID_STORAGE, VariantItemBlock::new));
         registry.register(createItemBlock(GTWPMetaBlocks.IGLASS, VariantItemBlock::new));
         registry.register(createItemBlock(GTWPMetaBlocks.PIPELINE, VariantItemBlock::new));
+        registry.register(createItemBlock(GTWPMetaBlocks.CASING, VariantItemBlock::new));
+        registry.register(createItemBlock(GTWPMetaBlocks.PARALLEL_CASING, VariantItemBlock::new));
     }
 
     private static <T extends Block> ItemBlock createItemBlock(T block, Function<T, ItemBlock> producer) {

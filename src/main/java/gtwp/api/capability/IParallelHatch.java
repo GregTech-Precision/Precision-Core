@@ -2,5 +2,5 @@ package gtwp.api.capability;
 
 public interface IParallelHatch {
 
-    int getParallel();
+    default int getParallel(){ return 1; };
 }

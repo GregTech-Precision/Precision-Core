@@ -25,6 +25,8 @@ import net.minecraft.util.ResourceLocation;
 import javax.annotation.Nonnull;
 import java.util.function.Predicate;
 
+import static gregtech.api.util.RelativeDirection.*;
+
 public class MESystemProvider extends GTWPRecipeMapMultiblockController {
 
     public MESystemProvider(ResourceLocation metaTileEntityId) {
@@ -35,15 +37,15 @@ public class MESystemProvider extends GTWPRecipeMapMultiblockController {
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
                 .aisle("CCCCC#", "CGGGC#", "CGGGC#", "CGGGC#")
-                .aisle("CCCCCC", "CUSUCC", "CUSUCC", "CGGGC#")
-                .aisle("CCCCCC", "CUSUCS", "CUSUCC", "CGGGC#")
+                .aisle("CCCCCC", "CUFUCC", "CUFUCC", "CGGGC#")
+                .aisle("CCCCCC", "CUFUCS", "CUFUCC", "CGGGC#")
                 .aisle("CCCCC#", "CGMGC#", "CGGGC#", "CGGGC#")
                 .where('S', selfPredicate())
                 .where('C', states(GTWPMetaBlocks.CASING.getState(BlockCasing.Casings.ME)).or(autoAbilities(true, true, true, true, true, false, false).setMaxGlobalLimited(9)))
                 .where('G', new TraceabilityPredicate(glassPredicate()))
                 .where('M', metaTileEntities(GTWPMetaTileEntities.AE_CONNECTOR))
                 .where('U', new TraceabilityPredicate(craftingUnit()))
-                .where('S', new TraceabilityPredicate(craftingStorage()))
+                .where('F', new TraceabilityPredicate(craftingStorage()))
                 .where('#', any())
                 .build();
     }

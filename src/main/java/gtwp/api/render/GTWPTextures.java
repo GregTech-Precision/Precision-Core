@@ -21,6 +21,8 @@ public class GTWPTextures {
     public static SimpleOverlayRenderer PARALLEL_RACK_ACTIVE;
     public static SimpleOverlayRenderer PARALLEL_RACK_INACTIVE;
     public static SimpleOverlayRenderer CASING_ME;
+    public static SimpleOverlayRenderer AE_CONNECTOR_ACTIVE;
+    public static SimpleOverlayRenderer AE_CONNECTOR_INACTIVE;
 
 
 
@@ -38,5 +40,7 @@ public class GTWPTextures {
         PARALLEL_RACK_ACTIVE = new SimpleOverlayRenderer("parallel/rack_overlay_active");
         PARALLEL_RACK_INACTIVE = new SimpleOverlayRenderer("parallel/rack_overlay_inactive");
         CASING_ME = new SimpleOverlayRenderer("matrixsystem/casing_me");
+        AE_CONNECTOR_ACTIVE = new SimpleOverlayRenderer("matrixsystem/ae_connector_active");
+        AE_CONNECTOR_INACTIVE = new SimpleOverlayRenderer("matrixsystem/ae_connector_inactive");
     }
 }

@@ -9,6 +9,8 @@ import gregtech.common.metatileentities.MetaTileEntities;
 import gtwp.GTWP;
 import gtwp.common.metatileentities.longpipes.PipelineEnergy;
 import gtwp.common.metatileentities.longpipes.PipelineFluid;
+import gtwp.common.metatileentities.multi.matrixsystem.AEConnectorHatch;
+import gtwp.common.metatileentities.multi.matrixsystem.MESystemProvider;
 import gtwp.common.metatileentities.multi.parallel.*;
 import gtwp.common.metatileentities.multi.processing.Greenhouse;
 import gtwp.common.metatileentities.multi.processing.Sawmill;
@@ -18,6 +20,7 @@ import gtwp.common.metatileentities.multi.tanks.SingleTank;
 import gtwp.common.metatileentities.multi.tanks.IOHatch;
 import gtwp.common.metatileentities.multi.multiblockparts.MetaTileEntityMEItemOutputHatch;
 import net.minecraft.util.ResourceLocation;
+import scala.tools.cmd.Meta;
 
 import java.util.function.Function;
 
@@ -35,6 +38,7 @@ public class GTWPMetaTileEntities {
     public static ParallelHatch PARALLEL_RECEIVER;
     public static ParallelComputerRack PARALLEL_RACK;
     public static CommunicationTower COMMUNICATION_TOWER;
+    public static AEConnectorHatch AE_CONNECTOR;
     //CONTROLLERS
     public static SingleTank SINGLE_FLUID_MULTI_TANK;
     public static MultiTank MULTI_FLUID_MULTI_TANK;
@@ -43,6 +47,7 @@ public class GTWPMetaTileEntities {
     public static Sawmill SAWMILL;
     public static Satellite SATELLITE;
     public static ParallelComputer PARALLEL_COMPUTER;
+    public static MESystemProvider ME_SYSTEM_PROVIDER;
 
     public static PipelineFluid PIPELINEFLUID;
     public static PipelineEnergy PIPELINEENERGY;
@@ -64,6 +69,7 @@ public class GTWPMetaTileEntities {
             PARALLEL_RECEIVER = MetaTileEntities.registerMetaTileEntity(id++, new ParallelHatch(location("parallel_receiver_" + (int) Math.pow(4, i+1) + "p"), 5 + i, false));
         }
         PARALLEL_RACK = MetaTileEntities.registerMetaTileEntity(id++, new ParallelComputerRack(location("parallel_rack")));
+        AE_CONNECTOR = MetaTileEntities.registerMetaTileEntity(id++, new AEConnectorHatch(location("ae_connector")));
 
         //CONTROLLERS
         SINGLE_FLUID_MULTI_TANK = MetaTileEntities.registerMetaTileEntity(id++, new SingleTank(location("fluid_tank.single")));
@@ -74,6 +80,7 @@ public class GTWPMetaTileEntities {
         SATELLITE = MetaTileEntities.registerMetaTileEntity(id++, new Satellite(location("satellite")));
         PARALLEL_COMPUTER = MetaTileEntities.registerMetaTileEntity(id++, new ParallelComputer(location("parallel_computer")));
         COMMUNICATION_TOWER = MetaTileEntities.registerMetaTileEntity(id++, new CommunicationTower(location("communication_tower")));
+        ME_SYSTEM_PROVIDER = MetaTileEntities.registerMetaTileEntity(id++, new MESystemProvider(location("me_system_provider")));
         //SIMPLE MACHINES
         PIPELINEFLUID = MetaTileEntities.registerMetaTileEntity(id++, new PipelineFluid(location("pipelinefluid")));
         PIPELINEENERGY = MetaTileEntities.registerMetaTileEntity(id++, new PipelineEnergy(location("pipelineenergy"), 0));

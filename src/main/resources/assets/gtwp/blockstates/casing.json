@@ -12,6 +12,12 @@
       "textures": {
         "all": "gregtech:blocks/parallel/casing_satellite"
       }
+    },
+    "variant=me": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/matrixsystem/casing_me"
+      }
     }
   }
 }

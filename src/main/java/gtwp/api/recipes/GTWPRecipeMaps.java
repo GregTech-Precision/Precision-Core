@@ -34,4 +34,12 @@ public class GTWPRecipeMaps {
             0,1,
             0,0,
             new SimpleRecipeBuilder(), false);
+
+    public static final RecipeMap<SimpleRecipeBuilder> ME_SYSTEM_PROVIDER = new RecipeMap<>(
+            "me_system_provider",
+            1,9,
+            1,1,
+            1,1,
+            0,0,
+            new SimpleRecipeBuilder(), false);
 }

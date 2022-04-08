@@ -27,8 +27,6 @@ public class PrecisionCore {
     @EventHandler
     public static void preInit(FMLPreInitializationEvent event)
     {
-
-
         PrecisionMetaBlocks.init();
         PrecisionMetaTileEntities.init();
 

@@ -2,7 +2,6 @@ package precisioncore.common.metatileentities.multi.processing;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;

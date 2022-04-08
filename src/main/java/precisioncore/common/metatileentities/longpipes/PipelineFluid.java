@@ -1,7 +1,6 @@
 package precisioncore.common.metatileentities.longpipes;
 
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTTransferUtils;
 import net.minecraft.util.ResourceLocation;

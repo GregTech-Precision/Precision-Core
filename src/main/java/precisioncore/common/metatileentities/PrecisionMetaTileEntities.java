@@ -44,10 +44,6 @@ public class PrecisionMetaTileEntities {
     public static Satellite SATELLITE;
     public static ParallelComputer PARALLEL_COMPUTER;
 
-    public static PipelineFluid PIPELINEFLUID;
-    public static PipelineEnergy PIPELINEENERGY;
-
-
     public static void init() {
         GTLog.logger.info("Precision Core Registering New Meta Tile Entities");
 
@@ -75,8 +71,6 @@ public class PrecisionMetaTileEntities {
         PARALLEL_COMPUTER = MetaTileEntities.registerMetaTileEntity(id++, new ParallelComputer(location("parallel_computer")));
         COMMUNICATION_TOWER = MetaTileEntities.registerMetaTileEntity(id++, new CommunicationTower(location("communication_tower")));
         //SIMPLE MACHINES
-        PIPELINEFLUID = MetaTileEntities.registerMetaTileEntity(id++, new PipelineFluid(location("pipelinefluid")));
-        PIPELINEENERGY = MetaTileEntities.registerMetaTileEntity(id++, new PipelineEnergy(location("pipelineenergy"), 0));
     }
 
     private static void registerSimpleMetaTileEntity(SimpleMachineMetaTileEntity[] machines,

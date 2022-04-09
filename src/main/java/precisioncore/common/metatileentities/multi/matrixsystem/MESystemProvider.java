@@ -14,6 +14,7 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import precisioncore.api.metatileentities.PrecisionMultiblockAbility;
 import precisioncore.api.metatileentities.PrecisionRecipeMapMultiblockController;
 import precisioncore.api.recipes.PrecisionRecipeMaps;
 import precisioncore.api.render.PrecisionTextures;
@@ -38,11 +39,12 @@ public class MESystemProvider extends PrecisionRecipeMapMultiblockController {
                 .aisle("CCCCC#", "CGGGC#", "CGGGC#", "CGGGC#")
                 .aisle("CCCCCC", "CUFUCC", "CUFUCC", "CGGGC#")
                 .aisle("CCCCCC", "CUFUCS", "CUFUCC", "CGGGC#")
-                .aisle("CCCCC#", "CGMGC#", "CGGGC#", "CGGGC#")
+                .aisle("CCPCC#", "CGMGC#", "CGGGC#", "CGGGC#")
                 .where('S', selfPredicate())
                 .where('C', states(PrecisionMetaBlocks.CASING.getState(BlockCasing.Casings.ME)).or(autoAbilities(true, true, true, true, true, false, false).setMaxGlobalLimited(9)))
-                .where('G', new TraceabilityPredicate(glassPredicate()))
                 .where('M', metaTileEntities(PrecisionMetaTileEntities.ME_CONNECTOR))
+                .where('P', abilities(PrecisionMultiblockAbility.MATRIX_PARTICLE_IMPORT))
+                .where('G', new TraceabilityPredicate(glassPredicate()))
                 .where('U', new TraceabilityPredicate(craftingUnit()))
                 .where('F', new TraceabilityPredicate(craftingStorage()))
                 .where('#', any())

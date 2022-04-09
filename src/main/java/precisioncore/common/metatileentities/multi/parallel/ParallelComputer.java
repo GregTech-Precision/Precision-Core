@@ -40,7 +40,6 @@ import static gregtech.api.util.RelativeDirection.*;
 
 public class ParallelComputer extends MultiblockWithDisplayBase implements IAddresable {
 
-    private CommunicationTower communicationTower;
     private int frequency = 0;
     private UUID netAddress;
     private final ParallelComputerLogic workingLogic;

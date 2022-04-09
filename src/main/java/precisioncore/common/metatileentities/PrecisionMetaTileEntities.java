@@ -7,8 +7,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.common.metatileentities.MetaTileEntities;
 import precisioncore.PrecisionCore;
-import precisioncore.common.metatileentities.longpipes.PipelineEnergy;
-import precisioncore.common.metatileentities.longpipes.PipelineFluid;
+import precisioncore.common.metatileentities.multi.matrixsystem.*;
 import precisioncore.common.metatileentities.multi.parallel.*;
 import precisioncore.common.metatileentities.multi.processing.Greenhouse;
 import precisioncore.common.metatileentities.multi.processing.Sawmill;
@@ -35,6 +34,7 @@ public class PrecisionMetaTileEntities {
     public static ParallelHatch PARALLEL_RECEIVER;
     public static ParallelComputerRack PARALLEL_RACK;
     public static CommunicationTower COMMUNICATION_TOWER;
+
     //CONTROLLERS
     public static SingleTank SINGLE_FLUID_MULTI_TANK;
     public static MultiTank MULTI_FLUID_MULTI_TANK;
@@ -43,6 +43,13 @@ public class PrecisionMetaTileEntities {
     public static Sawmill SAWMILL;
     public static Satellite SATELLITE;
     public static ParallelComputer PARALLEL_COMPUTER;
+
+    //MATRIX SYSTEM
+    public static MEConnectorHatch ME_CONNECTOR;
+    public static MESystemProvider ME_SYSTEM_PROVIDER;
+    public static MatrixParticleDiffuser PARAMETRIC_DIFFUSER;
+    public static MatrixParticleStabilizer PARAMETRIC_STABILIZER;
+    public static MatrixParticleContainment PARAMETRIC_CONTAINMENT;
 
     public static void init() {
         GTLog.logger.info("Precision Core Registering New Meta Tile Entities");
@@ -70,7 +77,12 @@ public class PrecisionMetaTileEntities {
         SATELLITE = MetaTileEntities.registerMetaTileEntity(id++, new Satellite(location("satellite")));
         PARALLEL_COMPUTER = MetaTileEntities.registerMetaTileEntity(id++, new ParallelComputer(location("parallel_computer")));
         COMMUNICATION_TOWER = MetaTileEntities.registerMetaTileEntity(id++, new CommunicationTower(location("communication_tower")));
-        //SIMPLE MACHINES
+        //MATRIX SYSTEM
+        ME_CONNECTOR = MetaTileEntities.registerMetaTileEntity(id++, new MEConnectorHatch(location("me_connector")));
+        ME_SYSTEM_PROVIDER = MetaTileEntities.registerMetaTileEntity(id++, new MESystemProvider(location("me_system_provider")));
+        PARAMETRIC_DIFFUSER = MetaTileEntities.registerMetaTileEntity(id++, new MatrixParticleDiffuser(location("parametric_diffuser")));
+        PARAMETRIC_STABILIZER = MetaTileEntities.registerMetaTileEntity(id++, new MatrixParticleStabilizer(location("parametric_stabilizer")));
+        PARAMETRIC_CONTAINMENT = MetaTileEntities.registerMetaTileEntity(id++, new MatrixParticleContainment(location("parametric_containment")));
     }
 
     private static void registerSimpleMetaTileEntity(SimpleMachineMetaTileEntity[] machines,

@@ -17,9 +17,10 @@ public class BlockCasing extends VariantBlock<BlockCasing.Casings> {
     }
 
     public enum Casings implements IStringSerializable {
-        ME("me"),
         COMPUTER("computer"),
-        SATELLITE("satellite");
+        SATELLITE("satellite"),
+        ME("me"),
+        PARTICLE("particle");
 
         private final String name;
 

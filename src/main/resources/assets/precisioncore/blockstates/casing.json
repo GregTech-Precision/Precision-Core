@@ -18,6 +18,12 @@
       "textures": {
         "all": "gregtech:blocks/matrixsystem/casing_me"
       }
+    },
+    "variant=particle": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/matrixsystem/casing_particle"
+      }
     }
   }
 }

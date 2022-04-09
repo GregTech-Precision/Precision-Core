@@ -7,8 +7,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.common.metatileentities.MetaTileEntities;
 import precisioncore.PrecisionCore;
-import precisioncore.common.metatileentities.longpipes.PipelineEnergy;
-import precisioncore.common.metatileentities.longpipes.PipelineFluid;
 import precisioncore.common.metatileentities.multi.parallel.*;
 import precisioncore.common.metatileentities.multi.processing.Greenhouse;
 import precisioncore.common.metatileentities.multi.processing.Sawmill;
@@ -20,7 +18,6 @@ import precisioncore.common.metatileentities.multi.multiblockparts.MEItemOutputH
 import net.minecraft.util.ResourceLocation;
 
 import java.util.function.Function;
-
 
 public class PrecisionMetaTileEntities {
 

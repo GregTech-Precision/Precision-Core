@@ -1,0 +1,101 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "variant=iglass0": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/iglass/iglass0"
+      }
+    },
+    "variant=iglass1": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/iglass/iglass1"
+      }
+    },
+    "variant=iglass2": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/iglass/iglass2"
+      }
+    },
+    "variant=iglass3": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/iglass/iglass3"
+      }
+    },
+    "variant=iglass4": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/iglass/iglass4"
+      }
+    },
+    "variant=iglass5": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/iglass/iglass5"
+      }
+    },
+    "variant=iglass6": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/iglass/iglass6"
+      }
+    },
+    "variant=iglass7": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/iglass/iglass7"
+      }
+    },
+    "variant=iglass8": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/iglass/iglass8"
+      }
+    },
+    "variant=iglass9": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/iglass/iglass9"
+      }
+    },
+    "variant=iglass10": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/iglass/iglass10"
+      }
+    },
+    "variant=iglass11": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/iglass/iglass11"
+      }
+    },
+    "variant=iglass12": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/iglass/iglass12"
+      }
+    },
+    "variant=iglass13": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/iglass/iglass13"
+      }
+    },
+    "variant=iglass14": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/iglass/iglass14"
+      }
+    },
+    "variant=iglass15": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/iglass/iglass15"
+      }
+    }
+  }
+}

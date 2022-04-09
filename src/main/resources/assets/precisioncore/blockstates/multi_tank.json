@@ -1,0 +1,29 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "variant=fluid_storage_t1": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/multi_tank/fluid_storage_t1"
+      }
+      },
+      "variant=fluid_storage_t2": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/multi_tank/fluid_storage_t2"
+      }
+      },
+      "variant=fluid_storage_t3": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/multi_tank/fluid_storage_t3"
+      }
+      },
+      "variant=fluid_storage_t4": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/multi_tank/fluid_storage_t4"
+      }
+    }
+  }
+}

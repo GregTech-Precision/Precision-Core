@@ -25,8 +25,8 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 version = '0.0.5'
-group = 'gtwp' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'GTWP'
+group = 'precision.core' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = 'PrecisionCore'
 
 apply plugin: 'java'
 
@@ -107,7 +107,7 @@ dependencies {
 jar {
     manifest {
         attributes([
-                "Specification-Title": "GTWP",
+                "Specification-Title": "Precision Core",
                 "Specification-Vendor": "examplemodsareus",
                 "Specification-Version": "1", // We are version 1 of ourselves
                 "Implementation-Title": project.name,

@@ -39,13 +39,7 @@ public class BlockMultiTank extends VariantBlock<BlockMultiTank.MultiTankFluidSt
     }
 
     public static TraceabilityPredicate predicate(){
-        return new TraceabilityPredicate(blockPredicate());
-    }
-
-    private static Predicate<BlockWorldState> blockPredicate() {
-        return (blockWorldState) -> {
-            return blockWorldState.getBlockState().getBlock() instanceof BlockMultiTank;
-        };
+        return new TraceabilityPredicate(blockWorldState -> blockWorldState.getBlockState().getBlock() instanceof BlockMultiTank);
     }
 
     @Override

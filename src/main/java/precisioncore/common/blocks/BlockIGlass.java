@@ -48,13 +48,7 @@ public class BlockIGlass extends VariantBlock<BlockIGlass.IGlass> {
     }
 
     public static TraceabilityPredicate predicate(){
-        return new TraceabilityPredicate(blockPredicate());
-    }
-
-    private static Predicate<BlockWorldState> blockPredicate() {
-        return (blockWorldState) -> {
-            return blockWorldState.getBlockState().getBlock() instanceof BlockIGlass;
-        };
+        return new TraceabilityPredicate(blockWorldState -> blockWorldState.getBlockState().getBlock() instanceof BlockIGlass);
     }
 
     public enum IGlass implements IStringSerializable {

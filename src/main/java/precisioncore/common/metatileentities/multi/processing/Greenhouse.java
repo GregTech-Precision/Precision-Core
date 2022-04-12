@@ -26,8 +26,8 @@ public class Greenhouse extends RecipeMapMultiblockController {
                 .aisle("C***C", "#GGG#").setRepeatable(3)
                 .aisle("#CSC#", "#####")
                 .where('S', selfPredicate())
-                .where('G', new TraceabilityPredicate(BlockIGlass.predicate()))
-                .where('C', new TraceabilityPredicate(BlockIGlass.predicate()).or(autoAbilities(true, false, true, true, true, false, false).setMaxGlobalLimited(1)))
+                .where('G', BlockIGlass.predicate())
+                .where('C', BlockIGlass.predicate().or(autoAbilities(true, false, true, true, true, false, false).setMaxGlobalLimited(1)))
                 .where('*', air())
                 .where('#', any())
                 .build();

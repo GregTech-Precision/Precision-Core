@@ -125,8 +125,8 @@ public class SingleTank extends MultiblockWithDisplayBase {
                  .aisle("XXX", "GGG", "GGG", "GGG", "GGG", "GGG", "XXX")
                  .where('S', selfPredicate())
                  .where('X', states(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.PTFE_INERT_CASING)).or(metaTileEntities(PrecisionMetaTileEntities.IO_HATCH).setMaxGlobalLimited(1)))
-                 .where('G', new TraceabilityPredicate(BlockIGlass.predicate()).or(metaTileEntities(PrecisionMetaTileEntities.IO_HATCH).setMaxGlobalLimited(1)))
-                 .where('M', new TraceabilityPredicate(BlockMultiTank.predicate()))
+                 .where('G', BlockIGlass.predicate().or(metaTileEntities(PrecisionMetaTileEntities.IO_HATCH).setMaxGlobalLimited(1)))
+                 .where('M', BlockMultiTank.predicate())
                  .build();
     }
 

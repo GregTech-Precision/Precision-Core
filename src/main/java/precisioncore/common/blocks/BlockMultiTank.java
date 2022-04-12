@@ -1,6 +1,7 @@
 package precisioncore.common.blocks;
 
 import gregtech.api.pattern.BlockWorldState;
+import gregtech.api.pattern.TraceabilityPredicate;
 import net.minecraft.client.resources.I18n;
 import gregtech.common.blocks.VariantBlock;
 import net.minecraft.block.SoundType;
@@ -37,10 +38,8 @@ public class BlockMultiTank extends VariantBlock<BlockMultiTank.MultiTankFluidSt
         return false;
     }
 
-    public static Predicate<BlockWorldState> predicate() {
-        return (blockWorldState) -> {
-            return blockWorldState.getBlockState().getBlock() instanceof BlockMultiTank;
-        };
+    public static TraceabilityPredicate predicate(){
+        return new TraceabilityPredicate(blockWorldState -> blockWorldState.getBlockState().getBlock() instanceof BlockMultiTank);
     }
 
     @Override

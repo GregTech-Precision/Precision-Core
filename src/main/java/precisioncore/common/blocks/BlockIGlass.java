@@ -1,6 +1,7 @@
 package precisioncore.common.blocks;
 
 import gregtech.api.pattern.BlockWorldState;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.common.blocks.VariantBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -46,10 +47,8 @@ public class BlockIGlass extends VariantBlock<BlockIGlass.IGlass> {
         return blockAccess.getBlockState(pos.offset(side)) != blockState || blockState.getBlock() != this && super.shouldSideBeRendered(blockState, blockAccess, pos, side);
     }
 
-    public static Predicate<BlockWorldState> predicate() {
-        return (blockWorldState) -> {
-            return blockWorldState.getBlockState().getBlock() instanceof BlockIGlass;
-        };
+    public static TraceabilityPredicate predicate(){
+        return new TraceabilityPredicate(blockWorldState -> blockWorldState.getBlockState().getBlock() instanceof BlockIGlass);
     }
 
     public enum IGlass implements IStringSerializable {

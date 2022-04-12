@@ -36,8 +36,8 @@ public class PrecisionMetaTileEntities {
     public static CommunicationTower COMMUNICATION_TOWER;
 
     //CONTROLLERS
-    public static SingleTank SINGLE_FLUID_MULTI_TANK;
-    public static MultiTank MULTI_FLUID_MULTI_TANK;
+    public static SingleTank SINGLE_TANK;
+    public static MultiTank MULTI_TANK;
     public static Greenhouse GREENHOUSE;
     public static PyrolyseOven PYROLYSE_OVEN;
     public static Sawmill SAWMILL;
@@ -69,8 +69,8 @@ public class PrecisionMetaTileEntities {
         PARALLEL_RACK = MetaTileEntities.registerMetaTileEntity(id++, new ParallelComputerRack(location("parallel_rack")));
 
         //CONTROLLERS
-        SINGLE_FLUID_MULTI_TANK = MetaTileEntities.registerMetaTileEntity(id++, new SingleTank(location("fluid_tank.single")));
-        MULTI_FLUID_MULTI_TANK = MetaTileEntities.registerMetaTileEntity(id++, new MultiTank(location("fluid_tank.multi")));
+        SINGLE_TANK = MetaTileEntities.registerMetaTileEntity(id++, new SingleTank(location("fluid_tank.single")));
+        MULTI_TANK = MetaTileEntities.registerMetaTileEntity(id++, new MultiTank(location("fluid_tank.multi")));
         GREENHOUSE = MetaTileEntities.registerMetaTileEntity(id++, new Greenhouse(location("greenhouse")));
         PYROLYSE_OVEN = MetaTileEntities.registerMetaTileEntity(1004, new PyrolyseOven(location("pyrolyse_oven"))); // GTCEu pyrolyse oven id is 1004
         SAWMILL = MetaTileEntities.registerMetaTileEntity(id++, new Sawmill(location("sawmill")));

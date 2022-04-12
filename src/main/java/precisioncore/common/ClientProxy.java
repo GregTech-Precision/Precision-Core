@@ -19,7 +19,7 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent event) {
-        GTLog.logger.info("GT:WP register item models");
+        GTLog.logger.info("Precision Core register item models");
         PrecisionMetaBlocks.registerItemModels();
     }
 }

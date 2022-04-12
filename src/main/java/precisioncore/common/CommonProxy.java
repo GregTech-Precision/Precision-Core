@@ -44,7 +44,6 @@ public class CommonProxy {
 
         registry.register(PrecisionMetaBlocks.FLUID_STORAGE);
         registry.register(PrecisionMetaBlocks.IGLASS);
-        registry.register(PrecisionMetaBlocks.PIPELINE);
         registry.register(PrecisionMetaBlocks.CASING);
     }
 
@@ -56,7 +55,6 @@ public class CommonProxy {
 
         registry.register(createItemBlock(PrecisionMetaBlocks.FLUID_STORAGE, VariantItemBlock::new));
         registry.register(createItemBlock(PrecisionMetaBlocks.IGLASS, VariantItemBlock::new));
-        registry.register(createItemBlock(PrecisionMetaBlocks.PIPELINE, VariantItemBlock::new));
         registry.register(createItemBlock(PrecisionMetaBlocks.CASING, VariantItemBlock::new));
         registry.register(createItemBlock(PrecisionMetaBlocks.PARALLEL_CASING, VariantItemBlock::new));
     }

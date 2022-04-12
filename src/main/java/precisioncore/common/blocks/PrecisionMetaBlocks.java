@@ -13,7 +13,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class PrecisionMetaBlocks {
     public static BlockMultiTank FLUID_STORAGE;
     public static BlockIGlass IGLASS;
-    public static BlockPipeline PIPELINE;
     public static BlockCasing CASING;
     public static BlockCasingParallel PARALLEL_CASING;
 
@@ -25,8 +24,6 @@ public class PrecisionMetaBlocks {
         FLUID_STORAGE.setRegistryName("multi_tank");
         IGLASS = new BlockIGlass();
         IGLASS.setRegistryName("iglass");
-        PIPELINE = new BlockPipeline();
-        PIPELINE.setRegistryName("blockpipeline");
         CASING = new BlockCasing();
         CASING.setRegistryName("casing");
         PARALLEL_CASING = new BlockCasingParallel();
@@ -38,7 +35,6 @@ public class PrecisionMetaBlocks {
     {
         registerItemModel(FLUID_STORAGE);
         registerItemModel(IGLASS);
-        registerItemModel(PIPELINE);
         registerItemModel(CASING);
         registerItemModel(PARALLEL_CASING);
     }

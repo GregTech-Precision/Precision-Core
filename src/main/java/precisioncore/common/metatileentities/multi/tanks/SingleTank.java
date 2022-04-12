@@ -124,26 +124,10 @@ public class SingleTank extends MultiblockWithDisplayBase {
                  .aisle("XXX", "GMG", "GMG", "GMG", "GMG", "GMG", "XSX")
                  .aisle("XXX", "GGG", "GGG", "GGG", "GGG", "GGG", "XXX")
                  .where('S', selfPredicate())
-                 .where('X', states(getCasingState()))
-                 .where('G', new TraceabilityPredicate(glassPredicate()).or(metaTileEntities(PrecisionMetaTileEntities.IO_HATCH).setMaxGlobalLimited(1)))
-                 .where('M', new TraceabilityPredicate(storagePredicate()))
+                 .where('X', states(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.PTFE_INERT_CASING)).or(metaTileEntities(PrecisionMetaTileEntities.IO_HATCH).setMaxGlobalLimited(1)))
+                 .where('G', new TraceabilityPredicate(BlockIGlass.predicate()).or(metaTileEntities(PrecisionMetaTileEntities.IO_HATCH).setMaxGlobalLimited(1)))
+                 .where('M', new TraceabilityPredicate(BlockMultiTank.predicate()))
                  .build();
-    }
-
-    private IBlockState getCasingState() {
-        return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.PTFE_INERT_CASING);
-    }
-
-    public static Predicate<BlockWorldState> glassPredicate() {
-        return (blockWorldState) -> {
-            return blockWorldState.getBlockState().getBlock() instanceof BlockIGlass;
-        };
-    }
-
-    public static Predicate<BlockWorldState> storagePredicate() {
-        return (blockWorldState) -> {
-            return blockWorldState.getBlockState().getBlock() instanceof BlockMultiTank;
-        };
     }
 
     @Override

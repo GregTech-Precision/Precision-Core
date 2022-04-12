@@ -44,29 +44,11 @@ public class MESystemProvider extends PrecisionRecipeMapMultiblockController {
                 .where('C', states(PrecisionMetaBlocks.CASING.getState(BlockCasing.Casings.ME)).or(autoAbilities(true, true, true, true, true, false, false).setMaxGlobalLimited(9)))
                 .where('M', metaTileEntities(PrecisionMetaTileEntities.ME_CONNECTOR))
                 .where('P', abilities(PrecisionMultiblockAbility.MATRIX_PARTICLE_IMPORT))
-                .where('G', new TraceabilityPredicate(glassPredicate()))
-                .where('U', new TraceabilityPredicate(craftingUnit()))
-                .where('F', new TraceabilityPredicate(craftingStorage()))
+                .where('G', BlockIGlass.predicate())
+                .where('U', new TraceabilityPredicate(state -> state.getBlockState().getBlock() instanceof BlockCraftingUnit))
+                .where('F', new TraceabilityPredicate(state -> state.getBlockState().getBlock() instanceof BlockCraftingStorage))
                 .where('#', any())
                 .build();
-    }
-
-    public static Predicate<BlockWorldState> glassPredicate() {
-        return (blockWorldState) -> {
-            return blockWorldState.getBlockState().getBlock() instanceof BlockIGlass;
-        };
-    }
-
-    public static Predicate<BlockWorldState> craftingStorage() {
-        return (blockWorldState) -> {
-            return blockWorldState.getBlockState().getBlock() instanceof BlockCraftingStorage;
-        };
-    }
-
-    public static Predicate<BlockWorldState> craftingUnit() {
-        return (blockWorldState) -> {
-            return blockWorldState.getBlockState().getBlock() instanceof BlockCraftingUnit;
-        };
     }
 
     @Nonnull

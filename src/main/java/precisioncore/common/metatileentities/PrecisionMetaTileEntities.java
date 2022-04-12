@@ -47,9 +47,11 @@ public class PrecisionMetaTileEntities {
     //MATRIX SYSTEM
     public static MEConnectorHatch ME_CONNECTOR;
     public static MESystemProvider ME_SYSTEM_PROVIDER;
-    public static MatrixParticleDiffuser PARAMETRIC_DIFFUSER;
-    public static MatrixParticleStabilizer PARAMETRIC_STABILIZER;
-    public static MatrixParticleContainment PARAMETRIC_CONTAINMENT;
+    public static MatrixPatricleHatch MP_HATCH_EXPORT;
+    public static MatrixPatricleHatch MP_HATCH_IMPORT;
+    public static MatrixParticleDiffuser MP_DIFFUSER;
+    public static MatrixParticleStabilizer MP_STABILIZER;
+    public static MatrixParticleContainment MP_CONTAINMENT;
 
     public static void init() {
         GTLog.logger.info("Precision Core Registering New Meta Tile Entities");
@@ -80,9 +82,11 @@ public class PrecisionMetaTileEntities {
         //MATRIX SYSTEM
         ME_CONNECTOR = MetaTileEntities.registerMetaTileEntity(id++, new MEConnectorHatch(location("me_connector")));
         ME_SYSTEM_PROVIDER = MetaTileEntities.registerMetaTileEntity(id++, new MESystemProvider(location("me_system_provider")));
-        PARAMETRIC_DIFFUSER = MetaTileEntities.registerMetaTileEntity(id++, new MatrixParticleDiffuser(location("parametric_diffuser")));
-        PARAMETRIC_STABILIZER = MetaTileEntities.registerMetaTileEntity(id++, new MatrixParticleStabilizer(location("parametric_stabilizer")));
-        PARAMETRIC_CONTAINMENT = MetaTileEntities.registerMetaTileEntity(id++, new MatrixParticleContainment(location("parametric_containment")));
+        MP_HATCH_EXPORT = MetaTileEntities.registerMetaTileEntity(id++, new MatrixPatricleHatch(location("mp_hatch_export"), true));
+        MP_HATCH_IMPORT = MetaTileEntities.registerMetaTileEntity(id++, new MatrixPatricleHatch(location("mp_hatch_import"), false));
+        MP_DIFFUSER = MetaTileEntities.registerMetaTileEntity(id++, new MatrixParticleDiffuser(location("mp_diffuser")));
+        MP_STABILIZER = MetaTileEntities.registerMetaTileEntity(id++, new MatrixParticleStabilizer(location("mp_stabilizer")));
+        MP_CONTAINMENT = MetaTileEntities.registerMetaTileEntity(id++, new MatrixParticleContainment(location("mp_containment")));
     }
 
     private static void registerSimpleMetaTileEntity(SimpleMachineMetaTileEntity[] machines,

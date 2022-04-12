@@ -14,6 +14,7 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import net.minecraft.block.Block;
 import net.minecraft.util.ResourceLocation;
 import precisioncore.api.render.PrecisionTextures;
 import precisioncore.common.blocks.BlockCasing;
@@ -52,7 +53,7 @@ public class MatrixParticleStabilizer extends MultiblockWithDisplayBase {
                 .aisle("CC#CC", "CGSGC", "CC#CC")
                 .where('S', selfPredicate())
                 .where('C', states(PrecisionMetaBlocks.CASING.getState(BlockCasing.Casings.PARTICLE)).or(autoAbilities(true, false)).or(abilities(MultiblockAbility.INPUT_ENERGY)))
-                .where('G', new TraceabilityPredicate(glassPredicate()))
+                .where('G', BlockIGlass.predicate())
                 .where('#', any())
                 .where('*', air())
                 .aisle()

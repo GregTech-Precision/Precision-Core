@@ -54,7 +54,7 @@ public class MatrixParticleContainment extends MultiblockWithDisplayBase {
                 .aisle("C####CC", "CCCCCSG", "######C")
                 .where('S', selfPredicate())
                 .where('C', states(PrecisionMetaBlocks.CASING.getState(BlockCasing.Casings.PARTICLE)).or(autoAbilities(true, false)).or(abilities(MultiblockAbility.INPUT_ENERGY)))
-                .where('G', new TraceabilityPredicate(glassPredicate()))
+                .where('G', BlockIGlass.predicate())
                 .where('#', any())
                 .where('*', air())
                 .build();

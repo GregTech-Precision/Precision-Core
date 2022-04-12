@@ -15,6 +15,7 @@ import gregtech.client.renderer.texture.Textures;
 import net.minecraft.util.ResourceLocation;
 import precisioncore.api.render.PrecisionTextures;
 import precisioncore.common.blocks.BlockCasing;
+import precisioncore.common.blocks.BlockIGlass;
 import precisioncore.common.blocks.PrecisionMetaBlocks;
 
 import javax.annotation.Nonnull;
@@ -50,6 +51,7 @@ public class MatrixParticleDiffuser extends MultiblockWithDisplayBase {
                 .aisle("##########", "#####CCCCC", "#####CCCCC", "#####C###C")
                 .where('S', selfPredicate())
                 .where('C', states(PrecisionMetaBlocks.CASING.getState(BlockCasing.Casings.PARTICLE)).or(autoAbilities(true, false)).or(abilities(MultiblockAbility.INPUT_ENERGY)))
+                .where('G', BlockIGlass.predicate())
                 .where('T', any()) //change to transducer
                 .where('#', any())
                 .where('*', air())

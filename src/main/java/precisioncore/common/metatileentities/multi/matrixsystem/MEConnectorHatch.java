@@ -32,7 +32,7 @@ public class MEConnectorHatch extends MetaTileEntityMultiblockPart {
     private boolean isProxyActive;
 
     public MEConnectorHatch(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, 4);
+        super(metaTileEntityId, 5);
     }
 
     @Override

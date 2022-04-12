@@ -132,29 +132,10 @@ public class MultiTank extends MultiblockControllerBase {
                 .aisle("XXXXX", "GMMMG", "GMMMG", "GMMMG", "GMMMG", "GMMMG", "GMMMG", "GMMMG", "XXXXX")
                 .aisle("XXXXX", "GGGGG", "GGGGG", "GGGGG", "GGGGG", "GGGGG", "GGGGG", "GGGGG", "XXXXX")
                 .where('S', selfPredicate())
-                .where('X', states(getCasingState()))
-                .where('G', new TraceabilityPredicate(glassPredicate()).or(metaTileEntities(PrecisionMetaTileEntities.IO_HATCH).setMaxGlobalLimited(1)))
-                .where('M', new TraceabilityPredicate(storagePredicate()))
+                .where('X', states(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.PTFE_INERT_CASING)).or(metaTileEntities(PrecisionMetaTileEntities.IO_HATCH).setMaxGlobalLimited(1)))
+                .where('G', BlockIGlass.predicate().or(metaTileEntities(PrecisionMetaTileEntities.IO_HATCH).setMaxGlobalLimited(1)))
+                .where('M', BlockMultiTank.predicate())
                 .build();
-    }
-
-
-
-    private IBlockState getCasingState()
-    {
-        return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.PTFE_INERT_CASING);
-    }
-
-    public static Predicate<BlockWorldState> glassPredicate() {
-        return (blockWorldState) -> {
-            return blockWorldState.getBlockState().getBlock() instanceof BlockIGlass;
-        };
-    }
-
-    public static Predicate<BlockWorldState> storagePredicate() {
-        return (blockWorldState) -> {
-            return blockWorldState.getBlockState().getBlock() instanceof BlockMultiTank;
-        };
     }
 
     @Override
@@ -178,6 +159,11 @@ public class MultiTank extends MultiblockControllerBase {
     public boolean hasFrontFacing() {
         return true;
     }*/
+
+    @Override
+    protected boolean openGUIOnRightClick() {
+        return false;
+    }
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {

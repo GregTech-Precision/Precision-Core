@@ -1,5 +1,7 @@
 package precisioncore.common.blocks;
 
+import gregtech.api.pattern.BlockWorldState;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.common.blocks.VariantBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -11,6 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
 import javax.annotation.Nonnull;
+import java.util.function.Predicate;
 
 public class BlockIGlass extends VariantBlock<BlockIGlass.IGlass> {
 
@@ -42,6 +45,16 @@ public class BlockIGlass extends VariantBlock<BlockIGlass.IGlass> {
     @Override
     public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
         return blockAccess.getBlockState(pos.offset(side)) != blockState || blockState.getBlock() != this && super.shouldSideBeRendered(blockState, blockAccess, pos, side);
+    }
+
+    public static TraceabilityPredicate predicate(){
+        return new TraceabilityPredicate(blockPredicate());
+    }
+
+    private static Predicate<BlockWorldState> blockPredicate() {
+        return (blockWorldState) -> {
+            return blockWorldState.getBlockState().getBlock() instanceof BlockIGlass;
+        };
     }
 
     public enum IGlass implements IStringSerializable {

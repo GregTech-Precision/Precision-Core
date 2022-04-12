@@ -1,5 +1,7 @@
 package precisioncore.common.blocks;
 
+import gregtech.api.pattern.BlockWorldState;
+import gregtech.api.pattern.TraceabilityPredicate;
 import net.minecraft.client.resources.I18n;
 import gregtech.common.blocks.VariantBlock;
 import net.minecraft.block.SoundType;
@@ -16,6 +18,7 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class BlockMultiTank extends VariantBlock<BlockMultiTank.MultiTankFluidStorage> {
 
@@ -33,6 +36,16 @@ public class BlockMultiTank extends VariantBlock<BlockMultiTank.MultiTankFluidSt
     @Override
     public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EntityLiving.SpawnPlacementType type) {
         return false;
+    }
+
+    public static TraceabilityPredicate predicate(){
+        return new TraceabilityPredicate(blockPredicate());
+    }
+
+    private static Predicate<BlockWorldState> blockPredicate() {
+        return (blockWorldState) -> {
+            return blockWorldState.getBlockState().getBlock() instanceof BlockMultiTank;
+        };
     }
 
     @Override

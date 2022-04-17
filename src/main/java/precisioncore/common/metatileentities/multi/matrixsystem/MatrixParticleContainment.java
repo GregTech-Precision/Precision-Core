@@ -15,15 +15,20 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import precisioncore.api.render.PrecisionTextures;
 import precisioncore.common.blocks.BlockCasing;
 import precisioncore.common.blocks.BlockIGlass;
 import precisioncore.common.blocks.PrecisionMetaBlocks;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.function.Predicate;
 
 public class MatrixParticleContainment extends MultiblockWithDisplayBase {
+
+    private int particlesContained = 0;
 
     public MatrixParticleContainment(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -31,6 +36,21 @@ public class MatrixParticleContainment extends MultiblockWithDisplayBase {
 
     @Override
     protected void updateFormedValid() {}
+
+    public void addStableParticles(int toAdd){
+        if(particlesContained < 100000){
+            if(particlesContained + toAdd >= 100000)
+                particlesContained = 100000;
+            else
+                particlesContained += toAdd;
+        }
+    }
+
+    @Override
+    protected void addDisplayText(List<ITextComponent> textList) {
+        super.addDisplayText(textList);
+        textList.add(new TextComponentString("particles contained: "+particlesContained));
+    }
 
     @Nonnull
     @Override
@@ -50,20 +70,14 @@ public class MatrixParticleContainment extends MultiblockWithDisplayBase {
                 .aisle("C####CC", "CCCCCCC", "######C")
                 .aisle("CCCCCCC", "CCCCCCG", "CCCCCCC")
                 .aisle("CCCCCCC", "G*****G", "CGGGCCC")
-                .aisle("CCCCCCC", "CCCCCCC", "CCCCCCC")
-                .aisle("C####CC", "CCCCCSG", "######C")
+                .aisle("CCCCCCC", "CCCCCCG", "CCCCCCC")
+                .aisle("C####CC", "CCCCCSC", "######C")
                 .where('S', selfPredicate())
                 .where('C', states(PrecisionMetaBlocks.CASING.getState(BlockCasing.Casings.PARTICLE)).or(autoAbilities(true, false)).or(abilities(MultiblockAbility.INPUT_ENERGY)))
                 .where('G', BlockIGlass.predicate())
                 .where('#', any())
                 .where('*', air())
                 .build();
-    }
-
-    public static Predicate<BlockWorldState> glassPredicate() {
-        return (blockWorldState) -> {
-            return blockWorldState.getBlockState().getBlock() instanceof BlockIGlass;
-        };
     }
 
     @Override

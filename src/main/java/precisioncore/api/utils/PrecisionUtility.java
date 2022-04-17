@@ -3,6 +3,7 @@ package precisioncore.api.utils;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
+import java.util.Random;
 
 public class PrecisionUtility {
 
@@ -21,5 +22,10 @@ public class PrecisionUtility {
 
     public static double getDistance(BlockPos from, BlockPos to){
         return from.getDistance(to.getX(), to.getY(), to.getZ());
+    }
+
+    public static int randomBetween(int min, int max){
+        Random r = new Random();
+        return r.nextInt(max-min)+min;
     }
 }

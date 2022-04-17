@@ -26,7 +26,24 @@ tile.iglass.iglass13.name=Green I-Glass
 tile.iglass.iglass14.name=Red I-Glass
 tile.iglass.iglass15.name=Black I-Glass
 
-
-
 tile.pipelineblock.name=Long Distance Pipe
 gtwp.multi.meitemoutputhatch=ME Item Output Bus
+
+#The One Probe locale
+
+##All
+precisioncore.top.connection.no=No Connection
+precisioncore.top.connection.established=Connection Established
+
+##IParallelHatch
+precisioncore.top.parallel.target.null=No Target Machine
+precisioncore.top.parallel.address=Address:
+precisioncore.top.parallel.address.null=No Target Address
+precisioncore.top.parallel.points=Parallel Points:
+
+##IAddressable
+precisioncore.top.addressable.address.null=Null Network
+precisioncore.top.addressable.address=Network Address:
+
+##PrecisionMultiblockController
+precisioncore.top.controller.parallel=Current Parallel Usage:

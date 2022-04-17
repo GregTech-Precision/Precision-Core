@@ -82,7 +82,8 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2859'
     compile files('libs/gregtech-1.12.2-2.2.0-beta.jar',
             'libs/CodeChickenLib-1.12.2-3.2.3.358.jar',
-            'libs/appliedenergistics2-rv6-stable-7.jar')
+            'libs/appliedenergistics2-rv6-stable-7.jar',
+            'libs/theoneprobe-1.12-1.4.28.jar')
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
     // compile "some.group:artifact:version"

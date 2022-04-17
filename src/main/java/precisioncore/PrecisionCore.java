@@ -1,13 +1,16 @@
 package precisioncore;
 
+import precisioncore.api.capability.PrecisionCapabilityManager;
 import precisioncore.common.CommonProxy;
 import precisioncore.common.blocks.PrecisionMetaBlocks;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 
 import precisioncore.common.metatileentities.PrecisionMetaTileEntities;
+import precisioncore.integration.theoneprobe.TheOneProbeCompatibility;
 
 @Mod(modid = PrecisionCore.MODID,
         name = PrecisionCore.NAME,
@@ -30,6 +33,13 @@ public class PrecisionCore {
         PrecisionMetaBlocks.init();
         PrecisionMetaTileEntities.init();
 
+        PrecisionCapabilityManager.init();
+
         proxy.preLoad();
+    }
+
+    @EventHandler
+    public static void onInit(FMLInitializationEvent event){
+        TheOneProbeCompatibility.registerCompatibility();
     }
 }

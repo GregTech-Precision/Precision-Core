@@ -10,6 +10,9 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.capabilities.Capability;
+import precisioncore.api.capability.PrecisionCapabilities;
 import precisioncore.api.capability.PrecisionDataCodes;
 import precisioncore.api.capability.IAddresable;
 import precisioncore.api.metatileentities.PrecisionMultiblockAbility;
@@ -54,15 +57,16 @@ public class SatelliteHatch extends MetaTileEntityMultiblockPart implements IMul
                 pair.scheduleRenderUpdate();
             scheduleRenderUpdate();
         }
-        return isConnected();
+        return isReceivingSignal();
     }
 
     public SatelliteHatch getConnection(){
         return pair;
     }
 
-    public boolean isConnected() {
-        return !transmitter && pair != null;
+    @Override
+    public boolean isReceivingSignal() {
+        return transmitter || pair != null;
     }
 
     @Override
@@ -101,7 +105,7 @@ public class SatelliteHatch extends MetaTileEntityMultiblockPart implements IMul
     private SimpleOverlayRenderer getHatchOverlay(){
         if(transmitter)
             return getController() == null ? PrecisionTextures.PARALLEL_HATCH_RED : getController() != null && getController().isActive() ? PrecisionTextures.PARALLEL_HATCH_GREEN : PrecisionTextures.PARALLEL_HATCH_YELLOW;
-        else return (isConnected() ? (getConnection().isTransmitting() ? PrecisionTextures.PARALLEL_HATCH_GREEN : PrecisionTextures.PARALLEL_HATCH_YELLOW) : PrecisionTextures.PARALLEL_HATCH_RED);
+        else return (isReceivingSignal() ? (getConnection().isTransmitting() ? PrecisionTextures.PARALLEL_HATCH_GREEN : PrecisionTextures.PARALLEL_HATCH_YELLOW) : PrecisionTextures.PARALLEL_HATCH_RED);
     }
 
     @Override
@@ -193,5 +197,16 @@ public class SatelliteHatch extends MetaTileEntityMultiblockPart implements IMul
     @Override
     public int getFrequency() {
         return frequency;
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        T result = super.getCapability(capability, side);
+        if (result != null)
+            return result;
+        if (capability == PrecisionCapabilities.CAPABILITY_ADDRESSABLE) {
+            return PrecisionCapabilities.CAPABILITY_ADDRESSABLE.cast(this);
+        }
+        return null;
     }
 }

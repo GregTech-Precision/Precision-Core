@@ -14,6 +14,8 @@ import gregtech.api.unification.material.Materials;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.MetaBlocks;
+import net.minecraftforge.common.capabilities.Capability;
+import precisioncore.api.capability.PrecisionCapabilities;
 import precisioncore.api.capability.PrecisionDataCodes;
 import precisioncore.api.capability.IAddresable;
 import precisioncore.api.metatileentities.PrecisionMultiblockAbility;
@@ -83,7 +85,7 @@ public class CommunicationTower extends MultiblockWithDisplayBase implements IAd
                 if (!receiverList.isEmpty()) {
                     for (IAddresable receiver : receiverList) {
                         if (receiver instanceof SatelliteHatch) {
-                            if (!(((SatelliteHatch) receiver).isConnected() && ((SatelliteHatch) receiver).getConnection().isTransmitting())) {
+                            if (!(((SatelliteHatch) receiver).isReceivingSignal() && ((SatelliteHatch) receiver).getConnection().isTransmitting())) {
                                 return false;
                             }
                         }
@@ -199,5 +201,16 @@ public class CommunicationTower extends MultiblockWithDisplayBase implements IAd
     @Override
     public int getFrequency() {
         return frequency;
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        T result = super.getCapability(capability, side);
+        if(result != null)
+            return result;
+
+        if(capability == PrecisionCapabilities.CAPABILITY_ADDRESSABLE)
+            return PrecisionCapabilities.CAPABILITY_ADDRESSABLE.cast(this);
+        return null;
     }
 }

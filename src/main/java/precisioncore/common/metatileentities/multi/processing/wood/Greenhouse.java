@@ -1,4 +1,4 @@
-package precisioncore.common.metatileentities.multi.processing;
+package precisioncore.common.metatileentities.multi.processing.wood;
 
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -10,8 +10,6 @@ import gregtech.client.renderer.texture.Textures;
 import precisioncore.common.blocks.BlockIGlass;
 import precisioncore.api.recipes.PrecisionRecipeMaps;
 import net.minecraft.util.ResourceLocation;
-
-import java.util.function.Predicate;
 
 public class Greenhouse extends RecipeMapMultiblockController {
 

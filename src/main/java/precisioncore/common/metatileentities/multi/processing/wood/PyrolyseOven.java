@@ -1,4 +1,4 @@
-package precisioncore.common.metatileentities.multi.processing;
+package precisioncore.common.metatileentities.multi.processing.wood;
 
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;

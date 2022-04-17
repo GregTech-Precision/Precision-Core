@@ -1,5 +1,6 @@
 package precisioncore.api.utils;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
 

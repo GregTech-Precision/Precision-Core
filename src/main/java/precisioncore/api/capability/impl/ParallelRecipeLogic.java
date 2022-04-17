@@ -8,7 +8,7 @@ import precisioncore.api.utils.PrecisionUtility;
 
 public class ParallelRecipeLogic extends MultiblockRecipeLogic {
 
-    public ParallelRecipeLogic(RecipeMapMultiblockController tileEntity) {
+    public ParallelRecipeLogic(PrecisionRecipeMapMultiblockController tileEntity) {
         super(tileEntity);
     }
 
@@ -22,5 +22,9 @@ public class ParallelRecipeLogic extends MultiblockRecipeLogic {
     @Override
     public PrecisionRecipeMapMultiblockController getMetaTileEntity() {
         return ((PrecisionRecipeMapMultiblockController) super.getMetaTileEntity());
+    }
+
+    public int getCurrentParallel(){
+        return this.parallelRecipesPerformed;
     }
 }

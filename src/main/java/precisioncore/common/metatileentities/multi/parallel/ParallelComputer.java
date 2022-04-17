@@ -4,6 +4,8 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -13,6 +15,8 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import net.minecraftforge.common.capabilities.Capability;
+import precisioncore.api.capability.PrecisionCapabilities;
 import precisioncore.api.capability.PrecisionDataCodes;
 import precisioncore.api.capability.IAddresable;
 import precisioncore.api.capability.impl.ParallelComputerLogic;
@@ -40,18 +44,19 @@ import static gregtech.api.util.RelativeDirection.*;
 
 public class ParallelComputer extends MultiblockWithDisplayBase implements IAddresable {
 
-    private CommunicationTower communicationTower;
     private int frequency = 0;
     private UUID netAddress;
-    private final ParallelComputerLogic workingLogic;
+    private final ParallelComputerLogic workableLogic;
 
     public ParallelComputer(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
-        workingLogic = new ParallelComputerLogic(this);
+        this.workableLogic = new ParallelComputerLogic(this);
     }
 
     @Override
-    protected void updateFormedValid() {}
+    protected void updateFormedValid() {
+
+    }
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
@@ -67,7 +72,7 @@ public class ParallelComputer extends MultiblockWithDisplayBase implements IAddr
                 .aisle("CC", "RT", "RT", "CC").setRepeatable(2, 16)
                 .aisle("CC", "CC", "CC", "CC")
                 .where('S', selfPredicate())
-                .where('C', states(casingState()).or(autoAbilities(true, false)).or(abilities(MultiblockAbility.INPUT_ENERGY).setMaxGlobalLimited(1)))
+                .where('C', states(casingState()).or(autoAbilities(true, false)).or(abilities(MultiblockAbility.INPUT_ENERGY).setMaxGlobalLimited(4)))
                 .where('R', metaTileEntities(PrecisionMetaTileEntities.PARALLEL_RACK))
                 .where('T', abilities(PrecisionMultiblockAbility.PARALLEL_HATCH_OUT))
                 .build();
@@ -122,7 +127,7 @@ public class ParallelComputer extends MultiblockWithDisplayBase implements IAddr
     }
 
     public boolean isReceivingSignal() {
-        if (workingLogic.isWorking())
+        if (workableLogic.isWorking())
             return PrecisionParallelAPI.getActualTower(getNetAddress(), getPos()) != null && PrecisionParallelAPI.getActualTower(getNetAddress(), getPos()).isReceivingSignal();
         return false;
     }
@@ -186,5 +191,16 @@ public class ParallelComputer extends MultiblockWithDisplayBase implements IAddr
     @Override
     public int getFrequency() {
         return frequency;
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        T result = super.getCapability(capability, side);
+        if(result != null)
+            return result;
+
+        if(capability == PrecisionCapabilities.CAPABILITY_ADDRESSABLE)
+            return PrecisionCapabilities.CAPABILITY_ADDRESSABLE.cast(this);
+        return null;
     }
 }

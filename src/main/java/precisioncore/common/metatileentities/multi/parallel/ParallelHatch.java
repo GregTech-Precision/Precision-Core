@@ -13,6 +13,8 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
+import net.minecraftforge.common.capabilities.Capability;
+import precisioncore.api.capability.PrecisionCapabilities;
 import precisioncore.api.capability.PrecisionDataCodes;
 import precisioncore.api.capability.IAddresable;
 import precisioncore.api.capability.IParallelHatch;
@@ -32,6 +34,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
+import java.util.UUID;
 
 public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IParallelHatch>, IParallelHatch {
 
@@ -39,16 +42,37 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
     private BlockPos pairPos;
     private final int tierParallel;
     private byte renderState = 2;
+    private UUID address;
 
     public ParallelHatch(ResourceLocation metaTileEntityId, int tier, boolean transmitter) {
         super(metaTileEntityId, tier); //tier starts from 5
         this.transmitter = transmitter;
         this.tierParallel = (int)Math.pow(4, tier-4);
+        this.address = transmitter ? UUID.randomUUID() : null;
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new ParallelHatch(metaTileEntityId, getTier(), transmitter);
+    }
+
+    public UUID getAddress(){
+        return this.address;
+    }
+
+    public boolean isTransmitter() {
+        return this.transmitter;
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        T result = super.getCapability(capability, side);
+        if (result != null)
+            return result;
+        if (capability == PrecisionCapabilities.CAPABILITY_PARALLEL) {
+            return PrecisionCapabilities.CAPABILITY_PARALLEL.cast(this);
+        }
+        return null;
     }
 
     public boolean setConnection(BlockPos position) {
@@ -63,6 +87,8 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
                             ParallelHatch pair = getPair();
                             pair.breakConnection();
                             pair.pairPos = getPos();
+                            if(!transmitter)
+                                address = pair.address;
                             return true;
                         }
                     }
@@ -94,6 +120,8 @@ public class ParallelHatch extends MetaTileEntityMultiblockPart implements IMult
 
     private void breakConnection(boolean goBrrrtRecursion){
         if(!getWorld().isRemote){
+            if(!transmitter)
+                address = null;
             if(pairPos != null){
                 if(goBrrrtRecursion && getPair() != null)
                     getPair().breakConnection(false);

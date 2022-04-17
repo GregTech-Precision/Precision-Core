@@ -1,18 +1,19 @@
 package precisioncore.api.metatileentities;
 
+import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.multiblock.MultiMapMultiblockController;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMap;
-import precisioncore.api.capability.PrecisionDataCodes;
-import precisioncore.api.capability.IAddresable;
-import precisioncore.api.capability.IParallelHatch;
-import precisioncore.api.capability.IParallelMultiblock;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.capabilities.Capability;
+import precisioncore.api.capability.*;
 import precisioncore.api.capability.impl.ParallelRecipeLogic;
 import precisioncore.api.utils.PrecisionParallelAPI;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+import scala.collection.Parallel;
 
 import java.util.List;
 import java.util.UUID;
@@ -32,6 +33,11 @@ public abstract class PrecisionRecipeMapMultiblockController extends MultiMapMul
     }
 
     @Override
+    public ParallelRecipeLogic getRecipeMapWorkable() {
+        return ((ParallelRecipeLogic) super.getRecipeMapWorkable());
+    }
+
+    @Override
     public boolean isParallel() {
         return true;
     }
@@ -39,12 +45,17 @@ public abstract class PrecisionRecipeMapMultiblockController extends MultiMapMul
     @Override
     public int getMaxParallel() {
         if(!getWorld().isRemote) {
-            if(PrecisionParallelAPI.getActualTower(netAddress, getPos()) != null){
+            if(isReceivingSignal()){
                 List<IParallelHatch> parallel = getAbilities(PrecisionMultiblockAbility.PARALLEL_HATCH_IN);
                 return parallel.isEmpty() ? 1 : parallel.get(0).getParallel();
             }
         }
         return 1;
+    }
+
+    @Override
+    public boolean isReceivingSignal() {
+        return PrecisionParallelAPI.getActualTower(netAddress, getPos()) != null;
     }
 
     @Override
@@ -118,5 +129,18 @@ public abstract class PrecisionRecipeMapMultiblockController extends MultiMapMul
     @Override
     public int getFrequency() {
         return frequency;
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        T result = super.getCapability(capability, side);
+        if(result != null)
+            return result;
+
+        if (capability == PrecisionCapabilities.CAPABILITY_PRECISION_CONTROLLER)
+            return PrecisionCapabilities.CAPABILITY_PRECISION_CONTROLLER.cast(this);
+        else if(capability == PrecisionCapabilities.CAPABILITY_ADDRESSABLE)
+            return PrecisionCapabilities.CAPABILITY_ADDRESSABLE.cast(this);
+        return null;
     }
 }

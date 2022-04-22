@@ -4,6 +4,7 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.IntCircuitRecipeBuilder;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.builders.TimedRecipeBuilder;
+import precisioncore.api.recipes.builders.ParticleRecipeBuilder;
 
 public class PrecisionRecipeMaps {
 
@@ -35,11 +36,11 @@ public class PrecisionRecipeMaps {
             0,0,
             new SimpleRecipeBuilder(), false);
 
-    public static final RecipeMap<SimpleRecipeBuilder> ME_SYSTEM_PROVIDER = new RecipeMap<>(
+    public static final RecipeMap<ParticleRecipeBuilder> ME_SYSTEM_PROVIDER = new RecipeMap<>(
             "me_system_provider",
             1,9,
             1,1,
             1,1,
             0,0,
-            new SimpleRecipeBuilder(), false);
+            new ParticleRecipeBuilder(), false);
 }

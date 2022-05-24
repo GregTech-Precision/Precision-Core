@@ -1,7 +1,8 @@
 package precisioncore.common;
 
+import gregtech.api.block.VariantItemBlock;
 import gregtech.api.util.GTLog;
-import gregtech.common.blocks.VariantItemBlock;
+import gregtech.api.block.VariantBlock;
 import precisioncore.PrecisionCore;
 import precisioncore.common.blocks.PrecisionMetaBlocks;
 import precisioncore.common.items.PrecisionMetaItems;

@@ -2,7 +2,7 @@ package precisioncore.common.blocks;
 
 import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.TraceabilityPredicate;
-import gregtech.common.blocks.VariantBlock;
+import gregtech.api.block.VariantBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;

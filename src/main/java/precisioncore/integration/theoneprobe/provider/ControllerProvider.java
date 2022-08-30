@@ -2,8 +2,10 @@ package precisioncore.integration.theoneprobe.provider;
 
 import gregtech.integration.theoneprobe.provider.CapabilityInfoProvider;
 import mcjty.theoneprobe.api.ElementAlignment;
+import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.TextStyleClass;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -20,7 +22,7 @@ public class ControllerProvider extends CapabilityInfoProvider<IParallelMultiblo
     }
 
     @Override
-    protected void addProbeInfo(IParallelMultiblock controller, IProbeInfo probeInfo, TileEntity tileEntity, EnumFacing enumFacing) {
+    protected void addProbeInfo(IParallelMultiblock controller, IProbeInfo probeInfo, EntityPlayer entityPlayer, TileEntity tileEntity, IProbeHitData iProbeHitData) {
         int currentParallelUsage = ((PrecisionRecipeMapMultiblockController) controller).getRecipeMapWorkable().getCurrentParallel();
         IProbeInfo vertical = probeInfo.vertical(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_TOPLEFT));
         vertical.text(TextStyleClass.INFO + "{*precisioncore.top.controller.parallel*} "+currentParallelUsage);

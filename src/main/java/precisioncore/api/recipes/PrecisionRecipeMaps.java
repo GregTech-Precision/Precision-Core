@@ -3,7 +3,6 @@ package precisioncore.api.recipes;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.IntCircuitRecipeBuilder;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
-import gregtech.api.recipes.builders.TimedRecipeBuilder;
 
 public class PrecisionRecipeMaps {
 
@@ -19,13 +18,13 @@ public class PrecisionRecipeMaps {
             0,0,
             new IntCircuitRecipeBuilder(), false);
 
-    public static final RecipeMap<TimedRecipeBuilder> PYROLYSE = new RecipeMap<>(
+    public static final RecipeMap<SimpleRecipeBuilder> PYROLYSE = new RecipeMap<>(
             "pyrolyse",
-            1,1,
-            0,1,
-            0,1,
-            0, 5,
-            new TimedRecipeBuilder(), false);
+            0,2,
+            0,5,
+            0,2,
+            0, 6,
+            new SimpleRecipeBuilder(), false);
 
     public static final RecipeMap<SimpleRecipeBuilder> SAWMILL = new RecipeMap<>(
             "sawmill",

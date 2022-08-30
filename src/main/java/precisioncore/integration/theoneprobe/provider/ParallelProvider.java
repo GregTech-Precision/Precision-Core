@@ -3,9 +3,11 @@ package precisioncore.integration.theoneprobe.provider;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import gregtech.integration.theoneprobe.provider.CapabilityInfoProvider;
 import mcjty.theoneprobe.api.ElementAlignment;
+import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.TextStyleClass;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -26,7 +28,7 @@ public class ParallelProvider extends CapabilityInfoProvider<IParallelHatch> {
     //Connection:       [No Connection/Connection Established]
     //Parallel Points:  [Parallel Points Amount]
     @Override
-    protected void addProbeInfo(IParallelHatch capability, IProbeInfo probeInfo, TileEntity tileEntity, EnumFacing enumFacing) {
+    protected void addProbeInfo(IParallelHatch capability, IProbeInfo probeInfo, EntityPlayer entityPlayer, TileEntity tileEntity, IProbeHitData iProbeHitData) {
         ParallelHatch hatch = ((ParallelHatch) capability);
         String controllerName = null;
 

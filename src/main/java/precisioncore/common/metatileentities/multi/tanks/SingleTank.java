@@ -76,11 +76,6 @@ public class SingleTank extends MultiblockWithDisplayBase {
         return fluidTankList;
     }
 
-    @Override
-    public boolean canShare() {
-        return false;
-    }
-
     private int countCapacity() {
         BlockPos storagePos = getPos();
         int outCapacity = 0;

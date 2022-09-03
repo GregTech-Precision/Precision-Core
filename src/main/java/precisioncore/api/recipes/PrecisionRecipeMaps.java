@@ -20,9 +20,9 @@ public class PrecisionRecipeMaps {
 
     public static final RecipeMap<SimpleRecipeBuilder> PYROLYSE = new RecipeMap<>(
             "pyrolyse",
-            0,2,
-            0,5,
-            0,2,
+            0,1,
+            0,6,
+            0,1,
             0, 6,
             new SimpleRecipeBuilder(), false);
 

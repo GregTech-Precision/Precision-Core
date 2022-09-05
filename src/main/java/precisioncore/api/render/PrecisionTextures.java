@@ -24,7 +24,7 @@ public class PrecisionTextures {
 
 
     public static void preInit() {
-        GTLog.logger.info("GT:WP pre initializing textures");
+        GTLog.logger.info("Precision Core Pre Initializing Textures");
         for(int i = 1; i<=4;i++) MULTI_TANK_FLUID_STORAGE[i-1] = new SimpleOverlayRenderer("multi_tank/fluid_storage_t"+i);
         for(int i = 0; i<=15;i++) IGLASS[i] = new SimpleOverlayRenderer("iglass/iglass"+i);
         PIPELINE = new SimpleOverlayRenderer("blockpipeline/fluid");

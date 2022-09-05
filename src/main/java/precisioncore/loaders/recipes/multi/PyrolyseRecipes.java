@@ -1,7 +1,6 @@
 package precisioncore.loaders.recipes.multi;
 
 import static gregtech.api.unification.material.Materials.*;
-
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static precisioncore.api.recipes.PrecisionRecipeMaps.PYROLYSE;
 
@@ -15,7 +14,11 @@ public class PyrolyseRecipes {
                 .timedFluidOutput(Methane.getFluid(144), 21*20)
                 .timedFluidOutput(CarbonDioxide.getFluid(216), 28*20)
                 .fluidOutputs(WoodTar.getFluid(1440))
-                .output(gem, Charcoal, 5)
+                .timedOutput(gem, Charcoal, 7*20)
+                .timedOutput(gem, Charcoal, 14*20)
+                .timedOutput(gem, Charcoal, 21*20)
+                .timedOutput(gem, Charcoal, 28*20)
+                .output(gem, Charcoal)
                 .duration(35*20).EUt(128)
                 .buildAndRegister();
 
@@ -28,10 +31,6 @@ public class PyrolyseRecipes {
                 .buildAndRegister();
 
         //C2H4 -> C2H2 + H2
-        PYROLYSE.recipeBuilder()
-                .fluidInputs(Ethylene.getFluid(1000))
-                .fluidOutputs()
-                .buildAndRegister();
 
         //C2H6 -> C2H4 + H2
         PYROLYSE.recipeBuilder()

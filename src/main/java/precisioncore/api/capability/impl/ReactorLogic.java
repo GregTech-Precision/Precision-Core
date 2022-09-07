@@ -1,5 +1,6 @@
 package precisioncore.api.capability.impl;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.unification.material.Materials;
@@ -17,26 +18,22 @@ public class ReactorLogic extends AbstractRecipeLogic {
 
     private final Reactor reactor;
 
-    private static final int STEAM_PER_WATER = 160;
+    private static final int STEAM_PER_WATER = 40;
     private static final int DATA_HEAT = 989;
-
-    private final int maxWaterConsumption;
 
     private final int maxHeat;
     private int currentHeat = 0;
 
-    public ReactorLogic(Reactor reactor, int maxWaterConsumption, int maxHeat){
+    public ReactorLogic(Reactor reactor, int tier){
         super(reactor, null, false);
         this.reactor = reactor;
-        this.maxWaterConsumption = maxWaterConsumption;
-        this.maxHeat = maxHeat;
+        this.maxHeat = (int) GTValues.V[tier];
     }
 
     @Override
     public void update() {
         if(!reactor.isActive() && currentHeat > 0) {
             setHeat(currentHeat - 1);
-            return;
         }
 
         if(reactor.isActive() && currentHeat < maxHeat){
@@ -46,14 +43,13 @@ public class ReactorLogic extends AbstractRecipeLogic {
         if(consumeWater(getCurrentWaterConsumption(), false)){
             consumeWater(getCurrentWaterConsumption(), true);
             outputSteam(getCurrentSteamProduction());
+        } else {
+            // TODO: boom
         }
-
     }
 
     public float getRodLevelPercentage(){
         List<IReactorHatch> reactorHatchList = reactor.getAbilities(PrecisionMultiblockAbility.REACTOR_HATCH);
-        if(reactorHatchList.isEmpty())
-            return 0;
         float maxRodLevel = reactorHatchList.size() * 10;
         float currentLevel = reactorHatchList.stream().mapToInt(IReactorHatch::getRodLevel).sum();
         return currentLevel / maxRodLevel * 100;
@@ -64,7 +60,7 @@ public class ReactorLogic extends AbstractRecipeLogic {
     }
 
     public int getCurrentWaterConsumption(){
-        return (int) (maxWaterConsumption * getCurrentHeatPercentage());
+        return (int) (maxHeat * getCurrentHeatPercentage() / 100);
     }
 
     public int getCurrentSteamProduction(){

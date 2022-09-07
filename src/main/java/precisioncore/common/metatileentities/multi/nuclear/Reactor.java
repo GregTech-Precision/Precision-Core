@@ -26,7 +26,7 @@ public class Reactor extends MultiblockWithDisplayBase {
 
     public Reactor(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
-        this.reactorLogic = new ReactorLogic(this, 200, 2000);
+        this.reactorLogic = new ReactorLogic(this, 6);
     }
 
     @Override

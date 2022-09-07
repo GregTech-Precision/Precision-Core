@@ -1,10 +1,10 @@
 package precisioncore.api.render;
 
-import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.api.util.GTLog;
-import precisioncore.PrecisionCore;
+import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.relauncher.Side;
+import precisioncore.PrecisionCore;
 
 @Mod.EventBusSubscriber(modid = PrecisionCore.MODID, value = Side.CLIENT)
 public class PrecisionTextures {
@@ -20,6 +20,7 @@ public class PrecisionTextures {
     public static SimpleOverlayRenderer PARALLEL_RACK_EMPTY;
     public static SimpleOverlayRenderer PARALLEL_RACK_ACTIVE;
     public static SimpleOverlayRenderer PARALLEL_RACK_INACTIVE;
+    public static SimpleOverlayRenderer REACTOR_CASING;
 
 
 
@@ -36,5 +37,6 @@ public class PrecisionTextures {
         PARALLEL_RACK_EMPTY = new SimpleOverlayRenderer("parallel/rack_overlay_empty");
         PARALLEL_RACK_ACTIVE = new SimpleOverlayRenderer("parallel/rack_overlay_active");
         PARALLEL_RACK_INACTIVE = new SimpleOverlayRenderer("parallel/rack_overlay_inactive");
+        REACTOR_CASING = new SimpleOverlayRenderer("reactor/casing_reactor");
     }
 }

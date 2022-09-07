@@ -10,22 +10,29 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.common.blocks.BlockBoilerCasing;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.util.ResourceLocation;
-import precisioncore.api.capability.impl.ReactorRecipeLogic;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import precisioncore.api.capability.impl.ReactorLogic;
+import precisioncore.api.metatileentities.PrecisionMultiblockAbility;
 import precisioncore.api.render.PrecisionTextures;
 import precisioncore.common.blocks.BlockCasing;
 import precisioncore.common.blocks.PrecisionMetaBlocks;
 
+import java.util.List;
+
 public class Reactor extends MultiblockWithDisplayBase {
 
-    private final ReactorRecipeLogic reactorRecipeLogic;
+    private final ReactorLogic reactorLogic;
 
     public Reactor(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
-        this.reactorRecipeLogic = new ReactorRecipeLogic(this);
+        this.reactorLogic = new ReactorLogic(this, 200, 2000);
     }
 
     @Override
-    protected void updateFormedValid() {}
+    protected void updateFormedValid() {
+
+    }
 
     @Override
     protected BlockPattern createStructurePattern() {
@@ -40,20 +47,28 @@ public class Reactor extends MultiblockWithDisplayBase {
                 .aisle("#CCCCCCC#", "#C#####C#", "##R###R##", "##R###R##", "##RC#CR##", "##CCCCC##")
                 .aisle("##CCSCC##", "##CCCCC##", "###CCC###", "###CCC###", "####C####", "#########")
                 .where('S', selfPredicate())
-                .where('C', states(PrecisionMetaBlocks.CASING.getState(BlockCasing.Casings.REACTOR)))
+                .where('C', states(PrecisionMetaBlocks.CASING.getState(BlockCasing.Casings.REACTOR)).or(autoAbilities(true, false)))
                 .where('R', states(MetaBlocks.BOILER_CASING.getState(BlockBoilerCasing.BoilerCasingType.STEEL_PIPE)))
-                .where('F', any())
+                .where('F', abilities(PrecisionMultiblockAbility.REACTOR_HATCH))
                 .where('#', any())
                 .build();
     }
 
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart iMultiblockPart) {
-        return PrecisionTextures.SATELLITE_CASING;
+        return PrecisionTextures.REACTOR_CASING;
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
         return new Reactor(metaTileEntityId);
+    }
+
+    @Override
+    protected void addDisplayText(List<ITextComponent> textList) {
+        super.addDisplayText(textList);
+        textList.add(new TextComponentString("Heat: "+reactorLogic.getCurrentHeatPercentage()));
+        textList.add(new TextComponentString("Water Consumption: "+reactorLogic.getCurrentWaterConsumption()));
+        textList.add(new TextComponentString("Steam Production: "+reactorLogic.getCurrentSteamProduction()));
     }
 }

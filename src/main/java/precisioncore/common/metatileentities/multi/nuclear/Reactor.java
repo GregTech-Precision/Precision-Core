@@ -1,5 +1,6 @@
 package precisioncore.common.metatileentities.multi.nuclear;
 
+import codechicken.lib.raytracer.CuboidRayTraceResult;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -9,9 +10,14 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.common.blocks.BlockBoilerCasing;
 import gregtech.common.blocks.MetaBlocks;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import precisioncore.api.capability.IReactorHatch;
 import precisioncore.api.capability.impl.ReactorLogic;
 import precisioncore.api.metatileentities.PrecisionMultiblockAbility;
 import precisioncore.api.render.PrecisionTextures;
@@ -65,10 +71,45 @@ public class Reactor extends MultiblockWithDisplayBase {
     }
 
     @Override
+    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        if(playerIn.isSneaking())
+            downAllRods();
+        else
+            upAllRods();
+        return true;
+    }
+
+    private void downAllRods(){
+        getAbilities(PrecisionMultiblockAbility.REACTOR_HATCH).forEach(IReactorHatch::downRod);
+    }
+
+    private void upAllRods(){
+        getAbilities(PrecisionMultiblockAbility.REACTOR_HATCH).forEach(IReactorHatch::upRod);
+    }
+
+    @Override
+    protected boolean shouldShowVoidingModeButton() {
+        return false;
+    }
+
+    @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
-        textList.add(new TextComponentString("Heat: "+reactorLogic.getCurrentHeatPercentage()));
-        textList.add(new TextComponentString("Water Consumption: "+reactorLogic.getCurrentWaterConsumption()));
-        textList.add(new TextComponentString("Steam Production: "+reactorLogic.getCurrentSteamProduction()));
+        textList.add(new TextComponentString(String.format("Heat: %.1f", reactorLogic.getCurrentHeatPercentage() * 100)));
+        textList.add(new TextComponentString("Water Consumption: " + (int) reactorLogic.getCurrentWaterConsumption()));
+        textList.add(new TextComponentString("Steam Production: " + reactorLogic.getCurrentSteamProduction()));
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        data.setTag("logic", reactorLogic.serializeNBT());
+        return data;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        reactorLogic.deserializeNBT(data.getCompoundTag("logic"));
     }
 }

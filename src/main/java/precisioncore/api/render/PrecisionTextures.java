@@ -21,6 +21,8 @@ public class PrecisionTextures {
     public static SimpleOverlayRenderer PARALLEL_RACK_ACTIVE;
     public static SimpleOverlayRenderer PARALLEL_RACK_INACTIVE;
     public static SimpleOverlayRenderer REACTOR_CASING;
+    public static SimpleOverlayRenderer NUCLEAR_FUEL_HATCH_ACTIVE;
+    public static SimpleOverlayRenderer NUCLEAR_FUEL_HATCH_INACTIVE;
 
 
 
@@ -37,6 +39,8 @@ public class PrecisionTextures {
         PARALLEL_RACK_EMPTY = new SimpleOverlayRenderer("parallel/rack_overlay_empty");
         PARALLEL_RACK_ACTIVE = new SimpleOverlayRenderer("parallel/rack_overlay_active");
         PARALLEL_RACK_INACTIVE = new SimpleOverlayRenderer("parallel/rack_overlay_inactive");
-        REACTOR_CASING = new SimpleOverlayRenderer("reactor/casing_reactor");
+        REACTOR_CASING = new SimpleOverlayRenderer("nuclear/casing_reactor");
+        NUCLEAR_FUEL_HATCH_ACTIVE  = new SimpleOverlayRenderer("nuclear/hatch_overlay_active");
+        NUCLEAR_FUEL_HATCH_INACTIVE  = new SimpleOverlayRenderer("nuclear/hatch_overlay_inactive");
     }
 }

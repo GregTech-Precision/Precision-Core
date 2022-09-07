@@ -1,7 +1,12 @@
 package precisioncore.common.metatileentities.multi.nuclear;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.Widget;
+import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
@@ -12,12 +17,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.items.ItemStackHandler;
 import precisioncore.api.capability.IReactorHatch;
+import precisioncore.api.gui.PrecisionGUITextures;
 import precisioncore.api.metatileentities.PrecisionMultiblockAbility;
+import precisioncore.api.render.PrecisionTextures;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -34,19 +39,74 @@ public class ReactorFuelHatch extends MetaTileEntityMultiblockPart implements IM
     }
 
     @Override
-    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if(!getWorld().isRemote) {
-            if (playerIn.isSneaking()) {
-                this.rodLevel--;
-                if (this.rodLevel < 0) this.rodLevel = 0;
-            } else {
-                this.rodLevel++;
-                if (this.rodLevel > 10) this.rodLevel = 10;
-            }
-            writeCustomData(DATA_UPDATE, buf -> buf.writeVarInt(this.rodLevel));
-        }
-        playerIn.sendMessage(new TextComponentString("Level: " + rodLevel));
-        return true;
+    public int getRodLevel() {
+        return rodLevel;
+    }
+
+    @Override
+    public void downRod() {
+        this.rodLevel=Math.min(10, rodLevel+1);
+        writeCustomData(DATA_UPDATE, buf -> buf.writeVarInt(this.rodLevel));
+    }
+
+    @Override
+    public void upRod() {
+        this.rodLevel=Math.max(0, rodLevel-1);
+        writeCustomData(DATA_UPDATE, buf -> buf.writeVarInt(this.rodLevel));
+    }
+
+    @Override
+    public boolean isMOX() {
+        return false;
+    }
+
+    @Override
+    public int depleteRod(int amount, boolean simulate) {
+        return 0;
+    }
+
+    @Override
+    public int depleteRod(boolean simulate) {
+        return depleteRod(getRodLevel(), simulate);
+    }
+
+    @Override
+    protected ModularUI createUI(EntityPlayer entityPlayer) {
+        return ModularUI.builder(PrecisionGUITextures.ROD_HATCH_BACKGROUND, 176, 166)
+                .slot(holder, 0, 89, 7, GuiTextures.SLOT)
+                .widget(new ClickButtonWidget(69, 7, 18, 18, "", this::clickUpRod))
+                .widget(new ClickButtonWidget(69, 61, 18, 18, "", this::clickDownRod))
+                .bindPlayerInventory(entityPlayer.inventory)
+                .build(getHolder(), entityPlayer);
+    }
+
+    private void clickUpRod(Widget.ClickData clickData) {
+        upRod();
+    }
+
+    private void clickDownRod(Widget.ClickData clickData) {
+        downRod();
+    }
+
+    @Override
+    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        super.renderMetaTileEntity(renderState, translation, pipeline);
+        (holder.getStackInSlot(0).isEmpty() ? PrecisionTextures.NUCLEAR_FUEL_HATCH_INACTIVE : PrecisionTextures.NUCLEAR_FUEL_HATCH_ACTIVE).renderSided(EnumFacing.UP, renderState, translation, pipeline);
+    }
+
+    @Override
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
+        return new ReactorFuelHatch(metaTileEntityId);
+    }
+
+    @Override
+    public MultiblockAbility<IReactorHatch> getAbility() {
+        return PrecisionMultiblockAbility.REACTOR_HATCH;
+    }
+
+    @Override
+    public void registerAbilities(List<IReactorHatch> list) {
+        list.add(this);
     }
 
     @Override
@@ -82,41 +142,6 @@ public class ReactorFuelHatch extends MetaTileEntityMultiblockPart implements IM
         this.rodLevel = data.getInteger("rodLevel");
     }
 
-    @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
-        return new ReactorFuelHatch(metaTileEntityId);
-    }
-
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
-    }
-
-    @Override
-    public MultiblockAbility<IReactorHatch> getAbility() {
-        return PrecisionMultiblockAbility.REACTOR_HATCH;
-    }
-
-    @Override
-    public void registerAbilities(List<IReactorHatch> list) {
-        list.add(this);
-    }
-
-    @Override
-    public int getRodLevel() {
-        return rodLevel;
-    }
-
-    @Override
-    public boolean isMOX() {
-        return false;
-    }
-
-    @Override
-    public int depleteRod(int amount, boolean simulate) {
-        return 0;
-    }
-
     private class NuclearFuelInventoryHolder extends ItemStackHandler {
 
         NuclearFuelInventoryHolder() {
@@ -131,6 +156,12 @@ public class ReactorFuelHatch extends MetaTileEntityMultiblockPart implements IM
         @Override
         public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
             return true; // TODO: add is nuclear fuel checking
+        }
+
+        @Override
+        protected void onContentsChanged(int slot) {
+            super.onContentsChanged(slot);
+            scheduleRenderUpdate();
         }
     }
 }

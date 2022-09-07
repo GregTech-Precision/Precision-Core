@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.unification.material.Materials;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
@@ -18,16 +19,20 @@ public class ReactorLogic extends AbstractRecipeLogic {
 
     private final Reactor reactor;
 
-    private static final int STEAM_PER_WATER = 40;
+    private static final int STEAM_PER_WATER = 160;
     private static final int DATA_HEAT = 989;
 
     private final int maxHeat;
     private int currentHeat = 0;
 
+
+    /**
+     * Produces steam equals energy (Reactor tier + 1) * 10A
+     */
     public ReactorLogic(Reactor reactor, int tier){
         super(reactor, null, false);
         this.reactor = reactor;
-        this.maxHeat = (int) GTValues.V[tier];
+        this.maxHeat = (int) GTValues.V[tier-1];
     }
 
     @Override
@@ -40,8 +45,9 @@ public class ReactorLogic extends AbstractRecipeLogic {
             setHeat(currentHeat + 1);
         }
 
-        if(consumeWater(getCurrentWaterConsumption(), false)){
-            consumeWater(getCurrentWaterConsumption(), true);
+        int waterToConsume = (int)(getCurrentWaterConsumption());
+        if(consumeWater(waterToConsume, false)){
+            consumeWater(waterToConsume, true);
             outputSteam(getCurrentSteamProduction());
         } else {
             // TODO: boom
@@ -52,19 +58,19 @@ public class ReactorLogic extends AbstractRecipeLogic {
         List<IReactorHatch> reactorHatchList = reactor.getAbilities(PrecisionMultiblockAbility.REACTOR_HATCH);
         float maxRodLevel = reactorHatchList.size() * 10;
         float currentLevel = reactorHatchList.stream().mapToInt(IReactorHatch::getRodLevel).sum();
-        return currentLevel / maxRodLevel * 100;
+        return currentLevel / maxRodLevel;
     }
 
     public float getCurrentHeatPercentage(){
         return ((float) currentHeat / (float) maxHeat) * getRodLevelPercentage();
     }
 
-    public int getCurrentWaterConsumption(){
-        return (int) (maxHeat * getCurrentHeatPercentage() / 100);
+    public float getCurrentWaterConsumption(){
+        return maxHeat * getCurrentHeatPercentage();
     }
 
     public int getCurrentSteamProduction(){
-        return getCurrentWaterConsumption() * STEAM_PER_WATER;
+        return (int) getCurrentWaterConsumption() * STEAM_PER_WATER;
     }
 
     private void setHeat(int heat){
@@ -111,6 +117,19 @@ public class ReactorLogic extends AbstractRecipeLogic {
         if(dataId == DATA_HEAT){
             this.currentHeat = buf.readVarInt();
         }
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound tag = super.serializeNBT();
+        tag.setInteger("heat", this.currentHeat);
+        return tag;
+    }
+
+    @Override
+    public void deserializeNBT(@Nonnull NBTTagCompound compound) {
+        super.deserializeNBT(compound);
+        this.currentHeat = compound.getInteger("heat");
     }
 
     @Override

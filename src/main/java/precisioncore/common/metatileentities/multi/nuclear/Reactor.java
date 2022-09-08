@@ -1,6 +1,7 @@
 package precisioncore.common.metatileentities.multi.nuclear;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
+import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -8,6 +9,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.PatternMatchContext;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.common.blocks.BlockBoilerCasing;
 import gregtech.common.blocks.MetaBlocks;
@@ -37,6 +39,28 @@ public class Reactor extends MultiblockWithDisplayBase {
 
     @Override
     protected void updateFormedValid() {
+    }
+
+    private void initializeAbilities(){
+        this.importFluids = new FluidTankList(true, getAbilities(MultiblockAbility.IMPORT_FLUIDS));
+        this.exportFluids = new FluidTankList(true, getAbilities(MultiblockAbility.EXPORT_FLUIDS));
+    }
+
+    private void resetAbilities(){
+        this.importFluids = new FluidTankList(true);
+        this.exportFluids = new FluidTankList(true);
+    }
+
+    @Override
+    protected void formStructure(PatternMatchContext context) {
+        super.formStructure(context);
+        initializeAbilities();
+    }
+
+    @Override
+    public void invalidateStructure() {
+        super.invalidateStructure();
+        resetAbilities();
     }
 
     @Override

@@ -2,12 +2,10 @@ package precisioncore.api.capability.impl;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.unification.material.Materials;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidTank;
 import precisioncore.api.capability.IReactorHatch;
 import precisioncore.api.metatileentities.PrecisionMultiblockAbility;
 import precisioncore.common.metatileentities.multi.nuclear.Reactor;
@@ -16,8 +14,6 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class ReactorLogic extends AbstractRecipeLogic {
-
-    private final Reactor reactor;
 
     private static final int STEAM_PER_WATER = 160;
     private static final int DATA_HEAT = 989;
@@ -31,17 +27,22 @@ public class ReactorLogic extends AbstractRecipeLogic {
      */
     public ReactorLogic(Reactor reactor, int tier){
         super(reactor, null, false);
-        this.reactor = reactor;
         this.maxHeat = (int) GTValues.V[tier-1];
+        this.workingEnabled = false;
+    }
+
+    @Override
+    public Reactor getMetaTileEntity() {
+        return (Reactor) super.getMetaTileEntity();
     }
 
     @Override
     public void update() {
-        if((!reactor.isActive() || !isWorkingEnabled()) && currentHeat > 0) {
+        if((!getMetaTileEntity().isActive() || !isWorkingEnabled()) && currentHeat > 0) {
             setHeat(currentHeat - 1);
         }
 
-        if(reactor.isActive() && isWorkingEnabled() && currentHeat < maxHeat){
+        if(getMetaTileEntity().isActive() && isWorkingEnabled() && currentHeat < maxHeat){
             setHeat(currentHeat + 1);
         }
 
@@ -49,13 +50,13 @@ public class ReactorLogic extends AbstractRecipeLogic {
         if(consumeWater(waterToConsume, false)){
             consumeWater(waterToConsume, true);
             outputSteam(getCurrentSteamProduction());
-        } else {
-            reactor.doExplosion(100*getCurrentHeatPercentage());
+        } else if(waterToConsume != 0) {
+            getMetaTileEntity().doExplosion(100*getCurrentHeatPercentage());
         }
     }
 
     public float getRodLevelPercentage(){
-        List<IReactorHatch> reactorHatchList = reactor.getAbilities(PrecisionMultiblockAbility.REACTOR_HATCH);
+        List<IReactorHatch> reactorHatchList = getMetaTileEntity().getAbilities(PrecisionMultiblockAbility.REACTOR_HATCH);
         float maxRodLevel = reactorHatchList.size() * 10;
         float currentLevel = reactorHatchList.stream().mapToInt(IReactorHatch::getRodLevel).sum();
         return currentLevel / maxRodLevel;
@@ -81,24 +82,14 @@ public class ReactorLogic extends AbstractRecipeLogic {
     }
 
     private boolean consumeWater(int amount, boolean drain){
-        List<IFluidTank> inputs = reactor.getAbilities(MultiblockAbility.IMPORT_FLUIDS);
-        for(IFluidTank tank : inputs){
-            if(tank.getFluid() != null && tank.getFluid().getFluid() == Materials.Water.getFluid()) {
-                FluidStack fluid = tank.drain(amount, drain);
-                if(fluid != null)
-                    amount -= fluid.amount;
-                if(amount == 0) break;
-            }
-        }
-        return amount <= 0;
+        FluidStack fluid = getInputTank().drain(Materials.Water.getFluid(amount), drain);
+        if(fluid == null || fluid.amount == 0)
+            return false;
+        return fluid.amount == amount;
     }
 
     private void outputSteam(int amount){
-        List<IFluidTank> outputs = reactor.getAbilities(MultiblockAbility.EXPORT_FLUIDS);
-        FluidStack water = Materials.Water.getFluid(amount);
-        for(IFluidTank tank : outputs){
-            water.amount -= tank.fill(water, true);
-        }
+        getOutputTank().fill(Materials.Steam.getFluid(amount), true);
     }
 
     @Override

@@ -37,11 +37,11 @@ public class ReactorLogic extends AbstractRecipeLogic {
 
     @Override
     public void update() {
-        if(!reactor.isActive() && currentHeat > 0) {
+        if((!reactor.isActive() || !isWorkingEnabled()) && currentHeat > 0) {
             setHeat(currentHeat - 1);
         }
 
-        if(reactor.isActive() && currentHeat < maxHeat){
+        if(reactor.isActive() && isWorkingEnabled() && currentHeat < maxHeat){
             setHeat(currentHeat + 1);
         }
 
@@ -50,7 +50,7 @@ public class ReactorLogic extends AbstractRecipeLogic {
             consumeWater(waterToConsume, true);
             outputSteam(getCurrentSteamProduction());
         } else {
-            // TODO: boom
+            reactor.doExplosion(100*getCurrentHeatPercentage());
         }
     }
 
@@ -62,7 +62,7 @@ public class ReactorLogic extends AbstractRecipeLogic {
     }
 
     public float getCurrentHeatPercentage(){
-        return ((float) currentHeat / (float) maxHeat) * getRodLevelPercentage();
+        return Math.min(getRodLevelPercentage(), ((float) currentHeat / (float) maxHeat));
     }
 
     public float getCurrentWaterConsumption(){
@@ -84,7 +84,9 @@ public class ReactorLogic extends AbstractRecipeLogic {
         List<IFluidTank> inputs = reactor.getAbilities(MultiblockAbility.IMPORT_FLUIDS);
         for(IFluidTank tank : inputs){
             if(tank.getFluid() != null && tank.getFluid().getFluid() == Materials.Water.getFluid()) {
-                amount -= tank.drain(amount, drain).amount;
+                FluidStack fluid = tank.drain(amount, drain);
+                if(fluid != null)
+                    amount -= fluid.amount;
                 if(amount == 0) break;
             }
         }
@@ -102,13 +104,13 @@ public class ReactorLogic extends AbstractRecipeLogic {
     @Override
     public void writeInitialData(@Nonnull PacketBuffer buf) {
         super.writeInitialData(buf);
-        buf.writeInt(this.currentHeat);
+        buf.writeVarInt(this.currentHeat);
     }
 
     @Override
     public void receiveInitialData(@Nonnull PacketBuffer buf) {
         super.receiveInitialData(buf);
-        this.currentHeat = buf.readInt();
+        this.currentHeat = buf.readVarInt();
     }
 
     @Override

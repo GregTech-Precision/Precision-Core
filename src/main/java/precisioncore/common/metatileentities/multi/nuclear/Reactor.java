@@ -4,6 +4,7 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
@@ -11,7 +12,6 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.common.blocks.BlockBoilerCasing;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
@@ -37,7 +37,6 @@ public class Reactor extends MultiblockWithDisplayBase {
 
     @Override
     protected void updateFormedValid() {
-
     }
 
     @Override
@@ -53,7 +52,10 @@ public class Reactor extends MultiblockWithDisplayBase {
                 .aisle("#CCCCCCC#", "#C#####C#", "##R###R##", "##R###R##", "##RC#CR##", "##CCCCC##")
                 .aisle("##CCSCC##", "##CCCCC##", "###CCC###", "###CCC###", "####C####", "#########")
                 .where('S', selfPredicate())
-                .where('C', states(PrecisionMetaBlocks.CASING.getState(BlockCasing.Casings.REACTOR)).or(autoAbilities(true, false)))
+                .where('C', states(PrecisionMetaBlocks.CASING.getState(BlockCasing.Casings.REACTOR))
+                        .or(autoAbilities(true, false))
+                        .or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMaxGlobalLimited(6))
+                        .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMaxGlobalLimited(3)))
                 .where('R', states(MetaBlocks.BOILER_CASING.getState(BlockBoilerCasing.BoilerCasingType.STEEL_PIPE)))
                 .where('F', abilities(PrecisionMultiblockAbility.REACTOR_HATCH))
                 .where('#', any())
@@ -98,18 +100,5 @@ public class Reactor extends MultiblockWithDisplayBase {
         textList.add(new TextComponentString(String.format("Heat: %.1f", reactorLogic.getCurrentHeatPercentage() * 100)));
         textList.add(new TextComponentString("Water Consumption: " + (int) reactorLogic.getCurrentWaterConsumption()));
         textList.add(new TextComponentString("Steam Production: " + reactorLogic.getCurrentSteamProduction()));
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
-        data.setTag("logic", reactorLogic.serializeNBT());
-        return data;
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
-        reactorLogic.deserializeNBT(data.getCompoundTag("logic"));
     }
 }

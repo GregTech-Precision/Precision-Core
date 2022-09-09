@@ -18,8 +18,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.ItemStackHandler;
 import precisioncore.api.capability.IReactorHatch;
+import precisioncore.api.capability.PrecisionCapabilities;
 import precisioncore.api.gui.PrecisionGUITextures;
 import precisioncore.api.metatileentities.PrecisionMultiblockAbility;
 import precisioncore.api.render.PrecisionTextures;
@@ -40,7 +42,7 @@ public class ReactorFuelHatch extends MetaTileEntityMultiblockPart implements IM
 
     @Override
     public int getRodLevel() {
-        return rodLevel;
+        return hasRod() ? rodLevel : 0;
     }
 
     @Override
@@ -58,6 +60,11 @@ public class ReactorFuelHatch extends MetaTileEntityMultiblockPart implements IM
     @Override
     public boolean isMOX() {
         return false;
+    }
+
+    @Override
+    public boolean hasRod() {
+        return true;
     }
 
     @Override
@@ -107,6 +114,17 @@ public class ReactorFuelHatch extends MetaTileEntityMultiblockPart implements IM
     @Override
     public void registerAbilities(List<IReactorHatch> list) {
         list.add(this);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        T result = super.getCapability(capability, side);
+        if(result != null)
+            return result;
+        if(capability == PrecisionCapabilities.CAPABILITY_ROD){
+            return PrecisionCapabilities.CAPABILITY_ROD.cast(this);
+        }
+        return null;
     }
 
     @Override

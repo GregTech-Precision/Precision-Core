@@ -47,3 +47,8 @@ precisioncore.top.addressable.address=Network Address:
 
 ##PrecisionMultiblockController
 precisioncore.top.controller.parallel=Current Parallel Usage:
+
+##IReactorHatch
+precisioncore.top.rod.mox=MOX Fuel
+precisioncore.top.rod.uranium=Uranium Fuel
+precisioncore.top.rod.level=Rod Level: %f%%

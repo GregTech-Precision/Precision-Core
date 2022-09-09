@@ -9,6 +9,8 @@ public interface IReactorHatch {
     void upRod();
     
     boolean isMOX();
+
+    boolean hasRod();
     
     int depleteRod(int amount, boolean simulate);
 

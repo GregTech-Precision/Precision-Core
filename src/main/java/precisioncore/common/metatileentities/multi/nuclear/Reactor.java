@@ -1,6 +1,7 @@
 package precisioncore.common.metatileentities.multi.nuclear;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
+import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -19,6 +20,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.common.capabilities.Capability;
 import precisioncore.api.capability.IReactorHatch;
 import precisioncore.api.capability.impl.ReactorLogic;
 import precisioncore.api.metatileentities.PrecisionMultiblockAbility;
@@ -61,6 +63,13 @@ public class Reactor extends MultiblockWithDisplayBase {
     public void invalidateStructure() {
         super.invalidateStructure();
         resetAbilities();
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        if(capability == GregtechTileCapabilities.CAPABILITY_WORKABLE)
+            return null;
+        return super.getCapability(capability, side);
     }
 
     @Override
@@ -122,7 +131,7 @@ public class Reactor extends MultiblockWithDisplayBase {
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
         textList.add(new TextComponentString(String.format("Heat: %.1f", reactorLogic.getCurrentHeatPercentage() * 100)));
-        textList.add(new TextComponentString("Water Consumption: " + (int) reactorLogic.getCurrentWaterConsumption()));
+        textList.add(new TextComponentString("Water Consumption: " + reactorLogic.getCurrentWaterConsumption()));
         textList.add(new TextComponentString("Steam Production: " + reactorLogic.getCurrentSteamProduction()));
     }
 }

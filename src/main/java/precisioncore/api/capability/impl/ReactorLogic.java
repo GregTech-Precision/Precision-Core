@@ -15,18 +15,22 @@ import java.util.List;
 
 public class ReactorLogic extends AbstractRecipeLogic {
 
-    private static final int STEAM_PER_WATER = 160;
+    private static final int STEAM_PER_WATER = 40;
     private static final int DATA_HEAT = 989;
 
     private final int maxHeat;
     private int currentHeat = 0;
 
+    private boolean lastIsMOX = false;
+    private int waterToConsume = 0;
+    private float lastRodLevel = 0;
+
 
     /**
-     * Produces steam equals energy (Reactor tier + 1) * 10A
+     * Produces steam equals energy reactor tier * 10A
      */
     public ReactorLogic(Reactor reactor, int tier){
-        super(reactor, null, false);
+        super(reactor, null);
         this.maxHeat = (int) GTValues.V[tier-1];
         this.workingEnabled = false;
     }
@@ -38,21 +42,55 @@ public class ReactorLogic extends AbstractRecipeLogic {
 
     @Override
     public void update() {
-        if((!getMetaTileEntity().isActive() || !isWorkingEnabled()) && currentHeat > 0) {
+        if ((!getMetaTileEntity().isActive() || !isWorkingEnabled()) && currentHeat > 0) {
             setHeat(currentHeat - 1);
         }
+        super.update();
+    }
 
-        if(getMetaTileEntity().isActive() && isWorkingEnabled() && currentHeat < maxHeat){
-            setHeat(currentHeat + 1);
+    @Override
+    protected void trySearchNewRecipe() {
+        if (getRodLevelPercentage() > 0) {
+            setMaxProgress(20);
+            this.progressTime = 1;
+            this.lastIsMOX = isMOX();
+            this.lastRodLevel = getRodLevelPercentage();
+            this.waterToConsume = getCurrentWaterConsumption();
+            if (wasActiveAndNeedsUpdate) {
+                wasActiveAndNeedsUpdate = false;
+            } else {
+                setActive(true);
+            }
+            metaTileEntity.getNotifiedFluidInputList().clear();
+            metaTileEntity.getNotifiedFluidOutputList().clear();
         }
+    }
 
-        int waterToConsume = (int)(getCurrentWaterConsumption());
-        if(consumeWater(waterToConsume, false)){
+    @Override
+    protected void updateRecipeProgress() {
+        if (consumeWater(waterToConsume, false)) {
             consumeWater(waterToConsume, true);
-            outputSteam(getCurrentSteamProduction());
-        } else if(waterToConsume != 0) {
-            getMetaTileEntity().doExplosion(100*getCurrentHeatPercentage());
+            outputSteam(waterToConsume * STEAM_PER_WATER);
+        } else if (waterToConsume != 0) {
+            getMetaTileEntity().doExplosion(1000 * getCurrentHeatPercentage());
         }
+
+        if (++progressTime > maxProgressTime) {
+            if (currentHeat < maxHeat) {
+                setHeat(currentHeat + (int) Math.max(1, getRodAmount() * getRodLevelPercentage()));
+            }
+            completeRecipe();
+        }
+    }
+
+    @Override
+    protected void completeRecipe() {
+        progressTime = 0;
+        lastIsMOX = false;
+        waterToConsume = 0;
+        lastRodLevel = 0;
+        setMaxProgress(0);
+        wasActiveAndNeedsUpdate = true;
     }
 
     public float getRodLevelPercentage(){
@@ -62,16 +100,28 @@ public class ReactorLogic extends AbstractRecipeLogic {
         return currentLevel / maxRodLevel;
     }
 
-    public float getCurrentHeatPercentage(){
-        return Math.min(getRodLevelPercentage(), ((float) currentHeat / (float) maxHeat));
+    private int getRodAmount(){
+        return (int) getMetaTileEntity().getAbilities(PrecisionMultiblockAbility.REACTOR_HATCH).size();
     }
 
-    public float getCurrentWaterConsumption(){
-        return maxHeat * getCurrentHeatPercentage();
+    public boolean isMOX(){
+        return getMetaTileEntity().getAbilities(PrecisionMultiblockAbility.REACTOR_HATCH).stream().allMatch(IReactorHatch::isMOX);
+    }
+
+    public float getCurrentHeatPercentage(){
+        return Math.min(lastRodLevel, ((float) currentHeat / (float) maxHeat));
+    }
+
+    public int getCurrentWaterConsumption(){
+        return (int) (maxHeat * getCurrentHeatPercentage() * getFuelModifier());
     }
 
     public int getCurrentSteamProduction(){
-        return (int) getCurrentWaterConsumption() * STEAM_PER_WATER;
+        return waterToConsume * STEAM_PER_WATER;
+    }
+
+    private int getFuelModifier(){
+        return lastIsMOX ? 4 : 1;
     }
 
     private void setHeat(int heat){
@@ -116,6 +166,9 @@ public class ReactorLogic extends AbstractRecipeLogic {
     public NBTTagCompound serializeNBT() {
         NBTTagCompound tag = super.serializeNBT();
         tag.setInteger("heat", this.currentHeat);
+        tag.setBoolean("lastIsMOX", this.lastIsMOX);
+        tag.setInteger("waterToConsume", this.waterToConsume);
+        tag.setFloat("lastRodLevel", this.lastRodLevel);
         return tag;
     }
 
@@ -123,6 +176,9 @@ public class ReactorLogic extends AbstractRecipeLogic {
     public void deserializeNBT(@Nonnull NBTTagCompound compound) {
         super.deserializeNBT(compound);
         this.currentHeat = compound.getInteger("heat");
+        this.lastIsMOX = compound.getBoolean("lastIsMOX");
+        this.waterToConsume = compound.getInteger("waterToConsume");
+        this.lastRodLevel = compound.getFloat("lastRodLevel");
     }
 
     @Override

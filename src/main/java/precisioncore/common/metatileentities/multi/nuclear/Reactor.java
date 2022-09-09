@@ -1,6 +1,9 @@
 package precisioncore.common.metatileentities.multi.nuclear;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -12,6 +15,7 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockBoilerCasing;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.entity.player.EntityPlayer;
@@ -83,7 +87,7 @@ public class Reactor extends MultiblockWithDisplayBase {
                 .aisle("CCCCCCCCC", "C#######C", "C#######C", "C#######C", "#C#####C#", "#CFFFFFC#")
                 .aisle("CCCCCCCCC", "C#######C", "#R#####R#", "#R#####R#", "#R#####R#", "#CFFFFFC#")
                 .aisle("#CCCCCCC#", "#C#####C#", "##R###R##", "##R###R##", "##RC#CR##", "##CCCCC##")
-                .aisle("##CCSCC##", "##CCCCC##", "###CCC###", "###CCC###", "####C####", "#########")
+                .aisle("##CCCCC##", "##CCSCC##", "###CCC###", "###CCC###", "####C####", "#########")
                 .where('S', selfPredicate())
                 .where('C', states(PrecisionMetaBlocks.CASING.getState(BlockCasing.Casings.REACTOR))
                         .or(autoAbilities(true, false))
@@ -103,6 +107,12 @@ public class Reactor extends MultiblockWithDisplayBase {
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
         return new Reactor(metaTileEntityId);
+    }
+
+    @Override
+    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        super.renderMetaTileEntity(renderState, translation, pipeline);
+        Textures.QUANTUM_TANK_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
     }
 
     @Override

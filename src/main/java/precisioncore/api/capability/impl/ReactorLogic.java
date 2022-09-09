@@ -3,6 +3,7 @@ package precisioncore.api.capability.impl;
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.GTLog;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.FluidStack;
@@ -53,7 +54,7 @@ public class ReactorLogic extends AbstractRecipeLogic {
         if (getRodLevelPercentage() > 0) {
             setMaxProgress(20);
             this.progressTime = 1;
-            this.lastIsMOX = isMOX();
+            this.lastIsMOX = checkIsMOX();
             this.lastRodLevel = getRodLevelPercentage();
             this.waterToConsume = getCurrentWaterConsumption();
             if (wasActiveAndNeedsUpdate) {
@@ -77,7 +78,7 @@ public class ReactorLogic extends AbstractRecipeLogic {
 
         if (++progressTime > maxProgressTime) {
             if (currentHeat < maxHeat) {
-                setHeat(currentHeat + (int) Math.max(1, getRodAmount() * getRodLevelPercentage()));
+                setHeat(currentHeat + (int) Math.max(1, getRodAmount() * lastRodLevel));
             }
             completeRecipe();
         }
@@ -101,10 +102,10 @@ public class ReactorLogic extends AbstractRecipeLogic {
     }
 
     private int getRodAmount(){
-        return (int) getMetaTileEntity().getAbilities(PrecisionMultiblockAbility.REACTOR_HATCH).size();
+        return getMetaTileEntity().getAbilities(PrecisionMultiblockAbility.REACTOR_HATCH).size();
     }
 
-    public boolean isMOX(){
+    public boolean checkIsMOX(){
         return getMetaTileEntity().getAbilities(PrecisionMultiblockAbility.REACTOR_HATCH).stream().allMatch(IReactorHatch::isMOX);
     }
 
@@ -155,7 +156,7 @@ public class ReactorLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @Nonnull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if(dataId == DATA_HEAT){
             this.currentHeat = buf.readVarInt();
@@ -183,26 +184,31 @@ public class ReactorLogic extends AbstractRecipeLogic {
 
     @Override
     protected long getEnergyInputPerSecond() {
+        GTLog.logger.error("Large Boiler called getEnergyInputPerSecond(), this should not be possible!");
         return 0;
     }
 
     @Override
     protected long getEnergyStored() {
+        GTLog.logger.error("Large Boiler called getEnergyStored(), this should not be possible!");
         return 0;
     }
 
     @Override
     protected long getEnergyCapacity() {
+        GTLog.logger.error("Large Boiler called getEnergyCapacity(), this should not be possible!");
         return 0;
     }
 
     @Override
     protected boolean drawEnergy(int i, boolean b) {
+        GTLog.logger.error("Large Boiler called drawEnergy(), this should not be possible!");
         return false;
     }
 
     @Override
     protected long getMaxVoltage() {
+        GTLog.logger.error("Large Boiler called getMaxVoltage(), this should not be possible!");
         return 0;
     }
 }

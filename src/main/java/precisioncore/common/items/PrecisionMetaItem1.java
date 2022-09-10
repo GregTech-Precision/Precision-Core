@@ -6,7 +6,6 @@ import precisioncore.common.items.behaviors.NuclearFuelBehavior;
 
 import static precisioncore.common.items.PrecisionMetaItems.*;
 
-
 public class PrecisionMetaItem1 extends StandardMetaItem {
 
     PrecisionMetaItem1(){
@@ -17,9 +16,11 @@ public class PrecisionMetaItem1 extends StandardMetaItem {
     public void registerSubItems() {
         int id = 0;
         //WOODEN_PILE = addItem(id++, "pile.wood").addOreDict("pile_wooden").setUnificationData(dust, Wood);
-        URANIUM_FUEL = addItem(id++, "uranium_fuel").addComponents(new NuclearFuelBehavior(20000, false));
-        URANIUM_MOX_FUEL = addItem(id++, "uranium_mox_fuel").addComponents(new NuclearFuelBehavior(20000, true));
-        NAQUADAH_FUEL = addItem(id++, "naquadah_fuel").addComponents(new NuclearFuelBehavior(100000, false));
-        NAQUADAH_MOX_FUEL = addItem(id++, "naquadah_mox_fuel").addComponents(new NuclearFuelBehavior(100000, true));
+        NAQUADAH_ROD = addItem(id++, "naquadah_rod").addComponents(new NuclearFuelBehavior(100000, 1, false));
+        DUAL_NAQUADAH_ROD = addItem(id++, "dual_naquadah_rod").addComponents(new NuclearFuelBehavior(100000, 2, false));
+        QUAD_NAQUADAH_ROD = addItem(id++, "quad_naquadah_rod").addComponents(new NuclearFuelBehavior(100000, 4, false));
+        NAQUADAH_MOX_ROD = addItem(id++, "naquadah_mox_rod").addComponents(new NuclearFuelBehavior(100000, 1, true));
+        DUAL_NAQUADAH_MOX_ROD = addItem(id++, "dual_naquadah_mox_rod").addComponents(new NuclearFuelBehavior(100000, 2, true));
+        QUAD_NAQUADAH_MOX_ROD = addItem(id++, "quad_naquadah_mox_rod").addComponents(new NuclearFuelBehavior(100000, 4, false));
     }
 }

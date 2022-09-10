@@ -1,30 +1,58 @@
 package precisioncore.common.items.behaviors;
 
 import gregtech.api.items.metaitem.MetaItem;
-import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
+import gregtech.common.items.behaviors.AbstractMaterialPartBehavior;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class NuclearFuelBehavior implements IItemBehaviour {
+public class NuclearFuelBehavior extends AbstractMaterialPartBehavior {
 
-    private int durability;
-    private boolean MOX;
+    private final int maxDurability;
+    private final int rodAmount;
+    private final boolean MOX;
 
-    public NuclearFuelBehavior(int durability, boolean MOX){
-        this.durability = durability;
+    public NuclearFuelBehavior(int maxDurability, int rodAmount, boolean MOX){
+        this.maxDurability = maxDurability;
+        this.rodAmount = rodAmount;
         this.MOX = MOX;
+    }
+
+    public int getDurability(ItemStack stack){
+        return getPartMaxDurability(stack) - getPartDamage(stack);
     }
 
     public boolean isMOX() {
         return MOX;
     }
 
-    public int getDurability() {
-        return durability;
+    public int getRodAmount(){
+        return rodAmount;
+    }
+
+    public void applyRodDamage(ItemStack itemStack, int damageApplied) {
+        int rodDurability = getPartMaxDurability(itemStack);
+        int resultDamage = getPartDamage(itemStack) + damageApplied;
+        if (resultDamage >= rodDurability) {
+            itemStack.shrink(1);
+        } else {
+            setPartDamage(itemStack, resultDamage);
+        }
+    }
+
+    public int getFuelModifier(){
+        return rodAmount * (MOX ? 4 : 1);
+    }
+
+    @Override
+    public int getPartMaxDurability(ItemStack itemStack) {
+        NuclearFuelBehavior behavior = getInstanceFor(itemStack);
+        if(behavior == null)
+            return 0;
+        return behavior.maxDurability;
     }
 
     @Nullable
@@ -45,7 +73,6 @@ public class NuclearFuelBehavior implements IItemBehaviour {
 
     @Override
     public void addInformation(ItemStack itemStack, List<String> lines) {
-        IItemBehaviour.super.addInformation(itemStack, lines);
-        lines.add("Durability: " + durability);
+        lines.add("Durability: " + getDurability(itemStack));
     }
 }

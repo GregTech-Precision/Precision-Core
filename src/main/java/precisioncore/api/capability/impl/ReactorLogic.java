@@ -77,15 +77,16 @@ public class ReactorLogic extends AbstractRecipeLogic {
         }
 
         if (++progressTime > maxProgressTime) {
-            if (currentHeat < maxHeat) {
-                setHeat(currentHeat + (int) Math.max(1, getRodAmount() * lastRodLevel));
-            }
             completeRecipe();
         }
     }
 
     @Override
     protected void completeRecipe() {
+        if (currentHeat < maxHeat) {
+            setHeat(currentHeat + (int) Math.max(1, getRodAmount() * lastRodLevel));
+        }
+        depleteUraniumFuel();
         progressTime = 0;
         lastIsMOX = false;
         waterToConsume = 0;
@@ -137,6 +138,10 @@ public class ReactorLogic extends AbstractRecipeLogic {
         if(fluid == null || fluid.amount == 0)
             return false;
         return fluid.amount == amount;
+    }
+
+    private void depleteUraniumFuel(){
+        getMetaTileEntity().getAbilities(PrecisionMultiblockAbility.REACTOR_HATCH).forEach(IReactorHatch::depleteRod);
     }
 
     private void outputSteam(int amount){

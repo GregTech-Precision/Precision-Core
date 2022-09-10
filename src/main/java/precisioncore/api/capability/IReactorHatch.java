@@ -12,7 +12,5 @@ public interface IReactorHatch {
 
     boolean hasRod();
     
-    int depleteRod(int amount, boolean simulate);
-
-    int depleteRod(boolean simulate);
+    void depleteRod();
 }

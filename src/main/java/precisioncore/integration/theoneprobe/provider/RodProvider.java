@@ -1,6 +1,5 @@
 package precisioncore.integration.theoneprobe.provider;
 
-import com.mojang.realmsclient.gui.ChatFormatting;
 import gregtech.api.GTValues;
 import gregtech.integration.theoneprobe.provider.CapabilityInfoProvider;
 import mcjty.theoneprobe.api.ElementAlignment;
@@ -25,10 +24,14 @@ public class RodProvider extends CapabilityInfoProvider<IReactorHatch> {
 
     @Override
     protected void addProbeInfo(IReactorHatch rodHatch, IProbeInfo probeInfo, EntityPlayer entityPlayer, TileEntity tileEntity, IProbeHitData probeHitData) {
-        boolean isMOX = rodHatch.isMOX();
         IProbeInfo vertical = probeInfo.vertical(new LayoutStyle().alignment(ElementAlignment.ALIGN_TOPLEFT));
-        vertical.text((isMOX ? ChatFormatting.RED : ChatFormatting.DARK_GREEN) + I18n.format("precisioncore.top.rod." + (isMOX ? "mox" : "uranium")));
-        vertical.text(ChatFormatting.YELLOW + I18n.format("precisioncore.top.rod.level", rodHatch.getRodLevel() * 10));
+        if(rodHatch.hasRod()) {
+            boolean isMOX = rodHatch.isMOX();
+            vertical.text(I18n.format("precisioncore.top.rod." + (isMOX ? "mox" : "uranium")));
+            vertical.text(I18n.format("precisioncore.top.rod.level", rodHatch.getRodLevel() * 10));
+        } else {
+            vertical.text(I18n.format("precisioncore.top.rod.no"));
+        }
     }
 
     @Override

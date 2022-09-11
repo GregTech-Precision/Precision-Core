@@ -78,7 +78,7 @@ public class ReactorLogic extends AbstractRecipeLogic {
         if (consumeWater(waterToConsume, false)) {
             consumeWater(waterToConsume, true);
             outputSteam(waterToConsume * STEAM_PER_WATER);
-        } else if (waterToConsume != 0) {
+        } else if (waterToConsume > 10) {
             getMetaTileEntity().doExplosion(1000 * getCurrentHeatPercentage());
         }
 

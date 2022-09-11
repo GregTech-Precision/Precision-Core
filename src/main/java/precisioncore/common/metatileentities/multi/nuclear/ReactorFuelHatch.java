@@ -69,26 +69,26 @@ public class ReactorFuelHatch extends MetaTileEntityMultiblockPart implements IM
         }
     }
 
-
-
     @Override
     public void downRod() {
-        int newRodLevel = Math.min(0, rodLevel + 1);
-        if(newRodLevel != this.rodLevel && !getWorld().isRemote) {
-            writeCustomData(PrecisionDataCodes.ROD_UPDATE, buf -> buf.writeVarInt(this.rodLevel));
+        int newRodLevel = Math.min(10, rodLevel + 1);
+        if(newRodLevel != rodLevel) {
+            writeCustomData(PrecisionDataCodes.ROD_UPDATE, buf -> buf.writeVarInt(newRodLevel));
+            this.rodLevel = newRodLevel;
+            if(getController() != null)
+                ((Reactor) getController()).notifyOnRodChanges();
         }
-        this.rodLevel = newRodLevel;
-        ((Reactor) getController()).notifyOnRodChanges();
     }
 
     @Override
     public void upRod() {
         int newRodLevel = Math.max(0, rodLevel - 1);
-        if(newRodLevel != this.rodLevel && !getWorld().isRemote) {
-            writeCustomData(PrecisionDataCodes.ROD_UPDATE, buf -> buf.writeVarInt(this.rodLevel));
+        if(newRodLevel != rodLevel) {
+            writeCustomData(PrecisionDataCodes.ROD_UPDATE, buf -> buf.writeVarInt(newRodLevel));
+            rodLevel = newRodLevel;
+            if (getController() != null)
+                ((Reactor) getController()).notifyOnRodChanges();
         }
-        this.rodLevel = newRodLevel;
-        ((Reactor) getController()).notifyOnRodChanges();
     }
 
     @Override
@@ -232,7 +232,8 @@ public class ReactorFuelHatch extends MetaTileEntityMultiblockPart implements IM
         protected void onContentsChanged(int slot) {
             super.onContentsChanged(slot);
             scheduleRenderUpdate();
-            ((Reactor) getController()).notifyOnRodChanges();
+            if(getController() != null)
+                ((Reactor) getController()).notifyOnRodChanges();
         }
     }
 }

@@ -46,7 +46,7 @@ public class ReactorLogic extends AbstractRecipeLogic {
         float rodCount = reactorHatchList.size();
         rodLevel = reactorHatchList.stream().mapToInt(IReactorHatch::getRodLevel).sum() / rodCount / 10;
         rodModifier = reactorHatchList.stream().mapToInt(IReactorHatch::getRodModifier).sum() / rodCount / 16;
-        heatPerSecond = (int) (10 * Math.pow(rodModifier, 0.25));
+        heatPerSecond = (int) (10 * Math.min(1, rodModifier * 2));
     }
 
     @Override

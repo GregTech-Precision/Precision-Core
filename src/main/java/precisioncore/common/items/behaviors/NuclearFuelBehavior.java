@@ -29,10 +29,6 @@ public class NuclearFuelBehavior extends AbstractMaterialPartBehavior {
         return MOX;
     }
 
-    public int getRodAmount(){
-        return rodAmount;
-    }
-
     public void applyRodDamage(ItemStack itemStack, int damageApplied) {
         int rodDurability = getPartMaxDurability(itemStack);
         int resultDamage = getPartDamage(itemStack) + damageApplied;

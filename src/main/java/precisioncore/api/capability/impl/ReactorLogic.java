@@ -8,6 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.FluidStack;
 import precisioncore.api.capability.IReactorHatch;
+import precisioncore.api.capability.PrecisionDataCodes;
 import precisioncore.api.metatileentities.PrecisionMultiblockAbility;
 import precisioncore.common.metatileentities.multi.nuclear.Reactor;
 
@@ -16,15 +17,14 @@ import java.util.List;
 
 public class ReactorLogic extends AbstractRecipeLogic {
 
-    private static final int STEAM_PER_WATER = 40;
-    private static final int DATA_HEAT = 989;
+    private static final int STEAM_PER_WATER = 160;
 
     private final int maxHeat;
     private int currentHeat = 0;
-
-    private boolean lastIsMOX = false;
     private int waterToConsume = 0;
-    private float lastRodLevel = 0;
+    private float rodLevel;
+    private float rodModifier;
+    private int heatPerSecond;
 
 
     /**
@@ -41,6 +41,14 @@ public class ReactorLogic extends AbstractRecipeLogic {
         return (Reactor) super.getMetaTileEntity();
     }
 
+    public void onRodChanges(){
+        List<IReactorHatch> reactorHatchList = getMetaTileEntity().getAbilities(PrecisionMultiblockAbility.REACTOR_HATCH);
+        float rodCount = reactorHatchList.size();
+        rodLevel = reactorHatchList.stream().mapToInt(IReactorHatch::getRodLevel).sum() / rodCount / 10;
+        rodModifier = reactorHatchList.stream().mapToInt(IReactorHatch::getRodModifier).sum() / rodCount / 16;
+        heatPerSecond = (int) (10 * Math.pow(rodModifier, 0.25));
+    }
+
     @Override
     public void update() {
         if ((!getMetaTileEntity().isActive() || !isWorkingEnabled()) && currentHeat > 0) {
@@ -51,11 +59,9 @@ public class ReactorLogic extends AbstractRecipeLogic {
 
     @Override
     protected void trySearchNewRecipe() {
-        if (getRodLevelPercentage() > 0) {
+        if (rodLevel * rodModifier > 0) {
             setMaxProgress(20);
             this.progressTime = 1;
-            this.lastIsMOX = checkIsMOX();
-            this.lastRodLevel = getRodLevelPercentage();
             this.waterToConsume = getCurrentWaterConsumption();
             if (wasActiveAndNeedsUpdate) {
                 wasActiveAndNeedsUpdate = false;
@@ -84,51 +90,30 @@ public class ReactorLogic extends AbstractRecipeLogic {
     @Override
     protected void completeRecipe() {
         if (currentHeat < maxHeat) {
-            setHeat(currentHeat + (int) Math.max(1, getRodAmount() * lastRodLevel));
+            setHeat(currentHeat + heatPerSecond);
         }
         depleteUraniumFuel();
         progressTime = 0;
-        lastIsMOX = false;
         waterToConsume = 0;
-        lastRodLevel = 0;
         setMaxProgress(0);
         wasActiveAndNeedsUpdate = true;
     }
 
-    public float getRodLevelPercentage(){
-        List<IReactorHatch> reactorHatchList = getMetaTileEntity().getAbilities(PrecisionMultiblockAbility.REACTOR_HATCH);
-        float maxRodLevel = reactorHatchList.size() * 10;
-        float currentLevel = reactorHatchList.stream().mapToInt(IReactorHatch::getRodLevel).sum();
-        return currentLevel / maxRodLevel;
-    }
-
-    private int getRodAmount(){
-        return getMetaTileEntity().getAbilities(PrecisionMultiblockAbility.REACTOR_HATCH).size();
-    }
-
-    public boolean checkIsMOX(){
-        return getMetaTileEntity().getAbilities(PrecisionMultiblockAbility.REACTOR_HATCH).stream().allMatch(IReactorHatch::isMOX);
-    }
-
     public float getCurrentHeatPercentage(){
-        return Math.min(lastRodLevel, ((float) currentHeat / (float) maxHeat));
+        return Math.min(rodLevel, ((float) currentHeat / (float) maxHeat));
     }
 
     public int getCurrentWaterConsumption(){
-        return (int) (maxHeat * getCurrentHeatPercentage() * getFuelModifier());
+        return (int) (maxHeat * getCurrentHeatPercentage() * rodModifier);
     }
 
     public int getCurrentSteamProduction(){
         return waterToConsume * STEAM_PER_WATER;
     }
 
-    private int getFuelModifier(){
-        return lastIsMOX ? 4 : 1;
-    }
-
     private void setHeat(int heat){
         if(this.currentHeat != heat && !getMetaTileEntity().getWorld().isRemote){
-            writeCustomData(DATA_HEAT, buf -> buf.writeVarInt(heat));
+            writeCustomData(PrecisionDataCodes.HEAT_UPDATE, buf -> buf.writeVarInt(heat));
         }
         this.currentHeat = heat;
     }
@@ -163,28 +148,27 @@ public class ReactorLogic extends AbstractRecipeLogic {
     @Override
     public void receiveCustomData(int dataId, @Nonnull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if(dataId == DATA_HEAT){
+        if(dataId == PrecisionDataCodes.HEAT_UPDATE){
             this.currentHeat = buf.readVarInt();
         }
     }
 
     @Override
     public NBTTagCompound serializeNBT() {
-        NBTTagCompound tag = super.serializeNBT();
-        tag.setInteger("heat", this.currentHeat);
-        tag.setBoolean("lastIsMOX", this.lastIsMOX);
-        tag.setInteger("waterToConsume", this.waterToConsume);
-        tag.setFloat("lastRodLevel", this.lastRodLevel);
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setBoolean("workingEnabled", this.workingEnabled);
+        tag.setInteger("progressTime", this.progressTime);
+        tag.setInteger("maxProgressTime", this.maxProgressTime);
+        tag.setInteger("currentHeat", this.currentHeat);
         return tag;
     }
 
     @Override
     public void deserializeNBT(@Nonnull NBTTagCompound compound) {
-        super.deserializeNBT(compound);
-        this.currentHeat = compound.getInteger("heat");
-        this.lastIsMOX = compound.getBoolean("lastIsMOX");
-        this.waterToConsume = compound.getInteger("waterToConsume");
-        this.lastRodLevel = compound.getFloat("lastRodLevel");
+        this.workingEnabled = compound.getBoolean("workingEnabled");
+        this.progressTime = compound.getInteger("progressTime");
+        this.maxProgressTime = compound.getInteger("maxProgressTime");
+        this.currentHeat = compound.getInteger("currentHeat");
     }
 
     @Override

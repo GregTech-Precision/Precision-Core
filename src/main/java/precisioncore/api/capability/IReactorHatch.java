@@ -4,6 +4,8 @@ public interface IReactorHatch {
 
     int getRodLevel();
 
+    int getRodModifier();
+
     void downRod();
 
     void upRod();

@@ -61,12 +61,17 @@ public class Reactor extends MultiblockWithDisplayBase {
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         initializeAbilities();
+        notifyOnRodChanges();
     }
 
     @Override
     public void invalidateStructure() {
         super.invalidateStructure();
         resetAbilities();
+    }
+
+    public void notifyOnRodChanges(){
+        reactorLogic.onRodChanges();
     }
 
     @Override

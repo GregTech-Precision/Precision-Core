@@ -13,7 +13,8 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import ic2.core.item.ItemGradualInt;
-import ic2.core.ref.ItemName;
+import ic2.core.item.reactor.ItemReactorMOX;
+import ic2.core.item.reactor.ItemReactorUranium;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -25,6 +26,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.ItemStackHandler;
 import precisioncore.api.capability.IReactorHatch;
 import precisioncore.api.capability.PrecisionCapabilities;
+import precisioncore.api.capability.PrecisionDataCodes;
 import precisioncore.api.gui.PrecisionGUITextures;
 import precisioncore.api.metatileentities.PrecisionMultiblockAbility;
 import precisioncore.api.render.PrecisionTextures;
@@ -32,25 +34,12 @@ import precisioncore.common.items.behaviors.NuclearFuelBehavior;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 public class ReactorFuelHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IReactorHatch>, IReactorHatch {
 
     private int rodLevel = 0;
     private final NuclearFuelInventoryHolder holder;
-    private static final int DATA_UPDATE = 895;
-    private final List<Item> availableUraniumRods = Arrays.asList(
-            ItemName.uranium_fuel_rod.getItemStack().getItem(),
-            ItemName.dual_uranium_fuel_rod.getItemStack().getItem(),
-            ItemName.quad_uranium_fuel_rod.getItemStack().getItem()
-    );
-
-    private final List<Item> availableMOXRods = Arrays.asList(
-            ItemName.mox_fuel_rod.getItemStack().getItem(),
-            ItemName.dual_mox_fuel_rod.getItemStack().getItem(),
-            ItemName.quad_mox_fuel_rod.getItemStack().getItem()
-    );
 
     public ReactorFuelHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 5);
@@ -63,15 +52,43 @@ public class ReactorFuelHatch extends MetaTileEntityMultiblockPart implements IM
     }
 
     @Override
+    public int getRodModifier() {
+        ItemStack stack = holder.getStackInSlot(0);
+        if(stack.isEmpty())
+            return 0;
+        else {
+            NuclearFuelBehavior behavior = NuclearFuelBehavior.getInstanceFor(stack);
+            if(behavior != null)
+                return behavior.getFuelModifier();
+            else {
+                if(stack.getItem() instanceof ItemReactorMOX)
+                    return ((ItemReactorMOX) stack.getItem()).numberOfCells * 4;
+                else
+                    return ((ItemReactorUranium) stack.getItem()).numberOfCells;
+            }
+        }
+    }
+
+
+
+    @Override
     public void downRod() {
-        this.rodLevel=Math.min(10, rodLevel+1);
-        writeCustomData(DATA_UPDATE, buf -> buf.writeVarInt(this.rodLevel));
+        int newRodLevel = Math.min(0, rodLevel + 1);
+        if(newRodLevel != this.rodLevel && !getWorld().isRemote) {
+            writeCustomData(PrecisionDataCodes.ROD_UPDATE, buf -> buf.writeVarInt(this.rodLevel));
+        }
+        this.rodLevel = newRodLevel;
+        ((Reactor) getController()).notifyOnRodChanges();
     }
 
     @Override
     public void upRod() {
-        this.rodLevel=Math.max(0, rodLevel-1);
-        writeCustomData(DATA_UPDATE, buf -> buf.writeVarInt(this.rodLevel));
+        int newRodLevel = Math.max(0, rodLevel - 1);
+        if(newRodLevel != this.rodLevel && !getWorld().isRemote) {
+            writeCustomData(PrecisionDataCodes.ROD_UPDATE, buf -> buf.writeVarInt(this.rodLevel));
+        }
+        this.rodLevel = newRodLevel;
+        ((Reactor) getController()).notifyOnRodChanges();
     }
 
     @Override
@@ -79,7 +96,7 @@ public class ReactorFuelHatch extends MetaTileEntityMultiblockPart implements IM
         ItemStack stack = holder.getStackInSlot(0);
         if(stack.isEmpty())
             return false;
-        return availableMOXRods.contains(stack.getItem()) || NuclearFuelBehavior.getInstanceFor(holder.getStackInSlot(0)).isMOX();
+        return stack.getItem() instanceof ItemReactorMOX || NuclearFuelBehavior.getInstanceFor(holder.getStackInSlot(0)).isMOX();
     }
 
     @Override
@@ -152,7 +169,7 @@ public class ReactorFuelHatch extends MetaTileEntityMultiblockPart implements IM
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if(dataId == DATA_UPDATE){
+        if(dataId == PrecisionDataCodes.ROD_UPDATE){
             this.rodLevel = buf.readVarInt();
         }
     }
@@ -203,7 +220,7 @@ public class ReactorFuelHatch extends MetaTileEntityMultiblockPart implements IM
 
         public boolean isRodValid(ItemStack stack){
             Item item = stack.getItem();
-            return availableUraniumRods.contains(item) || availableMOXRods.contains(item);
+            return item instanceof ItemReactorUranium;
         }
 
         @Override
@@ -215,6 +232,7 @@ public class ReactorFuelHatch extends MetaTileEntityMultiblockPart implements IM
         protected void onContentsChanged(int slot) {
             super.onContentsChanged(slot);
             scheduleRenderUpdate();
+            ((Reactor) getController()).notifyOnRodChanges();
         }
     }
 }

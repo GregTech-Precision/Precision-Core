@@ -10,6 +10,7 @@ import net.minecraftforge.fluids.FluidStack;
 import precisioncore.api.capability.IReactorHatch;
 import precisioncore.api.capability.PrecisionDataCodes;
 import precisioncore.api.metatileentities.PrecisionMultiblockAbility;
+import precisioncore.api.unification.PrecisionMaterials;
 import precisioncore.common.metatileentities.multi.nuclear.Reactor;
 
 import javax.annotation.Nonnull;
@@ -24,6 +25,7 @@ public class ReactorLogic extends AbstractRecipeLogic {
     private int waterToConsume = 0;
     private float rodLevel;
     private float rodModifier;
+    private boolean isMOX;
     private int heatPerSecond;
 
 
@@ -46,6 +48,7 @@ public class ReactorLogic extends AbstractRecipeLogic {
         float rodCount = reactorHatchList.size();
         rodLevel = reactorHatchList.stream().mapToInt(IReactorHatch::getRodLevel).sum() / rodCount / 10;
         rodModifier = reactorHatchList.stream().mapToInt(IReactorHatch::getRodModifier).sum() / rodCount / 16;
+        isMOX = reactorHatchList.stream().allMatch(rodHatch -> !rodHatch.hasRod() || rodHatch.isMOX());
         heatPerSecond = (int) (10 * Math.min(1, rodModifier * 2));
     }
 
@@ -130,7 +133,7 @@ public class ReactorLogic extends AbstractRecipeLogic {
     }
 
     private void outputSteam(int amount){
-        getOutputTank().fill(Materials.Steam.getFluid(amount), true);
+        getOutputTank().fill((isMOX ? PrecisionMaterials.SuperHeatedSteam : Materials.Steam).getFluid(amount), true);
     }
 
     @Override

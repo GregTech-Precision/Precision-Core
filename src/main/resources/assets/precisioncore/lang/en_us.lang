@@ -29,6 +29,9 @@ tile.iglass.iglass15.name=Black I-Glass
 tile.pipelineblock.name=Long Distance Pipe
 gtwp.multi.meitemoutputhatch=ME Item Output Bus
 
+#Materials
+material.super_heated_steam=Super Heated Steam
+
 #The One Probe locale
 
 ##All

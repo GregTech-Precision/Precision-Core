@@ -9,6 +9,7 @@ import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.util.ResourceLocation;
 import precisioncore.PrecisionCore;
 import precisioncore.common.metatileentities.multi.multiblockparts.MEItemOutputHatch;
+import precisioncore.common.metatileentities.multi.nuclear.AdvancedTurbine;
 import precisioncore.common.metatileentities.multi.nuclear.Reactor;
 import precisioncore.common.metatileentities.multi.nuclear.ReactorFuelHatch;
 import precisioncore.common.metatileentities.multi.parallel.*;
@@ -35,6 +36,7 @@ public class PrecisionMetaTileEntities {
     public static ParallelComputer PARALLEL_COMPUTER;
     public static CommunicationTower COMMUNICATION_TOWER;
     public static Reactor REACTOR;
+    public static AdvancedTurbine ADVANCED_TURBINE;
     //SIMPLE MACHINES
 
     //HATCHES
@@ -60,6 +62,7 @@ public class PrecisionMetaTileEntities {
         PARALLEL_COMPUTER = MetaTileEntities.registerMetaTileEntity(id++, new ParallelComputer(location("parallel_computer")));
         COMMUNICATION_TOWER = MetaTileEntities.registerMetaTileEntity(id++, new CommunicationTower(location("communication_tower")));
         REACTOR = MetaTileEntities.registerMetaTileEntity(id++, new Reactor(location("reactor")));
+        ADVANCED_TURBINE = MetaTileEntities.registerMetaTileEntity(id++, new AdvancedTurbine(location("advanced_turbine")));
         //SIMPLE MACHINES
 
         //HATCHES

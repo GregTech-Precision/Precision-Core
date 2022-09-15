@@ -12,6 +12,7 @@ import precisioncore.common.metatileentities.multi.multiblockparts.MEItemOutputH
 import precisioncore.common.metatileentities.multi.nuclear.AdvancedTurbine;
 import precisioncore.common.metatileentities.multi.nuclear.Reactor;
 import precisioncore.common.metatileentities.multi.nuclear.ReactorFuelHatch;
+import precisioncore.common.metatileentities.multi.nuclear.ReactorSteamHatch;
 import precisioncore.common.metatileentities.multi.parallel.*;
 import precisioncore.common.metatileentities.multi.processing.wood.Greenhouse;
 import precisioncore.common.metatileentities.multi.processing.wood.PyrolyseOven;
@@ -48,6 +49,8 @@ public class PrecisionMetaTileEntities {
     public static ParallelHatch PARALLEL_RECEIVER;
     public static ParallelComputerRack PARALLEL_RACK;
     public static ReactorFuelHatch REACTOR_FUEL_HATCH;
+    public static ReactorSteamHatch REACTOR_STEAM_HATCH_IMPORT;
+    public static ReactorSteamHatch REACTOR_STEAM_HATCH_EXPORT;
 
     public static void init() { // Controllers then singleblocks and hatches
         GTLog.logger.info("Precision Core Registering New Meta Tile Entities");
@@ -76,6 +79,8 @@ public class PrecisionMetaTileEntities {
         }
         PARALLEL_RACK = MetaTileEntities.registerMetaTileEntity(id++, new ParallelComputerRack(location("parallel_rack")));
         REACTOR_FUEL_HATCH = MetaTileEntities.registerMetaTileEntity(id++, new ReactorFuelHatch(location("reactor_fuel_hatch")));
+        REACTOR_STEAM_HATCH_IMPORT = MetaTileEntities.registerMetaTileEntity(id++, new ReactorSteamHatch(location("reactor_steam_hatch.import"), 2_000_000_000, false));
+        REACTOR_STEAM_HATCH_EXPORT = MetaTileEntities.registerMetaTileEntity(id++, new ReactorSteamHatch(location("reactor_steam_hatch.export"), 2_000_000_000, true));
     }
 
     private static void registerSimpleMetaTileEntity(SimpleMachineMetaTileEntity[] machines,

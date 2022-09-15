@@ -23,6 +23,7 @@ public class PrecisionTextures {
     public static SimpleOverlayRenderer REACTOR_CASING;
     public static SimpleOverlayRenderer NUCLEAR_FUEL_HATCH_ACTIVE;
     public static SimpleOverlayRenderer NUCLEAR_FUEL_HATCH_INACTIVE;
+    public static SimpleOverlayRenderer ADVANCED_TURBINE_CASING;
 
 
 
@@ -42,5 +43,6 @@ public class PrecisionTextures {
         REACTOR_CASING = new SimpleOverlayRenderer("nuclear/casing_reactor");
         NUCLEAR_FUEL_HATCH_ACTIVE  = new SimpleOverlayRenderer("nuclear/hatch_overlay_active");
         NUCLEAR_FUEL_HATCH_INACTIVE  = new SimpleOverlayRenderer("nuclear/hatch_overlay_inactive");
+        ADVANCED_TURBINE_CASING = new SimpleOverlayRenderer("nuclear/casing_advanced_turbine");
     }
 }

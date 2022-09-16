@@ -49,12 +49,12 @@ public class AdvancedTurbineLogic extends MultiblockFuelRecipeLogic {
         if (inputFluid == null)
             return false;
 
-        int parallel = (int) Math.min(Math.floor((float) getMaxVoltage() / recipe.getEUt()), Math.floor((float) inputFluid.amount / recipeFluidStack.amount));
+        int parallel = (int) Math.min(Math.floor((float) getMaxVoltage() / Math.abs(recipe.getEUt())), Math.floor((float) inputFluid.amount / recipeFluidStack.amount));
 
         //rebuild the recipe and adjust voltage to match the turbine
         RecipeBuilder<?> recipeBuilder = getRecipeMap().recipeBuilder();
         recipeBuilder.append(recipe, parallel, false)
-                .EUt(-parallel*recipe.getEUt());
+                .EUt(parallel*Math.abs(recipe.getEUt()));
         applyParallelBonus(recipeBuilder);
         recipe = recipeBuilder.build().getResult();
 

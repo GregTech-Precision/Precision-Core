@@ -6,7 +6,9 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
+import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ClickButtonWidget;
+import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
@@ -117,11 +119,16 @@ public class ReactorFuelHatch extends MetaTileEntityMultiblockPart implements IM
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return ModularUI.builder(PrecisionGUITextures.ROD_HATCH_BACKGROUND, 176, 166)
+    protected ModularUI createUI(EntityPlayer entityPlayer) { // TODO: update widget on button click
+        TextureArea levelTexture = PrecisionGUITextures.ROD_LEVEL.getSubArea(0, 0, 1, (float) getRodLevel()/10);
+        return ModularUI.extendedBuilder()
+                .image(0, 0, 176, 166, PrecisionGUITextures.ROD_HATCH_BACKGROUND)
                 .slot(holder, 0, 89, 7, GuiTextures.SLOT)
-                .widget(new ClickButtonWidget(69, 7, 18, 18, "", this::clickUpRod))
-                .widget(new ClickButtonWidget(69, 61, 18, 18, "", this::clickDownRod))
+                .widget(new ClickButtonWidget(69, 7, 18, 18, "", this::clickUpRod)
+                        .setButtonTexture(PrecisionGUITextures.ROD_UP_BUTTON))
+                .widget(new ClickButtonWidget(69, 61, 18, 18, "", this::clickDownRod)
+                        .setButtonTexture(PrecisionGUITextures.ROD_DOWN_BUTTON))
+                .widget(new ImageWidget(90, 25, 17,  (int) ( 53 * levelTexture.imageHeight), levelTexture))
                 .bindPlayerInventory(entityPlayer.inventory)
                 .build(getHolder(), entityPlayer);
     }

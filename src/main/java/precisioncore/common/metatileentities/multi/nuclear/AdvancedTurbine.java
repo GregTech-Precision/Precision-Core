@@ -4,6 +4,8 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.FuelMultiblockController;
@@ -96,16 +98,17 @@ public class AdvancedTurbine extends FuelMultiblockController {
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        super.renderMetaTileEntity(renderState, translation, pipeline);
         boolean active = getRecipeMapWorkable().isWorking();
         boolean base = isStructureFormed();
         Textures.LARGE_TURBINE_ROTOR_RENDERER.renderSided(renderState, translation, pipeline, getFrontFacing(), base, base, active, 0x00FFAA);
-        int axisOffset = 4 * getFrontFacing().getOpposite().getAxisDirection().getOffset();
-        if (getFrontFacing().getAxis() == EnumFacing.Axis.X)
-            translation.translate(axisOffset, 3, 0);
-        else
-            translation.translate(0, 3, axisOffset);
-        Textures.LARGE_TURBINE_ROTOR_RENDERER.renderSided(renderState, translation, pipeline, EnumFacing.UP, base, base, active, 0x00FFAA);
+        if(base) {
+            int axisOffset = 4 * getFrontFacing().getOpposite().getAxisDirection().getOffset();
+            if (getFrontFacing().getAxis() == EnumFacing.Axis.X)
+                translation.translate(axisOffset, 3, 0);
+            else
+                translation.translate(0, 3, axisOffset);
+            Textures.LARGE_TURBINE_ROTOR_RENDERER.renderSided(renderState, translation, pipeline, EnumFacing.UP, base, base, active, 0x00FFAA);
+        }
     }
 
     @Override
@@ -128,5 +131,10 @@ public class AdvancedTurbine extends FuelMultiblockController {
     @Override
     public boolean canVoidRecipeItemOutputs() {
         return true;
+    }
+
+    @Override
+    public IMultipleTankHandler getInputFluidInventory() {
+        return new FluidTankList(true, getAbilities(MultiblockAbility.IMPORT_FLUIDS));
     }
 }

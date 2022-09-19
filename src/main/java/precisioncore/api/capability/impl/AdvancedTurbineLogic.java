@@ -42,6 +42,11 @@ public class AdvancedTurbineLogic extends MultiblockFuelRecipeLogic {
     }
 
     @Override
+    protected void trySearchNewRecipe() {
+        super.trySearchNewRecipe();
+    }
+
+    @Override
     protected boolean prepareRecipe(Recipe recipe) {
         FluidStack recipeFluidStack = recipe.getFluidInputs().get(0).getInputFluidStack();
         // Null check fluid here, since it can return null on first join into world or first form

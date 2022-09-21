@@ -6,7 +6,6 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
-import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
@@ -38,6 +37,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
+import precisioncore.api.capability.impl.NotifiableFilteredFluidTank;
 import precisioncore.api.unification.PrecisionMaterials;
 
 import javax.annotation.Nullable;
@@ -53,7 +53,7 @@ public class ReactorSteamHatch  extends MetaTileEntityMultiblockNotifiablePart i
     public ReactorSteamHatch(ResourceLocation metaTileEntityId, int inventorySize, boolean isExportHatch) {
         super(metaTileEntityId, 6, isExportHatch);
         this.inventorySize = inventorySize;
-        this.fluidTank = new FilteredFluidHandler(inventorySize).setFillPredicate(fluidStack -> fluidStack.getFluid() == Materials.Steam.getFluid() || fluidStack.getFluid() == PrecisionMaterials.SuperHeatedSteam.getFluid());
+        this.fluidTank = new NotifiableFilteredFluidTank(inventorySize, this, isExportHatch).setFluidPredicate(fluidStack -> fluidStack.getFluid() == Materials.Steam.getFluid() || fluidStack.getFluid() == PrecisionMaterials.SuperHeatedSteam.getFluid());
         this.workingEnabled = true;
         initializeInventory();
     }
@@ -202,9 +202,9 @@ public class ReactorSteamHatch  extends MetaTileEntityMultiblockNotifiablePart i
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         if (this.isExportHatch)
-            tooltip.add(I18n.format("gregtech.machine.fluid_hatch.export.tooltip"));
+            tooltip.add(I18n.format("precisioncore.machine.steam_reactor_hatch.export.tooltip"));
         else
-            tooltip.add(I18n.format("gregtech.machine.fluid_hatch.import.tooltip"));
+            tooltip.add(I18n.format("precisioncore.machine.steam_reactor_hatch.import.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", getInventorySize()));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }

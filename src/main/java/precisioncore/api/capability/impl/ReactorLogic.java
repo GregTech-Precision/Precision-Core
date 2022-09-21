@@ -106,6 +106,10 @@ public class ReactorLogic extends AbstractRecipeLogic {
         return Math.min(rodLevel, ((float) currentHeat / (float) maxHeat));
     }
 
+    public float getCurrentRodLevel(){
+        return rodLevel;
+    }
+
     public int getCurrentWaterConsumption(){
         return (int) (maxHeat * getCurrentHeatPercentage() * rodModifier);
     }

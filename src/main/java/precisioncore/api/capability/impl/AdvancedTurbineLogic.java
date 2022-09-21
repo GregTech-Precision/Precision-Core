@@ -1,11 +1,18 @@
 package precisioncore.api.capability.impl;
 
 import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
+import gregtech.api.metatileentity.multiblock.FuelMultiblockController;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import precisioncore.common.metatileentities.multi.nuclear.AdvancedTurbine;
+
+import java.util.List;
 
 public class AdvancedTurbineLogic extends MultiblockFuelRecipeLogic {
 
@@ -42,11 +49,6 @@ public class AdvancedTurbineLogic extends MultiblockFuelRecipeLogic {
     }
 
     @Override
-    protected void trySearchNewRecipe() {
-        super.trySearchNewRecipe();
-    }
-
-    @Override
     protected boolean prepareRecipe(Recipe recipe) {
         FluidStack recipeFluidStack = recipe.getFluidInputs().get(0).getInputFluidStack();
         // Null check fluid here, since it can return null on first join into world or first form
@@ -68,5 +70,13 @@ public class AdvancedTurbineLogic extends MultiblockFuelRecipeLogic {
             return true;
         }
         return false;
+    }
+
+    public void updateTanks() {
+        FuelMultiblockController controller = (FuelMultiblockController) this.metaTileEntity;
+        List<IFluidHandler> tanks = controller.getNotifiedFluidInputList();
+        for (IFluidTank tank : controller.getAbilities(MultiblockAbility.IMPORT_FLUIDS)) {
+            tanks.add((FluidTank) tank);
+        }
     }
 }

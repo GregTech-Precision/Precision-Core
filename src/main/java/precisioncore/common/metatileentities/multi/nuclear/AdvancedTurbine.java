@@ -13,6 +13,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.PatternMatchContext;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockBoilerCasing;
@@ -38,6 +39,12 @@ public class AdvancedTurbine extends FuelMultiblockController {
     public void invalidateStructure() {
         super.invalidateStructure();
         this.recipeMapWorkable.invalidate();
+    }
+
+    @Override
+    protected void formStructure(PatternMatchContext context) {
+        super.formStructure(context);
+        getRecipeMapWorkable().updateTanks();
     }
 
     @Override
@@ -98,17 +105,16 @@ public class AdvancedTurbine extends FuelMultiblockController {
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        super.renderMetaTileEntity(renderState, translation, pipeline);
         boolean active = getRecipeMapWorkable().isWorking();
         boolean base = isStructureFormed();
         Textures.LARGE_TURBINE_ROTOR_RENDERER.renderSided(renderState, translation, pipeline, getFrontFacing(), base, base, active, 0x00FFAA);
-        if(base) {
-            int axisOffset = 4 * getFrontFacing().getOpposite().getAxisDirection().getOffset();
-            if (getFrontFacing().getAxis() == EnumFacing.Axis.X)
-                translation.translate(axisOffset, 3, 0);
-            else
-                translation.translate(0, 3, axisOffset);
-            Textures.LARGE_TURBINE_ROTOR_RENDERER.renderSided(renderState, translation, pipeline, EnumFacing.UP, base, base, active, 0x00FFAA);
-        }
+        int axisOffset = 4 * getFrontFacing().getOpposite().getAxisDirection().getOffset();
+        if (getFrontFacing().getAxis() == EnumFacing.Axis.X)
+            translation.translate(axisOffset, 2, 0);
+        else
+            translation.translate(0, 2, axisOffset);
+        Textures.LARGE_TURBINE_ROTOR_RENDERER.renderSided(renderState, translation, pipeline, EnumFacing.UP, base, base, active, 0x00FFAA);
     }
 
     @Override

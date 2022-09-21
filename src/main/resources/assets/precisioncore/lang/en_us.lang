@@ -12,12 +12,12 @@ gtwp.block.storage_field.multi=Maximum fluid amount per in multi tank is the 1/2
 tile.iglass.iglass0.name=White I-Glass
 tile.iglass.iglass1.name=Orange I-Glass
 tile.iglass.iglass2.name=Magenta I-Glass
-tile.iglass.iglass3.name=Light blue I-Glass
+tile.iglass.iglass3.name=Light Blue I-Glass
 tile.iglass.iglass4.name=Yellow I-Glass
 tile.iglass.iglass5.name=Lime I-Glass
 tile.iglass.iglass6.name=Pink I-Glass
 tile.iglass.iglass7.name=Gray I-Glass
-tile.iglass.iglass8.name=Light gray I-Glass
+tile.iglass.iglass8.name=Light Gray I-Glass
 tile.iglass.iglass9.name=Cyan I-Glass
 tile.iglass.iglass10.name=Purple I-Glass
 tile.iglass.iglass11.name=Blue I-Glass
@@ -28,7 +28,27 @@ tile.iglass.iglass15.name=Black I-Glass
 
 tile.pipelineblock.name=Long Distance Pipe
 gtwp.multi.meitemoutputhatch=ME Item Output Bus
-
+#Nuclear locales
+precisioncore.machine.reactor1.name=Nuclear Reactor I
+precicioncore.machine.reactor2.name=Nuclear Reactor II
+precicioncore.machine.reactor3.name=Nuclear Reactor III
+precisioncore.machine.reactor_fuel_hatch.name=Reactor Rod Hatch
+precisioncore.machine.reactor_steam_hatch.import.name=Reactor Input Hatch
+precisioncore.machine.reactor_steam_hatch.export.name=Reactor Output Hatch
+tile.casing.reactor.name=Radiation Proof Casing
+metaitem.naquadah_rod.name=Fuel Rod (Naquadah)
+metaitem.dual_naquadah_rod.name=Dual Fuel Rod (Naquadah)
+metaitem.quad_naquadah_rod.name=Quad Fuel Rod(Naquadah)
+metaitem.naquadah_mox_rod.name=Fuel Rod (Naquadah MOX)
+metaitem.dual_naquadah_mox_rod.name=Dual Fuel Rod (Naquadah MOX)
+metaitem.quad_naquadah_mox_rod.name=Quad Fuel Rod(Naquadah MOX)
+precisioncore.machine.reactor.tooltip=Stop Reactor Before Changing Reactor Structure
+precisioncore.machine.reactor.info.heat=Heat: %.1f
+precisioncore.machine.reactor.info.rod_level=Rod Level: %.1f
+precisioncore.machine.reactor.info.water_consumption=Water Consumption: %s
+precisioncore.machine.reactor.info.steam_production=Steam Production: %s
+precisioncore.machine.steam_reactor_hatch.import.tooltip=Reactor Steam Output Hatch
+precisioncore.machine.steam_reactor_hatch.export.tooltip=Reactor Steam Output Hatch
 #Materials
 material.super_heated_steam=Super Heated Steam
 

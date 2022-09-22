@@ -36,7 +36,9 @@ public class PrecisionMetaTileEntities {
     public static Satellite SATELLITE;
     public static ParallelComputer PARALLEL_COMPUTER;
     public static CommunicationTower COMMUNICATION_TOWER;
-    public static Reactor[] REACTORS = new Reactor[3];
+    public static Reactor REACTOR_I;
+    public static Reactor REACTOR_II;
+    public static Reactor REACTOR_III;
     public static AdvancedTurbine ADVANCED_TURBINE;
     //SIMPLE MACHINES
 
@@ -64,9 +66,9 @@ public class PrecisionMetaTileEntities {
         SATELLITE = MetaTileEntities.registerMetaTileEntity(id++, new Satellite(location("satellite")));
         PARALLEL_COMPUTER = MetaTileEntities.registerMetaTileEntity(id++, new ParallelComputer(location("parallel_computer")));
         COMMUNICATION_TOWER = MetaTileEntities.registerMetaTileEntity(id++, new CommunicationTower(location("communication_tower")));
-        REACTORS[0] = MetaTileEntities.registerMetaTileEntity(id++, new Reactor.ReactorT1(location("reactor1")));
-        REACTORS[1] = MetaTileEntities.registerMetaTileEntity(id++, new Reactor.ReactorT2(location("reactor2")));
-        REACTORS[2] = MetaTileEntities.registerMetaTileEntity(id++, new Reactor.ReactorT3(location("reactor3")));
+        REACTOR_I = MetaTileEntities.registerMetaTileEntity(id++, new Reactor.ReactorT1(location("reactor1")));
+        REACTOR_II = MetaTileEntities.registerMetaTileEntity(id++, new Reactor.ReactorT2(location("reactor2")));
+        REACTOR_III = MetaTileEntities.registerMetaTileEntity(id++, new Reactor.ReactorT3(location("reactor3")));
         ADVANCED_TURBINE = MetaTileEntities.registerMetaTileEntity(id++, new AdvancedTurbine(location("advanced_turbine")));
         //SIMPLE MACHINES
 

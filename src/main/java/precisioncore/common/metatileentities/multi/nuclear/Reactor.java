@@ -50,8 +50,7 @@ public abstract class Reactor extends MultiblockWithDisplayBase {
     }
 
     @Override
-    protected void updateFormedValid() {
-    }
+    protected void updateFormedValid(){}
 
     private void initializeAbilities(){
         this.importFluids = new FluidTankList(true, getAbilities(MultiblockAbility.IMPORT_FLUIDS));
@@ -122,8 +121,8 @@ public abstract class Reactor extends MultiblockWithDisplayBase {
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
-        textList.add(new TextComponentTranslation("precisioncore.machine.reactor.info.heat", reactorLogic.getCurrentHeatPercentage() * 100));
-        textList.add(new TextComponentTranslation("precisioncore.machine.reactor.info.rod_level", reactorLogic.getCurrentRodLevel() * 100));
+        textList.add(new TextComponentTranslation("precisioncore.machine.reactor.info.heat").appendText(String.format(" %.1f", reactorLogic.getCurrentHeatPercentage() * 100)));
+        textList.add(new TextComponentTranslation("precisioncore.machine.reactor.info.rod_level").appendText(String.format(" %.1f", reactorLogic.getCurrentRodLevel() * 100)));
         textList.add(new TextComponentTranslation("precisioncore.machine.reactor.info.water_consumption", reactorLogic.getCurrentWaterConsumption()));
         textList.add(new TextComponentTranslation("precisioncore.machine.reactor.info.steam_production", reactorLogic.getCurrentSteamProduction()));
     }

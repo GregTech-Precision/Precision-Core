@@ -39,6 +39,10 @@ public class NuclearFuelBehavior extends AbstractMaterialPartBehavior {
         }
     }
 
+    public int getRodAmount(){
+        return rodAmount;
+    }
+
     public int getFuelModifier(){
         return rodAmount * (MOX ? 4 : 1);
     }

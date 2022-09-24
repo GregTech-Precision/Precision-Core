@@ -7,7 +7,10 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
+import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.ClickButtonWidget;
+import gregtech.api.gui.widgets.ProgressWidget;
+import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -29,7 +32,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import precisioncore.api.capability.IReactorHatch;
 import precisioncore.api.capability.impl.ReactorLogic;
 import precisioncore.api.gui.PrecisionGUITextures;
 import precisioncore.api.metatileentities.PrecisionMultiblockAbility;
@@ -40,11 +42,11 @@ import precisioncore.common.blocks.PrecisionMetaBlocks;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class Reactor extends MultiblockWithDisplayBase {
+public abstract class NuclearReactor extends MultiblockWithDisplayBase {
 
     private final ReactorLogic reactorLogic;
 
-    public Reactor(ResourceLocation metaTileEntityId, int tier) {
+    public NuclearReactor(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId);
         this.reactorLogic = new ReactorLogic(this, tier);
     }
@@ -98,19 +100,30 @@ public abstract class Reactor extends MultiblockWithDisplayBase {
     }
 
     @Override
-    protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
-        return super.createUITemplate(entityPlayer)
-                .widget(new ClickButtonWidget(176, 0, 18, 18, "", this::clickUpAllRods).setButtonTexture(PrecisionGUITextures.ROD_UP_BUTTON))
-                .widget(new ClickButtonWidget(176, 18, 18, 18, "", this::clickDownAllRods).setButtonTexture(PrecisionGUITextures.ROD_DOWN_BUTTON));
+    protected ModularUI createUI(EntityPlayer entityPlayer) {
+        return ModularUI.builder(PrecisionGUITextures.NUCLEAR_REACTOR_BACKGROUND, 176, 164)
+                .label(11, 9, this.getMetaFullName(), 16777215)
+                .widget(new AdvancedTextWidget(11, 19, this::addDisplayText, 16777215))
+                .widget(new ToggleButtonWidget(155, 3, 16, 16, PrecisionGUITextures.TURN_BUTTON, reactorLogic::isWorkingEnabled, reactorLogic::setWorkingEnabled))
+                .widget(new ClickButtonWidget(155, 35, 16, 16, "", this::clickUpAllRods)
+                        .setButtonTexture(PrecisionGUITextures.REACTOR_ROD_UP_BUTTON))
+                .widget(new ClickButtonWidget(155, 53, 16, 16, "", this::clickDownAllRods)
+                        .setButtonTexture(PrecisionGUITextures.REACTOR_ROD_DOWN_BUTTON))
+                .widget(new ProgressWidget(reactorLogic::getCurrentHeatPercentage, 158, 111, 10, 36)
+                        .setProgressBar(null, PrecisionGUITextures.REACTOR_HEAT_BAR, ProgressWidget.MoveType.VERTICAL))
+                .build(getHolder(), entityPlayer);
     }
 
     private void clickDownAllRods(Widget.ClickData clickData) {
-        getAbilities(PrecisionMultiblockAbility.REACTOR_HATCH).forEach(IReactorHatch::downRod);
-
+        int amount = clickData.isShiftClick ? 10 : 1;
+        getAbilities(PrecisionMultiblockAbility.REACTOR_HATCH).forEach(hatch -> hatch.downRod(amount, false));
+        notifyOnRodChanges();
     }
 
     private void clickUpAllRods(Widget.ClickData clickData) {
-        getAbilities(PrecisionMultiblockAbility.REACTOR_HATCH).forEach(IReactorHatch::upRod);
+        int amount = clickData.isShiftClick ? 10 : 1;
+        getAbilities(PrecisionMultiblockAbility.REACTOR_HATCH).forEach(hatch -> hatch.upRod(amount, false));
+        notifyOnRodChanges();
     }
 
     @Override
@@ -133,9 +146,9 @@ public abstract class Reactor extends MultiblockWithDisplayBase {
         tooltip.add(I18n.format("precisioncore.machine.reactor.tooltip"));
     }
 
-    public static class ReactorT3 extends Reactor {
+    public static class NuclearReactorT3 extends NuclearReactor {
 
-        public ReactorT3(ResourceLocation metaTileEntityId) {
+        public NuclearReactorT3(ResourceLocation metaTileEntityId) {
             super(metaTileEntityId, 6);
         }
 
@@ -163,13 +176,13 @@ public abstract class Reactor extends MultiblockWithDisplayBase {
         }
         @Override
         public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
-            return new ReactorT3(metaTileEntityId);
+            return new NuclearReactorT3(metaTileEntityId);
         }
     }
 
-    public static class ReactorT2 extends Reactor {
+    public static class NuclearReactorT2 extends NuclearReactor {
 
-        public ReactorT2(ResourceLocation metaTileEntityId) {
+        public NuclearReactorT2(ResourceLocation metaTileEntityId) {
             super(metaTileEntityId, 5);
         }
 
@@ -195,13 +208,13 @@ public abstract class Reactor extends MultiblockWithDisplayBase {
         }
         @Override
         public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
-            return new ReactorT2(metaTileEntityId);
+            return new NuclearReactorT2(metaTileEntityId);
         }
     }
 
-    public static class ReactorT1 extends Reactor {
+    public static class NuclearReactorT1 extends NuclearReactor {
 
-        public ReactorT1(ResourceLocation metaTileEntityId) {
+        public NuclearReactorT1(ResourceLocation metaTileEntityId) {
             super(metaTileEntityId, 3);
         }
 
@@ -225,7 +238,7 @@ public abstract class Reactor extends MultiblockWithDisplayBase {
         }
         @Override
         public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
-            return new ReactorT1(metaTileEntityId);
+            return new NuclearReactorT1(metaTileEntityId);
         }
     }
 }

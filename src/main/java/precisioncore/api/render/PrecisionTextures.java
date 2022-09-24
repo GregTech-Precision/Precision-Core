@@ -5,6 +5,7 @@ import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.relauncher.Side;
 import precisioncore.PrecisionCore;
+import precisioncore.api.render.texture.RodHatchRenderer;
 
 @Mod.EventBusSubscriber(modid = PrecisionCore.MODID, value = Side.CLIENT)
 public class PrecisionTextures {
@@ -24,6 +25,7 @@ public class PrecisionTextures {
     public static SimpleOverlayRenderer NUCLEAR_FUEL_HATCH_ACTIVE;
     public static SimpleOverlayRenderer NUCLEAR_FUEL_HATCH_INACTIVE;
     public static SimpleOverlayRenderer ADVANCED_TURBINE_CASING;
+    public static RodHatchRenderer ROD_HATCH_RENDERER = new RodHatchRenderer();
 
 
 

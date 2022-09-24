@@ -6,9 +6,9 @@ public interface IReactorHatch {
 
     int getRodModifier();
 
-    void downRod();
+    void downRod(int height, boolean callReactorUpdate);
 
-    void upRod();
+    void upRod(int height, boolean callReactorUpdate);
     
     boolean isMOX();
 

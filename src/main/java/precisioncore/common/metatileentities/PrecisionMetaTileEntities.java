@@ -10,7 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import precisioncore.PrecisionCore;
 import precisioncore.common.metatileentities.multi.multiblockparts.MEItemOutputHatch;
 import precisioncore.common.metatileentities.multi.nuclear.AdvancedTurbine;
-import precisioncore.common.metatileentities.multi.nuclear.Reactor;
+import precisioncore.common.metatileentities.multi.nuclear.NuclearReactor;
 import precisioncore.common.metatileentities.multi.nuclear.ReactorFuelHatch;
 import precisioncore.common.metatileentities.multi.nuclear.ReactorSteamHatch;
 import precisioncore.common.metatileentities.multi.parallel.*;
@@ -36,9 +36,9 @@ public class PrecisionMetaTileEntities {
     public static Satellite SATELLITE;
     public static ParallelComputer PARALLEL_COMPUTER;
     public static CommunicationTower COMMUNICATION_TOWER;
-    public static Reactor REACTOR_I;
-    public static Reactor REACTOR_II;
-    public static Reactor REACTOR_III;
+    public static NuclearReactor nuclearReactorI;
+    public static NuclearReactor nuclearReactorIi;
+    public static NuclearReactor nuclearReactorIii;
     public static AdvancedTurbine ADVANCED_TURBINE;
     //SIMPLE MACHINES
 
@@ -66,9 +66,9 @@ public class PrecisionMetaTileEntities {
         SATELLITE = MetaTileEntities.registerMetaTileEntity(id++, new Satellite(location("satellite")));
         PARALLEL_COMPUTER = MetaTileEntities.registerMetaTileEntity(id++, new ParallelComputer(location("parallel_computer")));
         COMMUNICATION_TOWER = MetaTileEntities.registerMetaTileEntity(id++, new CommunicationTower(location("communication_tower")));
-        REACTOR_I = MetaTileEntities.registerMetaTileEntity(id++, new Reactor.ReactorT1(location("reactor1")));
-        REACTOR_II = MetaTileEntities.registerMetaTileEntity(id++, new Reactor.ReactorT2(location("reactor2")));
-        REACTOR_III = MetaTileEntities.registerMetaTileEntity(id++, new Reactor.ReactorT3(location("reactor3")));
+        nuclearReactorI = MetaTileEntities.registerMetaTileEntity(id++, new NuclearReactor.NuclearReactorT1(location("reactor1")));
+        nuclearReactorIi = MetaTileEntities.registerMetaTileEntity(id++, new NuclearReactor.NuclearReactorT2(location("reactor2")));
+        nuclearReactorIii = MetaTileEntities.registerMetaTileEntity(id++, new NuclearReactor.NuclearReactorT3(location("reactor3")));
         ADVANCED_TURBINE = MetaTileEntities.registerMetaTileEntity(id++, new AdvancedTurbine(location("advanced_turbine")));
         //SIMPLE MACHINES
 

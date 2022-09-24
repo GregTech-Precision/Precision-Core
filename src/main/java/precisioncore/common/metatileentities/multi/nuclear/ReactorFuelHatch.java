@@ -3,12 +3,10 @@ package precisioncore.common.metatileentities.multi.nuclear;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
-import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ClickButtonWidget;
-import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
@@ -53,6 +51,20 @@ public class ReactorFuelHatch extends MetaTileEntityMultiblockPart implements IM
         return hasRod() ? rodLevel : 0;
     }
 
+    public int getRodAmount(){
+        ItemStack stack = holder.getStackInSlot(0);
+        if(stack.isEmpty())
+            return 0;
+        else {
+            NuclearFuelBehavior behavior = NuclearFuelBehavior.getInstanceFor(stack);
+            if(behavior != null)
+                return behavior.getRodAmount();
+            else if (stack.getItem() instanceof ItemReactorMOX)
+                    return ((ItemReactorMOX) stack.getItem()).numberOfCells;
+        }
+        return 0;
+    }
+
     @Override
     public int getRodModifier() {
         ItemStack stack = holder.getStackInSlot(0);
@@ -72,24 +84,24 @@ public class ReactorFuelHatch extends MetaTileEntityMultiblockPart implements IM
     }
 
     @Override
-    public void downRod() {
-        int newRodLevel = Math.min(10, rodLevel + 1);
+    public void downRod(int height, boolean callReactorUpdate) {
+        int newRodLevel = Math.min(10, rodLevel + height);
         if(newRodLevel != rodLevel) {
             writeCustomData(PrecisionDataCodes.ROD_UPDATE, buf -> buf.writeVarInt(newRodLevel));
             this.rodLevel = newRodLevel;
-            if(getController() != null)
-                ((Reactor) getController()).notifyOnRodChanges();
+            if(callReactorUpdate && getController() != null)
+                ((NuclearReactor) getController()).notifyOnRodChanges();
         }
     }
 
     @Override
-    public void upRod() {
-        int newRodLevel = Math.max(0, rodLevel - 1);
+    public void upRod(int height, boolean callReactorUpdate) {
+        int newRodLevel = Math.max(0, rodLevel - height);
         if(newRodLevel != rodLevel) {
             writeCustomData(PrecisionDataCodes.ROD_UPDATE, buf -> buf.writeVarInt(newRodLevel));
             rodLevel = newRodLevel;
-            if (getController() != null)
-                ((Reactor) getController()).notifyOnRodChanges();
+            if (callReactorUpdate && getController() != null)
+                ((NuclearReactor) getController()).notifyOnRodChanges();
         }
     }
 
@@ -98,7 +110,7 @@ public class ReactorFuelHatch extends MetaTileEntityMultiblockPart implements IM
         ItemStack stack = holder.getStackInSlot(0);
         if(stack.isEmpty())
             return false;
-        return stack.getItem() instanceof ItemReactorMOX || NuclearFuelBehavior.getInstanceFor(holder.getStackInSlot(0)).isMOX();
+        return stack.getItem() instanceof ItemReactorMOX || (NuclearFuelBehavior.getInstanceFor(holder.getStackInSlot(0)) != null && NuclearFuelBehavior.getInstanceFor(holder.getStackInSlot(0)).isMOX());
     }
 
     @Override
@@ -120,31 +132,36 @@ public class ReactorFuelHatch extends MetaTileEntityMultiblockPart implements IM
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) { // TODO: update widget on button click
-        TextureArea levelTexture = PrecisionGUITextures.ROD_LEVEL.getSubArea(0, 0, 1, (float) getRodLevel()/10);
-        return ModularUI.extendedBuilder()
-                .image(0, 0, 176, 166, PrecisionGUITextures.ROD_HATCH_BACKGROUND)
-                .slot(holder, 0, 89, 7, GuiTextures.SLOT)
+        return ModularUI.builder(PrecisionGUITextures.ROD_HATCH_BACKGROUND, 176, 166)
+                .slot(holder, 0, 89, 7, PrecisionGUITextures.ROD_SLOT)
                 .widget(new ClickButtonWidget(69, 7, 18, 18, "", this::clickUpRod)
                         .setButtonTexture(PrecisionGUITextures.ROD_UP_BUTTON))
                 .widget(new ClickButtonWidget(69, 61, 18, 18, "", this::clickDownRod)
                         .setButtonTexture(PrecisionGUITextures.ROD_DOWN_BUTTON))
-                .widget(new ImageWidget(90, 25, 17,  (int) ( 53 * levelTexture.imageHeight), levelTexture))
+                .widget(new ProgressWidget(this::getRodLevelPercentage, 89, 26, 17, 52)
+                        .setProgressBar(null, PrecisionGUITextures.ROD_LEVEL, ProgressWidget.MoveType.VERTICAL_DOWNWARDS))
                 .bindPlayerInventory(entityPlayer.inventory)
                 .build(getHolder(), entityPlayer);
     }
 
+    private double getRodLevelPercentage(){
+        return (double) getRodLevel() / 10;
+    }
+
     private void clickUpRod(Widget.ClickData clickData) {
-        upRod();
+        int amount = clickData.isShiftClick ? 10 : 1;
+        upRod(amount, true);
     }
 
     private void clickDownRod(Widget.ClickData clickData) {
-        downRod();
+        int amount = clickData.isShiftClick ? 10 : 1;
+        downRod(amount, true);
     }
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        (holder.getStackInSlot(0).isEmpty() ? PrecisionTextures.NUCLEAR_FUEL_HATCH_INACTIVE : PrecisionTextures.NUCLEAR_FUEL_HATCH_ACTIVE).renderSided(EnumFacing.UP, renderState, translation, pipeline);
+        PrecisionTextures.ROD_HATCH_RENDERER.renderSided(renderState, translation, pipeline, hasRod(), getRodAmount(), isMOX());
     }
 
     @Override
@@ -240,7 +257,7 @@ public class ReactorFuelHatch extends MetaTileEntityMultiblockPart implements IM
             super.onContentsChanged(slot);
             scheduleRenderUpdate();
             if(getController() != null)
-                ((Reactor) getController()).notifyOnRodChanges();
+                ((NuclearReactor) getController()).notifyOnRodChanges();
         }
     }
 }

@@ -11,7 +11,7 @@ import precisioncore.api.capability.IReactorHatch;
 import precisioncore.api.capability.PrecisionDataCodes;
 import precisioncore.api.metatileentities.PrecisionMultiblockAbility;
 import precisioncore.api.unification.PrecisionMaterials;
-import precisioncore.common.metatileentities.multi.nuclear.Reactor;
+import precisioncore.common.metatileentities.multi.nuclear.NuclearReactor;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -32,15 +32,15 @@ public class ReactorLogic extends AbstractRecipeLogic {
     /**
      * Produces steam equals energy reactor tier * 10A
      */
-    public ReactorLogic(Reactor reactor, int tier){
+    public ReactorLogic(NuclearReactor reactor, int tier){
         super(reactor, null);
         this.maxHeat = (int) GTValues.V[tier-1];
-        this.workingEnabled = false;
+        setWorkingEnabled(false);
     }
 
     @Override
-    public Reactor getMetaTileEntity() {
-        return (Reactor) super.getMetaTileEntity();
+    public NuclearReactor getMetaTileEntity() {
+        return (NuclearReactor) super.getMetaTileEntity();
     }
 
     public void onRodChanges(){
@@ -50,6 +50,7 @@ public class ReactorLogic extends AbstractRecipeLogic {
         rodModifier = reactorHatchList.stream().mapToInt(IReactorHatch::getRodModifier).sum() / rodCount / 16;
         isMOX = reactorHatchList.stream().allMatch(rodHatch -> !rodHatch.hasRod() || rodHatch.isMOX());
         heatPerSecond = (int) (10 * Math.min(1, rodModifier * 2));
+        GTLog.logger.info("rod changes");
     }
 
     @Override

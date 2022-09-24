@@ -19,7 +19,6 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockBoilerCasing;
 import gregtech.common.blocks.BlockTurbineCasing;
 import gregtech.common.blocks.MetaBlocks;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
@@ -101,7 +100,7 @@ public class AdvancedTurbine extends FuelMultiblockController {
 
     @Override
     public boolean isValidFrontFacing(EnumFacing facing) {
-        return facing.getAxis() != EnumFacing.Axis.Y;
+        return !facing.getAxis().equals(EnumFacing.Axis.Y);
     }
 
     @Override
@@ -110,21 +109,6 @@ public class AdvancedTurbine extends FuelMultiblockController {
         boolean active = getRecipeMapWorkable().isWorking();
         boolean base = isStructureFormed();
         Textures.LARGE_TURBINE_ROTOR_RENDERER.renderSided(renderState, translation, pipeline, getFrontFacing(), base, base, active, 0x00FFAA);
-        BufferBuilder buffer = renderState.getBuffer();
-        int axisOffset = 4 * getFrontFacing().getOpposite().getAxisDirection().getOffset();
-        if (getFrontFacing().getAxis() == EnumFacing.Axis.X) {
-            translation.translate(axisOffset, 2, 0);
-            buffer.pos(getPos().getX() + axisOffset, getPos().getY() + 2, getPos().getZ());
-        } else{
-            translation.translate(0, 2, axisOffset);
-            buffer.pos(getPos().getX(), getPos().getY() + 2, getPos().getZ() + axisOffset);
-        }
-        if(base) {
-            CCRenderState ccRenderState = CCRenderState.instance();
-            ccRenderState.reset();
-            ccRenderState.bind(buffer);
-            Textures.LARGE_TURBINE_ROTOR_RENDERER.renderSided(ccRenderState, translation, new IVertexOperation[]{renderState.lightMatrix}, EnumFacing.UP, base, base, active, 0x00FFAA);
-        }
     }
 
     @Override

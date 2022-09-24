@@ -1,13 +1,9 @@
 package precisioncore.api.capability;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.GregtechTileCapabilities;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.Mod;
-import precisioncore.api.capability.IParallelHatch;
-import precisioncore.api.metatileentities.PrecisionRecipeMapMultiblockController;
 
 @Mod.EventBusSubscriber(modid = GTValues.MODID)
 public class PrecisionCapabilities {
@@ -20,4 +16,7 @@ public class PrecisionCapabilities {
 
     @CapabilityInject(IParallelMultiblock.class)
     public static Capability<IParallelMultiblock> CAPABILITY_PRECISION_CONTROLLER = null;
+
+    @CapabilityInject(IReactorHatch.class)
+    public static Capability<IReactorHatch> CAPABILITY_ROD = null;
 }

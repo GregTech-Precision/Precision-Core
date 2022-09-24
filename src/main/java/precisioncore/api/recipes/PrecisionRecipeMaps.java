@@ -1,6 +1,9 @@
 package precisioncore.api.recipes;
 
+import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.builders.FuelRecipeBuilder;
 import gregtech.api.recipes.builders.IntCircuitRecipeBuilder;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 
@@ -33,4 +36,13 @@ public class PrecisionRecipeMaps {
             0,1,
             0,0,
             new SimpleRecipeBuilder(), false);
+
+    public static final RecipeMap<FuelRecipeBuilder> ADVANCED_TURBINE = new RecipeMap<>(
+            "advanced_turbine",
+            0, 0,
+            0, 0,
+            1, 1,
+            0, 1,
+            new FuelRecipeBuilder(), false)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_GAS_COLLECTOR, ProgressWidget.MoveType.HORIZONTAL);
 }

@@ -12,6 +12,18 @@
       "textures": {
         "all": "gregtech:blocks/parallel/casing_satellite"
       }
+    },
+    "variant=reactor": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/nuclear/casing_reactor"
+      }
+    },
+    "variant=advanced_turbine": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/nuclear/casing_advanced_turbine"
+      }
     }
   }
 }

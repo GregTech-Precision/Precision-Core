@@ -83,7 +83,8 @@ dependencies {
     compile files('libs/CodeChickenLib-1.12.2-3.2.3.358.jar',
             'libs/appliedenergistics2-rv6-stable-7.jar',
             'libs/theoneprobe-1.12-1.4.28.jar',
-            'libs/gregtech-1.12.2-2.4.1-beta.jar')
+            'libs/gregtech-1.12.2-2.4.1-beta.jar',
+            'libs/industrialcraft-2-2.8.221-ex112.jar')
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
     // compile "some.group:artifact:version"

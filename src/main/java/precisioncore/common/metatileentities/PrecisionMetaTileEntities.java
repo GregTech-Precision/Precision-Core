@@ -6,16 +6,20 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.common.metatileentities.MetaTileEntities;
+import net.minecraft.util.ResourceLocation;
 import precisioncore.PrecisionCore;
+import precisioncore.common.metatileentities.multi.multiblockparts.MEItemOutputHatch;
+import precisioncore.common.metatileentities.multi.nuclear.AdvancedTurbine;
+import precisioncore.common.metatileentities.multi.nuclear.NuclearReactor;
+import precisioncore.common.metatileentities.multi.nuclear.ReactorFuelHatch;
+import precisioncore.common.metatileentities.multi.nuclear.ReactorSteamHatch;
 import precisioncore.common.metatileentities.multi.parallel.*;
 import precisioncore.common.metatileentities.multi.processing.wood.Greenhouse;
-import precisioncore.common.metatileentities.multi.processing.wood.Sawmill;
-import precisioncore.common.metatileentities.multi.tanks.MultiTank;
 import precisioncore.common.metatileentities.multi.processing.wood.PyrolyseOven;
-import precisioncore.common.metatileentities.multi.tanks.SingleTank;
+import precisioncore.common.metatileentities.multi.processing.wood.Sawmill;
 import precisioncore.common.metatileentities.multi.tanks.IOHatch;
-import precisioncore.common.metatileentities.multi.multiblockparts.MEItemOutputHatch;
-import net.minecraft.util.ResourceLocation;
+import precisioncore.common.metatileentities.multi.tanks.MultiTank;
+import precisioncore.common.metatileentities.multi.tanks.SingleTank;
 
 import java.util.function.Function;
 
@@ -31,6 +35,11 @@ public class PrecisionMetaTileEntities {
     public static Sawmill SAWMILL;
     public static Satellite SATELLITE;
     public static ParallelComputer PARALLEL_COMPUTER;
+    public static CommunicationTower COMMUNICATION_TOWER;
+    public static NuclearReactor nuclearReactorI;
+    public static NuclearReactor nuclearReactorIi;
+    public static NuclearReactor nuclearReactorIii;
+    public static AdvancedTurbine ADVANCED_TURBINE;
     //SIMPLE MACHINES
 
     //HATCHES
@@ -41,7 +50,9 @@ public class PrecisionMetaTileEntities {
     public static ParallelHatch PARALLEL_TRANSMITTER;
     public static ParallelHatch PARALLEL_RECEIVER;
     public static ParallelComputerRack PARALLEL_RACK;
-    public static CommunicationTower COMMUNICATION_TOWER;
+    public static ReactorFuelHatch REACTOR_FUEL_HATCH;
+    public static ReactorSteamHatch REACTOR_STEAM_HATCH_IMPORT;
+    public static ReactorSteamHatch REACTOR_STEAM_HATCH_EXPORT;
 
     public static void init() { // Controllers then singleblocks and hatches
         GTLog.logger.info("Precision Core Registering New Meta Tile Entities");
@@ -55,6 +66,10 @@ public class PrecisionMetaTileEntities {
         SATELLITE = MetaTileEntities.registerMetaTileEntity(id++, new Satellite(location("satellite")));
         PARALLEL_COMPUTER = MetaTileEntities.registerMetaTileEntity(id++, new ParallelComputer(location("parallel_computer")));
         COMMUNICATION_TOWER = MetaTileEntities.registerMetaTileEntity(id++, new CommunicationTower(location("communication_tower")));
+        nuclearReactorI = MetaTileEntities.registerMetaTileEntity(id++, new NuclearReactor.NuclearReactorT1(location("reactor1")));
+        nuclearReactorIi = MetaTileEntities.registerMetaTileEntity(id++, new NuclearReactor.NuclearReactorT2(location("reactor2")));
+        nuclearReactorIii = MetaTileEntities.registerMetaTileEntity(id++, new NuclearReactor.NuclearReactorT3(location("reactor3")));
+        ADVANCED_TURBINE = MetaTileEntities.registerMetaTileEntity(id++, new AdvancedTurbine(location("advanced_turbine")));
         //SIMPLE MACHINES
 
         //HATCHES
@@ -67,6 +82,9 @@ public class PrecisionMetaTileEntities {
             PARALLEL_RECEIVER = MetaTileEntities.registerMetaTileEntity(id++, new ParallelHatch(location("parallel_receiver_" + (int) Math.pow(4, i+1) + "p"), 5 + i, false));
         }
         PARALLEL_RACK = MetaTileEntities.registerMetaTileEntity(id++, new ParallelComputerRack(location("parallel_rack")));
+        REACTOR_FUEL_HATCH = MetaTileEntities.registerMetaTileEntity(id++, new ReactorFuelHatch(location("reactor_fuel_hatch")));
+        REACTOR_STEAM_HATCH_IMPORT = MetaTileEntities.registerMetaTileEntity(id++, new ReactorSteamHatch(location("reactor_steam_hatch.import"), 2_000_000_000, false));
+        REACTOR_STEAM_HATCH_EXPORT = MetaTileEntities.registerMetaTileEntity(id++, new ReactorSteamHatch(location("reactor_steam_hatch.export"), 2_000_000_000, true));
     }
 
     private static void registerSimpleMetaTileEntity(SimpleMachineMetaTileEntity[] machines,

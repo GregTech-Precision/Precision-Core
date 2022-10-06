@@ -4,8 +4,6 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -15,18 +13,6 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
-import net.minecraftforge.common.capabilities.Capability;
-import precisioncore.api.capability.PrecisionCapabilities;
-import precisioncore.api.capability.PrecisionDataCodes;
-import precisioncore.api.capability.IAddresable;
-import precisioncore.api.capability.impl.ParallelComputerLogic;
-import precisioncore.api.metatileentities.PrecisionMultiblockAbility;
-import precisioncore.api.render.PrecisionTextures;
-import precisioncore.api.utils.PrecisionParallelAPI;
-import precisioncore.common.blocks.BlockCasing;
-import precisioncore.common.blocks.PrecisionMetaBlocks;
-import precisioncore.common.metatileentities.PrecisionMetaTileEntities;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -35,6 +21,16 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.common.capabilities.Capability;
+import precisioncore.api.capability.IAddresable;
+import precisioncore.api.capability.PrecisionCapabilities;
+import precisioncore.api.capability.PrecisionDataCodes;
+import precisioncore.api.capability.impl.ParallelComputerLogic;
+import precisioncore.api.metatileentities.PrecisionMultiblockAbility;
+import precisioncore.api.render.PrecisionTextures;
+import precisioncore.api.utils.PrecisionParallelAPI;
+import precisioncore.common.blocks.BlockCasing;
+import precisioncore.common.metatileentities.PrecisionMetaTileEntities;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -72,7 +68,9 @@ public class ParallelComputer extends MultiblockWithDisplayBase implements IAddr
                 .aisle("CC", "RT", "RT", "CC").setRepeatable(2, 16)
                 .aisle("CC", "CC", "CC", "CC")
                 .where('S', selfPredicate())
-                .where('C', states(casingState()).or(autoAbilities(true, false)).or(abilities(MultiblockAbility.INPUT_ENERGY).setMaxGlobalLimited(4)))
+                .where('C', BlockCasing.predicate(BlockCasing.Casings.COMPUTER)
+                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMaxGlobalLimited(4))
+                        .or(autoAbilities(true, false)))
                 .where('R', metaTileEntities(PrecisionMetaTileEntities.PARALLEL_RACK))
                 .where('T', abilities(PrecisionMultiblockAbility.PARALLEL_HATCH_OUT))
                 .build();
@@ -89,10 +87,6 @@ public class ParallelComputer extends MultiblockWithDisplayBase implements IAddr
             if(imp instanceof ParallelComputerRack)
                 parallelPoints += ((ParallelComputerRack) imp).getParallelPoints();
         return parallelPoints;
-    }
-
-    private IBlockState casingState(){
-        return PrecisionMetaBlocks.CASING.getState(BlockCasing.Casings.COMPUTER);
     }
 
     @Override

@@ -37,7 +37,6 @@ import precisioncore.api.gui.PrecisionGUITextures;
 import precisioncore.api.metatileentities.PrecisionMultiblockAbility;
 import precisioncore.api.render.PrecisionTextures;
 import precisioncore.common.blocks.BlockCasing;
-import precisioncore.common.blocks.PrecisionMetaBlocks;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -165,7 +164,7 @@ public abstract class NuclearReactor extends MultiblockWithDisplayBase {
                     .aisle("#CCCCCCC#", "#C#####C#", "##R###R##", "##R###R##", "##RC#CR##", "##CCCCC##")
                     .aisle("##CCCCC##", "##CCSCC##", "###CCC###", "###CCC###", "####C####", "#########")
                     .where('S', selfPredicate())
-                    .where('C', states(PrecisionMetaBlocks.CASING.getState(BlockCasing.Casings.REACTOR))
+                    .where('C', BlockCasing.predicate(BlockCasing.Casings.REACTOR)
                             .or(autoAbilities(true, false))
                             .or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMaxGlobalLimited(6))
                             .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMaxGlobalLimited(3)))
@@ -197,7 +196,7 @@ public abstract class NuclearReactor extends MultiblockWithDisplayBase {
                     .aisle("CCCCCCC", "CR###RC", "#R###R#", "#R###R#", "#RCCCR#", "##CCC##")
                     .aisle("#CCCCC#", "#CCSCC#", "##CCC##", "##CCC##", "###C###", "#######")
                     .where('S', selfPredicate())
-                    .where('C', states(PrecisionMetaBlocks.CASING.getState(BlockCasing.Casings.REACTOR))
+                    .where('C', BlockCasing.predicate(BlockCasing.Casings.REACTOR)
                             .or(autoAbilities(true, false))
                             .or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMaxGlobalLimited(4))
                             .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMaxGlobalLimited(2)))
@@ -227,7 +226,7 @@ public abstract class NuclearReactor extends MultiblockWithDisplayBase {
                     .aisle("CCCCC", "CR#RC", "#RCR#", "#CCC#")
                     .aisle("#CCC#", "#CSC#", "##C##", "#####")
                     .where('S', selfPredicate())
-                    .where('C', states(PrecisionMetaBlocks.CASING.getState(BlockCasing.Casings.REACTOR))
+                    .where('C', BlockCasing.predicate(BlockCasing.Casings.REACTOR)
                             .or(autoAbilities(true, false))
                             .or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMaxGlobalLimited(2))
                             .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMaxGlobalLimited(1)))

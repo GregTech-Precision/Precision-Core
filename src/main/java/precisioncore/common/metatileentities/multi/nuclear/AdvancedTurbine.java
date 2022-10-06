@@ -26,7 +26,6 @@ import precisioncore.api.capability.impl.AdvancedTurbineLogic;
 import precisioncore.api.recipes.PrecisionRecipeMaps;
 import precisioncore.api.render.PrecisionTextures;
 import precisioncore.common.blocks.BlockCasing;
-import precisioncore.common.blocks.PrecisionMetaBlocks;
 
 public class AdvancedTurbine extends FuelMultiblockController {
 
@@ -64,12 +63,12 @@ public class AdvancedTurbine extends FuelMultiblockController {
                 .aisle("CCCCC", "CCCCC", "CCCCC", "#####")
                 .aisle("#HHH#", "#HSH#", "#HHH#", "#####")
                 .where('S', selfPredicate())
-                .where('H', states(PrecisionMetaBlocks.CASING.getState(BlockCasing.Casings.ADVANCED_TURBINE)))
-                .where('C', states(PrecisionMetaBlocks.CASING.getState(BlockCasing.Casings.ADVANCED_TURBINE))
+                .where('H', BlockCasing.predicate(BlockCasing.Casings.ADVANCED_TURBINE))
+                .where('C', BlockCasing.predicate(BlockCasing.Casings.ADVANCED_TURBINE)
                         .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMaxGlobalLimited(6))
                         .or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMaxGlobalLimited(3))
                         .or(autoAbilities(true, false)))
-                .where('E', states(PrecisionMetaBlocks.CASING.getState(BlockCasing.Casings.ADVANCED_TURBINE))
+                .where('E', BlockCasing.predicate(BlockCasing.Casings.ADVANCED_TURBINE)
                         .or(abilities(MultiblockAbility.OUTPUT_ENERGY)))
                 .where('G', states(MetaBlocks.TURBINE_CASING.getState(BlockTurbineCasing.TurbineCasingType.STEEL_GEARBOX)))
                 .where('P', states(MetaBlocks.BOILER_CASING.getState(BlockBoilerCasing.BoilerCasingType.STEEL_PIPE)))

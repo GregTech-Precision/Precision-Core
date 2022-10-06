@@ -11,13 +11,13 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.ResourceLocation;
 import precisioncore.api.render.PrecisionTextures;
 import precisioncore.common.PrecisionConfigHolder;
 import precisioncore.common.blocks.BlockCasing;
 import precisioncore.common.blocks.PrecisionMetaBlocks;
 import precisioncore.common.metatileentities.PrecisionMetaTileEntities;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
 
@@ -38,7 +38,9 @@ public class Satellite extends MultiblockWithDisplayBase {
                 .aisle("CCCCC", "CCSCC", "CCCCC", "*C*C*")
                 .aisle("*C*C*", "*C*C*", "*C*C*", "*C*C*")
                 .where('S', selfPredicate())
-                .where('C', states(casingState()).or(metaTileEntities(PrecisionMetaTileEntities.SATELLITE_TRANSMITTER).setMaxGlobalLimited(1,1)))
+                .where('C', BlockCasing.predicate(BlockCasing.Casings.SATELLITE)
+                        .or(metaTileEntities(PrecisionMetaTileEntities.SATELLITE_TRANSMITTER)
+                                .setMaxGlobalLimited(1,1)))
                 .where('*', any())
                 .build();
     }
